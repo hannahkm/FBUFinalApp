@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.parse.Parse;
 
 import android.content.Intent;
@@ -14,11 +17,19 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        AIzaSyBIriGEWomx2mfkJJwJqnygrXkJpj01jSo
+
+        // Initialize the SDK
+        Places.initialize(getApplicationContext(), getResources().getString(R.string.apiKey));
+
+        // Create a new PlacesClient instance
+        PlacesClient placesClient = Places.createClient(this);
+
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
