@@ -66,7 +66,7 @@ public class Itinerary extends ParseObject {
     }
 
     public String reformatDate(Date date){
-        String pattern = "MMMMM dd, yyyy";
+        String pattern = "MMMM dd, yyyy";
 
         SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
         return dateFormat.format(date);

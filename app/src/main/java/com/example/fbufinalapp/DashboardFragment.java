@@ -1,11 +1,13 @@
 package com.example.fbufinalapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,9 +15,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.fbufinalapp.adapters.ItineraryAdapter;
 import com.example.fbufinalapp.models.Itinerary;
+import com.google.android.gms.maps.model.Dash;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -33,6 +38,7 @@ public class DashboardFragment extends Fragment {
     RecyclerView rvItineraries;
     List<Itinerary> trips;
     ItineraryAdapter adapter;
+    FloatingActionButton fabNewItin;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -64,6 +70,7 @@ public class DashboardFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         rvItineraries = view.findViewById(R.id.rvItineraries);
+        fabNewItin = view.findViewById(R.id.fabNewItin);
         trips = new ArrayList<>();
         adapter = new ItineraryAdapter(context, trips);
 
@@ -71,6 +78,14 @@ public class DashboardFragment extends Fragment {
         rvItineraries.setLayoutManager(new LinearLayoutManager(context));
 
         queryPosts();
+
+        fabNewItin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context, EditItineraryActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     private void queryPosts() {
