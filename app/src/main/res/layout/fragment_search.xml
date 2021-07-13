@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/etSearch"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="-10dp"
         android:text="Powered By Google"
         android:textSize="12sp" />

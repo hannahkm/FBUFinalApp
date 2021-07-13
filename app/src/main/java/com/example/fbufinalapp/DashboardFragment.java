@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +40,7 @@ public class DashboardFragment extends Fragment {
     List<Itinerary> trips;
     ItineraryAdapter adapter;
     FloatingActionButton fabNewItin;
+    SwipeRefreshLayout swipeContainer;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -54,6 +56,8 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ((MainActivity) getActivity()).setActionBarTitle("Dashboard");
 
     }
 
@@ -77,6 +81,16 @@ public class DashboardFragment extends Fragment {
         rvItineraries.setAdapter(adapter);
         rvItineraries.setLayoutManager(new LinearLayoutManager(context));
 
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // refreshes the user's timeline
+                fetchTimelineAsync(0);
+            }
+        });
+
         queryPosts();
 
         fabNewItin.setOnClickListener(new View.OnClickListener() {
@@ -84,8 +98,15 @@ public class DashboardFragment extends Fragment {
             public void onClick(View v) {
                 Intent i = new Intent(context, EditItineraryActivity.class);
                 startActivity(i);
+                adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    public void fetchTimelineAsync(int page) {
+        adapter.clear();
+        queryPosts();
+        swipeContainer.setRefreshing(false);
     }
 
     private void queryPosts() {

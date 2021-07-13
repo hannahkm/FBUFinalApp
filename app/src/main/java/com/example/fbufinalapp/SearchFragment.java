@@ -65,6 +65,7 @@ public class SearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MainActivity) getActivity()).setActionBarTitle("Find Destinations");
     }
 
     @Override
@@ -81,6 +82,8 @@ public class SearchFragment extends Fragment {
 
         etSearch = view.findViewById(R.id.etSearch);
         searchResults = view.findViewById(R.id.tvResults);
+        etSearch.setText("");
+        searchResults.setText("");
 
         etSearch.addTextChangedListener(searchListener);
 

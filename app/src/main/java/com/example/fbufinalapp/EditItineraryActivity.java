@@ -56,15 +56,30 @@ public class EditItineraryActivity extends AppCompatActivity {
                 String title = String.valueOf(tvTripName.getText());
                 String notes = String.valueOf(etNotes.getText());
 
+                Itinerary itin = new Itinerary();
+
                 SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
                 Date start = null;
                 Date end = null;
-                try {
-                    start = sdf.parse(String.valueOf(etStartDate.getText()));
-                    end = sdf.parse(String.valueOf(etEndDate.getText()));
-                } catch (java.text.ParseException e) {
-                    Toast.makeText(EditItineraryActivity.this, "There was an issue with your dates", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
+                String startInput = String.valueOf(etStartDate.getText());
+                String endInput = String.valueOf(etEndDate.getText());
+
+                if (!startInput.equals("")){
+                    try {
+                        start = sdf.parse(String.valueOf(etStartDate.getText()));
+                        itin.setStartDate(start);
+                    } catch (java.text.ParseException e) {
+                        Log.i("EditItinerary", String.valueOf(e));
+                    }
+                }
+
+                if (!endInput.equals("")){
+                    try {
+                        end = sdf.parse(String.valueOf(etEndDate.getText()));
+                        itin.setEndDate(end);
+                    } catch (java.text.ParseException e) {
+                        Log.i("EditItinerary", String.valueOf(e));
+                    }
                 }
 
                 if (title == null || title.equals("")){
@@ -74,13 +89,9 @@ public class EditItineraryActivity extends AppCompatActivity {
                         title = "New Trip";
                     }
                 }
-
-                Itinerary itin = new Itinerary();
-                itin.setAuthor(ParseUser.getCurrentUser());
                 itin.setTitle(title);
+                itin.setAuthor(ParseUser.getCurrentUser());
                 itin.setDescription(notes);
-                itin.setStartDate(start);
-                itin.setEndDate(end);
                 itin.setPlaceID(place.getId());
 
                 itin.saveInBackground(new SaveCallback() {
@@ -98,6 +109,7 @@ public class EditItineraryActivity extends AppCompatActivity {
                         }
                     }
                 });
+
                 finish();
             }
         });

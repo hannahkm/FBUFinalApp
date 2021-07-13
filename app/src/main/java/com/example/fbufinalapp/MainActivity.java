@@ -22,8 +22,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        AIzaSyBIriGEWomx2mfkJJwJqnygrXkJpj01jSo
-
         // Initialize the SDK
         Places.initialize(getApplicationContext(), getResources().getString(R.string.apiKey));
 
@@ -66,5 +64,9 @@ public class MainActivity extends AppCompatActivity {
             });
         // Set default selection
         bottomNavigationView.setSelectedItemId(R.id.dashboard);
+    }
+
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 }
