@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.parse.ParseUser;
 
@@ -23,6 +24,7 @@ import com.parse.ParseUser;
 public class ProfileFragment extends Fragment {
     Button logout;
     Context context;
+    TextView username;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -75,6 +77,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ParseUser currentUser = ParseUser.getCurrentUser();
 
         logout = view.findViewById(R.id.btLogOut);
         logout.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +88,9 @@ public class ProfileFragment extends Fragment {
                 startActivity(i);
             }
         });
+
+        username = view.findViewById(R.id.tvUsername);
+        username.setText(currentUser.getUsername());
 
     }
 }
