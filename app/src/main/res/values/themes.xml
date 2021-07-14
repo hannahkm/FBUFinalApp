@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.FBUFinalApp" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#847059</item>
-        <item name="colorPrimaryVariant">#BB9B76</item>
+        <item name="colorPrimary">@color/brown</item>
+        <item name="colorPrimaryVariant">@color/brown_light</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
@@ -12,6 +12,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
         <!-- Customize your theme here. -->
+        <item name="android:textColor">@color/brown_dark</item>
+        <item name="android:textSize">16dp</item>
     </style>
 
     <style name="Widget.App.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
@@ -19,7 +21,7 @@
     </style>
 
     <style name="ThemeOverlay.App.BottomNavigationView" parent="">
-        <item name="colorPrimary">#BB9B76</item>
-        <item name="colorOnPrimary">#BB9B76</item>
+        <item name="colorPrimary">@color/brown_light</item>
+        <item name="colorOnPrimary">@color/brown_light</item>
     </style>
 </resources>

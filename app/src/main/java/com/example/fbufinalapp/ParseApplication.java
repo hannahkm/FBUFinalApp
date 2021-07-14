@@ -2,6 +2,7 @@ package com.example.fbufinalapp;
 
 import android.app.Application;
 
+import com.example.fbufinalapp.models.Itinerary;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -24,7 +25,7 @@ public class ParseApplication extends Application {
         builder.networkInterceptors().add(httpLoggingInterceptor);
 
         // Register your parse models
-//        ParseObject.registerSubclass(Post.class);
+        ParseObject.registerSubclass(Itinerary.class);
 
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId("QOiyHYg3hkWzAwm4czcfsXFxt8gu8oqttvnc1RCd")
