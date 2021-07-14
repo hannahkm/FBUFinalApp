@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FBUFinalApp">
-        <activity android:name=".EditItineraryActivity"></activity>
+        <activity android:name=".DetailedLocationActivity"></activity>
+        <activity android:name=".EditItineraryActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>

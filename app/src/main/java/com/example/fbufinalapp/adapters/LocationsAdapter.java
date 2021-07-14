@@ -1,6 +1,7 @@
 package com.example.fbufinalapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fbufinalapp.DetailedLocationActivity;
 import com.example.fbufinalapp.R;
 import com.example.fbufinalapp.models.Itinerary;
 import com.google.android.gms.common.api.ApiException;
@@ -23,6 +25,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.ViewHolder>{
 
@@ -55,17 +58,21 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvPrimary;
+        TextView tvSecondary;
         String placeId;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             tvPrimary = itemView.findViewById(R.id.tvPrimary);
+            tvSecondary = itemView.findViewById(R.id.tvSecondary);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, placeId, Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(context, DetailedLocationActivity.class);
+                    i.putExtra("placeID", placeId);
+                    context.startActivity(i);
                 }
             });
         }
@@ -73,8 +80,14 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
         public void bind(String place) {
             int lastIndex = place.lastIndexOf("\n");
             String description = place.substring(0, lastIndex);
-            placeId = place.substring(lastIndex+2);
-            tvPrimary.setText(description);
+            placeId = place.substring(lastIndex+1);
+
+            lastIndex = place.indexOf("\n");
+            String primary = description.substring(0, lastIndex);
+            String secondary = description.substring(lastIndex+1);
+
+            tvPrimary.setText(primary);
+            tvSecondary.setText(secondary);
         }
 
 
