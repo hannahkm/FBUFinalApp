@@ -20,6 +20,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -90,7 +91,10 @@ public class EditItineraryActivity extends AppCompatActivity {
                     }
                 }
                 itin.setTitle(title);
-                itin.setAuthor(ParseUser.getCurrentUser());
+
+                ParseUser currentUser = ParseUser.getCurrentUser();
+                itin.setAuthor(currentUser);
+
                 itin.setDescription(notes);
                 itin.setPlaceID(place.getId());
 
@@ -106,6 +110,23 @@ public class EditItineraryActivity extends AppCompatActivity {
                             etNotes.setText("");
                             etStartDate.setText("");
                             etEndDate.setText("");
+
+                            List<String> currentItins = currentUser.getList("itineraries");
+                            if (currentItins == null){
+                                currentItins = new ArrayList<String>();
+                            }
+                            currentItins.add(itin.getObjectId());
+                            currentUser.put("itineraries", currentItins);
+
+                            currentUser.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e != null){
+                                        Log.e("Saving user", String.valueOf(e));
+                                        Toast.makeText(EditItineraryActivity.this, "Error saving your trip", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
                         }
                     }
                 });
