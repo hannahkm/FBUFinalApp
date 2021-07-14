@@ -33,15 +33,17 @@
         android:text="Powered By Google"
         android:textSize="12sp" />
 
-    <TextView
-        android:id="@+id/tvResults"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvResults"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/tvGoogle"
         android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
-        android:padding="12dp"
-        android:textSize="16sp"
-        tools:text="Search Results" />
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="2dp"
+        android:paddingStart="12dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="12dp" />
+
 </RelativeLayout>
