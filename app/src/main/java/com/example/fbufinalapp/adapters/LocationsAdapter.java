@@ -72,6 +72,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
                 public void onClick(View v) {
                     Intent i = new Intent(context, DetailedLocationActivity.class);
                     i.putExtra("placeID", placeId);
+                    i.putExtra("name", tvPrimary.getText());
                     context.startActivity(i);
                 }
             });

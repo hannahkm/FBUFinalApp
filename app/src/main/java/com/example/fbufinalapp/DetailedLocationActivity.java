@@ -47,6 +47,9 @@ public class DetailedLocationActivity extends AppCompatActivity {
         btPhoneNumber = findViewById(R.id.btPhoneNumber);
 
         String placeId = getIntent().getStringExtra("placeID");
+        String name = getIntent().getStringExtra("name");
+
+        getSupportActionBar().setTitle(name);
 
         placesClient = Places.createClient(this);
 
@@ -104,9 +107,9 @@ public class DetailedLocationActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     try {
-//                        String phone = place.getPhoneNumber();
-                        String phone = "4439790677";
-                        Intent launch = new Intent(Intent.ACTION_DIAL, Uri.parse(phone));
+                        String phone = "tel:" + place.getPhoneNumber();
+                        Intent launch = new Intent(Intent.ACTION_DIAL);
+                        launch.setData(Uri.parse(phone));
                         startActivity(launch);
                     } catch (NullPointerException e) {
                         Toast.makeText(DetailedLocationActivity.this, "This location has no phone number", Toast.LENGTH_SHORT).show();
