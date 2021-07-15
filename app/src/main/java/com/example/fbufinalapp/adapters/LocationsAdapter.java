@@ -56,6 +56,11 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
         return places.size();
     }
 
+    public void clear() {
+        places.clear();
+        notifyDataSetChanged();
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvPrimary;
         TextView tvSecondary;
