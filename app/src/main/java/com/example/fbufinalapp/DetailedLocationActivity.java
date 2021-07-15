@@ -61,6 +61,10 @@ public class DetailedLocationActivity extends AppCompatActivity {
         placeId = getIntent().getStringExtra("placeID");
         String name = getIntent().getStringExtra("name");
 
+        if (currentUser.getList("favorites").contains(placeId)){
+            fabAddToFav.setImageResource(R.drawable.ic_favorite_filled);
+        }
+
         getSupportActionBar().setTitle(name);
 
         placesClient = Places.createClient(this);
@@ -138,36 +142,29 @@ public class DetailedLocationActivity extends AppCompatActivity {
         fabAddToFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Favorites fav = new Favorites();
+                List<String> currentFavs = currentUser.getList("favorites");
+                if (currentFavs == null){
+                    currentFavs = new ArrayList<String>();
+                }
 
-                fav.setPlaceId(placeId);
-                fav.setUser(ParseUser.getCurrentUser());
+                if (currentFavs.contains(placeId)){
+                    // we're disliking; remove the id from favorites
+                    currentFavs.remove(placeId);
+                    fabAddToFav.setImageResource(R.drawable.ic_favorite);
+                } else {
+                    // liking the location; add id
+                    currentFavs.add(placeId);
+                    fabAddToFav.setImageResource(R.drawable.ic_favorite_filled);
+                }
+                currentUser.put("favorites", currentFavs);
 
-                fav.saveInBackground(new SaveCallback() {
+
+                currentUser.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         if (e != null){
-                            Toast.makeText(DetailedLocationActivity.this, "Could not add to favorites", Toast.LENGTH_SHORT).show();
-                            Log.e("DetailedLocationActivity", String.valueOf(e));
-                        } else {
-                            List<String> currentFavs = currentUser.getList("favorites");
-                            if (currentFavs == null){
-                                currentFavs = new ArrayList<String>();
-                            }
-                            currentFavs.add(fav.getObjectId());
-                            currentUser.put("favorites", currentFavs);
-
-                            currentUser.saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    if (e != null){
-                                        Log.e("Saving user", String.valueOf(e));
-                                        Toast.makeText(DetailedLocationActivity.this, "Error saving your trip", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(DetailedLocationActivity.this, "Added to favorites!", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
+                            Log.e("Saving user", String.valueOf(e));
+                            Toast.makeText(DetailedLocationActivity.this, "An error occurred. Please try again later!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
