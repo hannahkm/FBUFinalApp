@@ -12,12 +12,18 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fbufinalapp.models.Favorites;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +38,9 @@ public class DetailedLocationActivity extends AppCompatActivity {
     Button btWebsite;
     Button btPhoneNumber;
     PlacesClient placesClient;
+    FloatingActionButton fabAddToFav;
+    ParseUser currentUser;
+    String placeId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +54,11 @@ public class DetailedLocationActivity extends AppCompatActivity {
         ratingBar = findViewById(R.id.ratingBar);
         btWebsite = findViewById(R.id.btWebsite);
         btPhoneNumber = findViewById(R.id.btPhoneNumber);
+        fabAddToFav = findViewById(R.id.fabAddToFav);
 
-        String placeId = getIntent().getStringExtra("placeID");
+        currentUser = ParseUser.getCurrentUser();
+
+        placeId = getIntent().getStringExtra("placeID");
         String name = getIntent().getStringExtra("name");
 
         getSupportActionBar().setTitle(name);
@@ -120,6 +132,45 @@ public class DetailedLocationActivity extends AppCompatActivity {
         }).addOnFailureListener((exception) -> {
             if (exception instanceof ApiException) {
                 Log.e(TAG, "Place not found: " + exception.getMessage());
+            }
+        });
+
+        fabAddToFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Favorites fav = new Favorites();
+
+                fav.setPlaceId(placeId);
+                fav.setUser(ParseUser.getCurrentUser());
+
+                fav.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e != null){
+                            Toast.makeText(DetailedLocationActivity.this, "Could not add to favorites", Toast.LENGTH_SHORT).show();
+                            Log.e("DetailedLocationActivity", String.valueOf(e));
+                        } else {
+                            List<String> currentFavs = currentUser.getList("favorites");
+                            if (currentFavs == null){
+                                currentFavs = new ArrayList<String>();
+                            }
+                            currentFavs.add(fav.getObjectId());
+                            currentUser.put("favorites", currentFavs);
+
+                            currentUser.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e != null){
+                                        Log.e("Saving user", String.valueOf(e));
+                                        Toast.makeText(DetailedLocationActivity.this, "Error saving your trip", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(DetailedLocationActivity.this, "Added to favorites!", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
             }
         });
 
