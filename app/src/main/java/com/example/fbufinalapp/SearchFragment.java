@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,6 +20,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fbufinalapp.adapters.ItineraryAdapter;
+import com.example.fbufinalapp.adapters.LocationsAdapter;
+import com.example.fbufinalapp.models.Itinerary;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
@@ -31,6 +36,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,7 +52,9 @@ public class SearchFragment extends Fragment {
     public static final String TAG = "SearchFragment";
     public static int AUTOCOMPLETE_REQUEST_CODE = 1;
     private EditText etSearch;
-    private TextView searchResults;
+    private RecyclerView searchResults;
+    List<String> places;
+    LocationsAdapter adapter;
     private StringBuilder mResult;
     PlacesClient placesClient;
     Context context;
@@ -81,9 +89,14 @@ public class SearchFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         etSearch = view.findViewById(R.id.etSearch);
-        searchResults = view.findViewById(R.id.tvResults);
+        searchResults = view.findViewById(R.id.rvResults);
         etSearch.setText("");
-        searchResults.setText("");
+
+        places = new ArrayList<>();
+        adapter = new LocationsAdapter(context, places);
+
+        searchResults.setAdapter(adapter);
+        searchResults.setLayoutManager(new LinearLayoutManager(context));
 
         etSearch.addTextChangedListener(searchListener);
 
@@ -109,14 +122,17 @@ public class SearchFragment extends Fragment {
                     .build();
 
             placesClient.findAutocompletePredictions(request).addOnSuccessListener(response -> {
-                mResult = new StringBuilder();
+                places.clear();
 
                 for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                    mResult = new StringBuilder();
                     mResult.append(prediction.getPrimaryText(null) + "\n");
-                    mResult.append(prediction.getSecondaryText(null) + "\n\n");
+                    mResult.append(prediction.getSecondaryText(null) + "\n");
+                    mResult.append(prediction.getPlaceId());
+                    places.add(String.valueOf(mResult));
                 }
 
-                searchResults.setText(String.valueOf(mResult));
+                adapter.notifyDataSetChanged();
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
                     ApiException apiException = (ApiException) exception;
