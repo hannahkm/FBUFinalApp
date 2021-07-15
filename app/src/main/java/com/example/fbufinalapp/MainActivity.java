@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.example.fbufinalapp.databinding.ActivityMainBinding;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.parse.Parse;
@@ -12,22 +13,24 @@ import com.parse.Parse;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseUser;
-import com.yelp.clientlib.connection.YelpAPI;
-import com.yelp.clientlib.connection.YelpAPIFactory;
 
 public class MainActivity extends AppCompatActivity {
-    public String apiKey = getResources().getString(R.string.apiKey);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        // using view binding
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+
+        // layout of activity is stored in a special property called root
+        View view = binding.getRoot();
+        setContentView(view);
 
         // Initialize the SDK
-        Places.initialize(getApplicationContext(), apiKey);
+        Places.initialize(getApplicationContext(), getResources().getString(R.string.apiKey));
 
         // Create a new PlacesClient instance
         PlacesClient placesClient = Places.createClient(this);

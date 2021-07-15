@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fbufinalapp.databinding.ActivityDetailedLocationBinding;
+import com.example.fbufinalapp.databinding.ActivityEditItineraryBinding;
 import com.example.fbufinalapp.models.Itinerary;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.model.Place;
@@ -31,7 +33,6 @@ public class EditItineraryActivity extends AppCompatActivity {
     TextView etStartDate;
     TextView etEndDate;
     TextView etNotes;
-    Button btFinish;
     Place place;
 
     private static int AUTOCOMPLETE_REQUEST_CODE = 1;
@@ -40,18 +41,22 @@ public class EditItineraryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_itinerary);
+        // using view binding
+        ActivityEditItineraryBinding binding = ActivityEditItineraryBinding.inflate(getLayoutInflater());
+
+        // layout of activity is stored in a special property called root
+        View view = binding.getRoot();
+        setContentView(view);
 
         tvTripName = findViewById(R.id.tvTripName);
         tvLocation = findViewById(R.id.tvLocation);
         etStartDate = findViewById(R.id.etStartDate);
         etEndDate = findViewById(R.id.etEndDate);
         etNotes = findViewById(R.id.etNotes);
-        btFinish = findViewById(R.id.btFinish);
 
         tvLocation.setOnFocusChangeListener(focusListener);
 
-        btFinish.setOnClickListener(new View.OnClickListener() {
+        binding.btFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String title = String.valueOf(tvTripName.getText());

@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fbufinalapp.databinding.ActivityDetailedLocationBinding;
+import com.example.fbufinalapp.databinding.ActivitySignUpBinding;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -22,14 +24,18 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
+        // using view binding
+        ActivitySignUpBinding binding = ActivitySignUpBinding.inflate(getLayoutInflater());
+
+        // layout of activity is stored in a special property called root
+        View view = binding.getRoot();
+        setContentView(view);
 
         tvUsername = findViewById(R.id.tvUsername);
         tvPassword = findViewById(R.id.tvPassword);
         tvEmail = findViewById(R.id.tvEmail);
 
-        Button signup = findViewById(R.id.btSignUp);
-        signup.setOnClickListener(new View.OnClickListener() {
+        binding.btSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SignUp();

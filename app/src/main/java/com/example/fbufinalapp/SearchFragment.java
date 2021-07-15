@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.example.fbufinalapp.adapters.ItineraryAdapter;
 import com.example.fbufinalapp.adapters.LocationsAdapter;
+import com.example.fbufinalapp.databinding.FragmentDashboardBinding;
+import com.example.fbufinalapp.databinding.FragmentSearchBinding;
 import com.example.fbufinalapp.models.Itinerary;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
@@ -53,6 +55,7 @@ public class SearchFragment extends Fragment {
     public static int AUTOCOMPLETE_REQUEST_CODE = 1;
     private EditText etSearch;
     private RecyclerView searchResults;
+    FragmentSearchBinding binding;
     List<String> places;
     LocationsAdapter adapter;
     private StringBuilder mResult;
@@ -81,16 +84,17 @@ public class SearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         context = container.getContext();
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        binding = FragmentSearchBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
+
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        etSearch = view.findViewById(R.id.etSearch);
         searchResults = view.findViewById(R.id.rvResults);
-        etSearch.setText("");
 
         places = new ArrayList<>();
         adapter = new LocationsAdapter(context, places);
@@ -98,7 +102,7 @@ public class SearchFragment extends Fragment {
         searchResults.setAdapter(adapter);
         searchResults.setLayoutManager(new LinearLayoutManager(context));
 
-        etSearch.addTextChangedListener(searchListener);
+        binding.etSearch.addTextChangedListener(searchListener);
 
         placesClient = Places.createClient(context);
     }
@@ -111,7 +115,7 @@ public class SearchFragment extends Fragment {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            String query = String.valueOf(etSearch.getText());
+            String query = String.valueOf(binding.etSearch.getText());
 
             // Create a new token for the autocomplete session
             AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();

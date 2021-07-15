@@ -111,14 +111,4 @@
         android:text="Get Directions"
         app:icon="@drawable/ic_map" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvReviews"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/btDirections"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="5dp"
-        android:padding="8dp"
-        android:paddingStart="15dp" />
 </RelativeLayout>

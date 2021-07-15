@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fbufinalapp.databinding.ActivityDetailedLocationBinding;
+import com.example.fbufinalapp.databinding.ActivityLoginBinding;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -23,7 +25,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        // using view binding
+        ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
+
+        // layout of activity is stored in a special property called root
+        View view = binding.getRoot();
+        setContentView(view);
 
         tvUsername = findViewById(R.id.tvUsername);
         tvPassword = findViewById(R.id.tvPassword);
@@ -35,17 +42,14 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(i);
         }
 
-        Button loggingIn = findViewById(R.id.btLogIn);
-        TextView signup = findViewById(R.id.btSignUp);
-
-        loggingIn.setOnClickListener(new View.OnClickListener() {
+        binding.btLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 logIn();
             }
         });
 
-        signup.setOnClickListener(new View.OnClickListener() {
+        binding.btSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(LoginActivity.this, SignUpActivity.class);

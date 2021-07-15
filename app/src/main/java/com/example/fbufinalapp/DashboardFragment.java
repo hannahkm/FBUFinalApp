@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.fbufinalapp.adapters.ItineraryAdapter;
+import com.example.fbufinalapp.databinding.FragmentDashboardBinding;
 import com.example.fbufinalapp.models.Itinerary;
 import com.google.android.gms.maps.model.Dash;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -39,8 +40,7 @@ public class DashboardFragment extends Fragment {
     RecyclerView rvItineraries;
     List<Itinerary> trips;
     ItineraryAdapter adapter;
-    FloatingActionButton fabNewItin;
-    SwipeRefreshLayout swipeContainer;
+    FragmentDashboardBinding binding;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -66,7 +66,10 @@ public class DashboardFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         context = container.getContext();
-        return inflater.inflate(R.layout.fragment_dashboard, container, false);
+        binding = FragmentDashboardBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
+
+        return view;
     }
 
     @Override
@@ -74,16 +77,14 @@ public class DashboardFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         rvItineraries = view.findViewById(R.id.rvItineraries);
-        fabNewItin = view.findViewById(R.id.fabNewItin);
         trips = new ArrayList<>();
         adapter = new ItineraryAdapter(context, trips);
 
         rvItineraries.setAdapter(adapter);
         rvItineraries.setLayoutManager(new LinearLayoutManager(context));
 
-        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        binding.swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 // refreshes the user's timeline
@@ -93,7 +94,7 @@ public class DashboardFragment extends Fragment {
 
         queryPosts();
 
-        fabNewItin.setOnClickListener(new View.OnClickListener() {
+        binding.fabNewItin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(context, EditItineraryActivity.class);
@@ -106,13 +107,12 @@ public class DashboardFragment extends Fragment {
     public void fetchTimelineAsync(int page) {
         adapter.clear();
         queryPosts();
-        swipeContainer.setRefreshing(false);
+        binding.swipeContainer.setRefreshing(false);
     }
 
     private void queryPosts() {
         ParseQuery<Itinerary> query = ParseQuery.getQuery(Itinerary.class);
         query.include(Itinerary.KEY_USER);
-        // limit query to latest 20 items
         // order posts by creation date (newest first)
         query.addDescendingOrder("createdAt");
         query.findInBackground(new FindCallback<Itinerary>() {

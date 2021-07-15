@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.fbufinalapp.databinding.FragmentDashboardBinding;
+import com.example.fbufinalapp.databinding.FragmentProfileBinding;
 import com.parse.ParseUser;
 
 /**
@@ -22,38 +24,15 @@ import com.parse.ParseUser;
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
-    Button logout;
     Context context;
-    TextView username;
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    FragmentProfileBinding binding;
 
     public ProfileFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
+    public static ProfileFragment newInstance() {
         ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -68,7 +47,10 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         context = container.getContext();
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        binding = FragmentProfileBinding.inflate(getLayoutInflater(), container, false);
+        View view = binding.getRoot();
+
+        return view;
     }
 
     @Override
@@ -76,8 +58,7 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ParseUser currentUser = ParseUser.getCurrentUser();
 
-        logout = view.findViewById(R.id.btLogOut);
-        logout.setOnClickListener(new View.OnClickListener() {
+        binding.btLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseUser.logOut();
@@ -86,8 +67,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        username = view.findViewById(R.id.tvUsername);
-        username.setText(currentUser.getUsername());
+        binding.tvUsername.setText(currentUser.getUsername());
 
     }
 }

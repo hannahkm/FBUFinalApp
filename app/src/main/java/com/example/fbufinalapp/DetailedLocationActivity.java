@@ -12,6 +12,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fbufinalapp.databinding.ActivityDetailedLocationBinding;
+import com.example.fbufinalapp.databinding.ActivityMainBinding;
 import com.example.fbufinalapp.models.Favorites;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.libraries.places.api.Places;
@@ -30,14 +32,14 @@ import java.util.concurrent.TimeUnit;
 
 public class DetailedLocationActivity extends AppCompatActivity {
     public static String TAG = "DetailedLocationActivity";
-    TextView tvName;
-    TextView tvAddress;
+//    TextView tvName;
+//    TextView tvAddress;
     TextView tvOpenHours;
     TextView tvPriceLevel;
     RatingBar ratingBar;
-    Button btWebsite;
-    Button btPhoneNumber;
-    Button btDirections;
+//    Button btWebsite;
+//    Button btPhoneNumber;
+//    Button btDirections;
     PlacesClient placesClient;
     FloatingActionButton fabAddToFav;
     ParseUser currentUser;
@@ -46,16 +48,21 @@ public class DetailedLocationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detailed_location);
+        // using view binding
+        ActivityDetailedLocationBinding binding = ActivityDetailedLocationBinding.inflate(getLayoutInflater());
 
-        tvName = findViewById(R.id.tvName);
-        tvAddress = findViewById(R.id.tvAddress);
+        // layout of activity is stored in a special property called root
+        View view = binding.getRoot();
+        setContentView(view);
+
+//        tvName = findViewById(R.id.tvName);
+//        tvAddress = findViewById(R.id.tvAddress);
         tvOpenHours = findViewById(R.id.tvOpenHours);
         tvPriceLevel = findViewById(R.id.tvPriceLevel);
         ratingBar = findViewById(R.id.ratingBar);
-        btWebsite = findViewById(R.id.btWebsite);
-        btPhoneNumber = findViewById(R.id.btPhoneNumber);
-        btDirections = findViewById(R.id.btDirections);
+//        btWebsite = findViewById(R.id.btWebsite);
+//        btPhoneNumber = findViewById(R.id.btPhoneNumber);
+//        btDirections = findViewById(R.id.btDirections);
         fabAddToFav = findViewById(R.id.fabAddToFav);
 
         currentUser = ParseUser.getCurrentUser();
@@ -81,8 +88,8 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
             Place place = response.getPlace();
-            tvName.setText(place.getName());
-            tvAddress.setText(place.getAddress());
+            binding.tvName.setText(place.getName());
+            binding.tvAddress.setText(place.getAddress());
 
             try {
                 List<String> openHours = place.getOpeningHours().getWeekdayText();
@@ -107,7 +114,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
                 ratingBar.setVisibility(View.GONE);
             }
 
-            btWebsite.setOnClickListener(new View.OnClickListener() {
+            binding.btWebsite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try {
@@ -121,7 +128,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
                 }
             });
 
-            btPhoneNumber.setOnClickListener(new View.OnClickListener() {
+            binding.btPhoneNumber.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try {
@@ -135,7 +142,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
                 }
             });
 
-            btDirections.setOnClickListener(new View.OnClickListener() {
+            binding.btDirections.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     try {
