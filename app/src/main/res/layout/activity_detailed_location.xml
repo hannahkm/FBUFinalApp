@@ -100,4 +100,25 @@
         android:tint="@color/white"
         app:backgroundTint="@color/brown_light"
         app:srcCompat="@drawable/ic_favorite" />
+
+    <Button
+        android:id="@+id/btDirections"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btWebsite"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Get Directions"
+        app:icon="@drawable/ic_map" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvReviews"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/btDirections"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="5dp"
+        android:padding="8dp"
+        android:paddingStart="15dp" />
 </RelativeLayout>

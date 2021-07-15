@@ -15,19 +15,22 @@ import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseUser;
+import com.yelp.clientlib.connection.YelpAPI;
+import com.yelp.clientlib.connection.YelpAPIFactory;
 
 public class MainActivity extends AppCompatActivity {
+    public String apiKey = getResources().getString(R.string.apiKey);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // Initialize the SDK
-        Places.initialize(getApplicationContext(), getResources().getString(R.string.apiKey));
+        Places.initialize(getApplicationContext(), apiKey);
 
         // Create a new PlacesClient instance
         PlacesClient placesClient = Places.createClient(this);
-
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
 

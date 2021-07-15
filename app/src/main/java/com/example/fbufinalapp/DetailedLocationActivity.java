@@ -37,6 +37,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
     RatingBar ratingBar;
     Button btWebsite;
     Button btPhoneNumber;
+    Button btDirections;
     PlacesClient placesClient;
     FloatingActionButton fabAddToFav;
     ParseUser currentUser;
@@ -54,6 +55,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
         ratingBar = findViewById(R.id.ratingBar);
         btWebsite = findViewById(R.id.btWebsite);
         btPhoneNumber = findViewById(R.id.btPhoneNumber);
+        btDirections = findViewById(R.id.btDirections);
         fabAddToFav = findViewById(R.id.fabAddToFav);
 
         currentUser = ParseUser.getCurrentUser();
@@ -129,6 +131,21 @@ public class DetailedLocationActivity extends AppCompatActivity {
                         startActivity(launch);
                     } catch (NullPointerException e) {
                         Toast.makeText(DetailedLocationActivity.this, "This location has no phone number", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            btDirections.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        String address = place.getAddress().replace(" ", "+");
+                        Uri gmmIntentUri = Uri.parse("google.navigation:q="+address);
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        mapIntent.setPackage("com.google.android.apps.maps");
+                        startActivity(mapIntent);
+                    } catch (NullPointerException e) {
+
                     }
                 }
             });
