@@ -58,6 +58,14 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
         notifyDataSetChanged();
     }
 
+    public List<Itinerary> getItems() {
+        return itins;
+    }
+
+    public void setItems(List<Itinerary> newItins) {
+        itins = newItins;
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle;
         TextView tvDates;

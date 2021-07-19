@@ -43,5 +43,5 @@
         android:layout_marginBottom="70dp"
         android:clickable="true"
         android:src="@android:drawable/ic_menu_add"
-        app:backgroundTint="?attr/colorButtonNormal" />
+        app:backgroundTint="@color/brown_light" />
 </RelativeLayout>

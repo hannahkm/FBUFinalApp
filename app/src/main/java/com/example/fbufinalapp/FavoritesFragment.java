@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,16 +31,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FavoritesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FavoritesFragment extends Fragment {
     FragmentFavoritesBinding binding;
     Context context;
     List<String> favorites;
-    LocationsAdapter adapter;
+    LocationsAdapter favAdapter;
     RecyclerView rvFavorites;
     ParseUser currentUser;
     public static String TAG = "FavoritesFragment";
@@ -57,7 +54,7 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((MainActivity) getActivity()).setActionBarTitle("Favorited Locations");
+        ((MainActivity) getActivity()).setActionBarTitle("Favorite Locations");
     }
 
     @Override
@@ -76,31 +73,33 @@ public class FavoritesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         rvFavorites = view.findViewById(R.id.rvFavorites);
-        favorites = new ArrayList<>();
-        adapter = new LocationsAdapter(context, favorites);
-
-        rvFavorites.setAdapter(adapter);
-        rvFavorites.setLayoutManager(new LinearLayoutManager(context));
 
         currentUser = ParseUser.getCurrentUser();
 
         placesClient = Places.createClient(context);
         placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS);
 
+        favorites = new ArrayList<>();
+        favAdapter = new LocationsAdapter(context, favorites);
+
+        rvFavorites.setAdapter(favAdapter);
+        rvFavorites.setLayoutManager(new LinearLayoutManager(context));
+
         // Setup refresh listener which triggers new data loading
         binding.swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // refreshes the user's timeline
+                // refreshes the user's page
                 fetchTimelineAsync(0);
             }
         });
 
         queryFavorites();
+
     }
 
     public void fetchTimelineAsync(int page) {
-        adapter.clear();
+        favAdapter.clear();
         queryFavorites();
         binding.swipeContainer.setRefreshing(false);
     }
@@ -115,6 +114,7 @@ public class FavoritesFragment extends Fragment {
                 Place place = response.getPlace();
                 String message = place.getName() + "\n" + place.getAddress() + "\n" + placeId;
                 favorites.add(message);
+                favAdapter.notifyItemInserted(favorites.size()-1);
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
                     Log.e(TAG, "Place not found: " + exception.getMessage());
@@ -122,6 +122,8 @@ public class FavoritesFragment extends Fragment {
             });
         }
 
-        adapter.notifyDataSetChanged();
+
     }
+
+
 }
