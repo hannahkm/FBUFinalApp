@@ -6,15 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.fbufinalapp.databinding.ActivityDetailedLocationBinding;
 import com.example.fbufinalapp.databinding.ActivitySignUpBinding;
-import com.parse.ParseException;
 import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 
 public class SignUpActivity extends AppCompatActivity {
     TextView tvUsername;

@@ -8,17 +8,17 @@ import androidx.fragment.app.FragmentManager;
 import com.example.fbufinalapp.databinding.ActivityMainBinding;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
-import com.parse.Parse;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
+    // define your fragments here
+    Fragment dashboardFragment, searchFragment, favoritesFragment, profileFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,12 +37,6 @@ public class MainActivity extends AppCompatActivity {
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
-        // define your fragments here
-        final Fragment dashboardFragment = new DashboardFragment();
-        final Fragment searchFragment = new SearchFragment();
-        final Fragment favoritesFragment = new FavoritesFragment();
-        final Fragment profileFragment = new ProfileFragment();
-
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(
             new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -51,16 +45,28 @@ public class MainActivity extends AppCompatActivity {
                     Fragment fragment;
                     switch (item.getItemId()) {
                         case R.id.dashboard:
+                            if (dashboardFragment == null){
+                                dashboardFragment = new DashboardFragment();
+                            }
                             fragment = dashboardFragment;
                             break;
                         case R.id.search:
+                            if (searchFragment == null){
+                                searchFragment = new SearchFragment();
+                            }
                             fragment = searchFragment;
                             break;
                         case R.id.favorites:
+                            if (favoritesFragment == null){
+                                favoritesFragment = new FavoritesFragment();
+                            }
                             fragment = favoritesFragment;
                             break;
                         case R.id.profile:
                         default:
+                            if (profileFragment == null){
+                                profileFragment = new ProfileFragment();
+                            }
                             fragment = profileFragment;
                             break;
                     }

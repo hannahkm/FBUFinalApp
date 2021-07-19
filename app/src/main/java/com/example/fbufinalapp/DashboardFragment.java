@@ -7,7 +7,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -16,13 +15,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.example.fbufinalapp.adapters.ItineraryAdapter;
 import com.example.fbufinalapp.databinding.FragmentDashboardBinding;
 import com.example.fbufinalapp.models.Itinerary;
-import com.google.android.gms.maps.model.Dash;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -76,7 +72,7 @@ public class DashboardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvItineraries = view.findViewById(R.id.rvItineraries);
+        rvItineraries = view.findViewById(R.id.rvFavorites);
         trips = new ArrayList<>();
         adapter = new ItineraryAdapter(context, trips);
 
@@ -99,6 +95,7 @@ public class DashboardFragment extends Fragment {
             public void onClick(View v) {
                 Intent i = new Intent(context, EditItineraryActivity.class);
                 startActivity(i);
+                adapter.notifyItemInserted(0);
                 adapter.notifyDataSetChanged();
             }
         });
@@ -128,4 +125,5 @@ public class DashboardFragment extends Fragment {
             }
         });
     }
+
 }

@@ -1,7 +1,6 @@
 package com.example.fbufinalapp;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,38 +11,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.fbufinalapp.adapters.ItineraryAdapter;
 import com.example.fbufinalapp.adapters.LocationsAdapter;
-import com.example.fbufinalapp.databinding.FragmentDashboardBinding;
 import com.example.fbufinalapp.databinding.FragmentSearchBinding;
-import com.example.fbufinalapp.models.Itinerary;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
-import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import static android.app.Activity.RESULT_OK;
-import static android.app.Activity.RESULT_CANCELED;
 
 /**
  * A simple {@link Fragment} subclass.
