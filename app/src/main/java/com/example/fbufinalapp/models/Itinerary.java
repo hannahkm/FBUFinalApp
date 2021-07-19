@@ -6,6 +6,7 @@ import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 //@Parcel(analyze = Itinerary.class)
 @ParseClassName("Itinerary")
@@ -16,6 +17,7 @@ public class Itinerary extends ParseObject {
     public static String KEY_PLACEID = "placeID";
     public static String KEY_STARTDATE = "startDate";
     public static String KEY_ENDDATE = "endDate";
+    public static String KEY_DESTINATIONS = "destinations";
 
     public String getTitle() {
         return getString(KEY_TITLE);
@@ -64,6 +66,12 @@ public class Itinerary extends ParseObject {
     public void setEndDate(Date end){
         put(KEY_ENDDATE, end);
     }
+
+    public List<String> getDestinations() {
+        return getList(KEY_DESTINATIONS);
+    }
+
+    public void setDestinations(List<String> destinations) { put(KEY_DESTINATIONS, destinations);}
 
     public String reformatDate(Date date){
         String pattern = "MMMM dd, yyyy";

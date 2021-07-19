@@ -1,6 +1,7 @@
 package com.example.fbufinalapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fbufinalapp.DetailedItineraryActivity;
 import com.example.fbufinalapp.R;
 import com.example.fbufinalapp.models.Itinerary;
 
@@ -67,6 +69,16 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
 
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvDates = itemView.findViewById(R.id.tvDates);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(context, DetailedItineraryActivity.class);
+                    String itinId = itins.get(getAdapterPosition()).getObjectId();
+                    i.putExtra("itinId", itinId);
+                    context.startActivity(i);
+                }
+            });
         }
 
         public void bind(Itinerary itin) {
