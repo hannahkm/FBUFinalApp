@@ -10,15 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.fbufinalapp.adapters.LocationsAdapter;
-import com.example.fbufinalapp.databinding.FragmentDashboardBinding;
 import com.example.fbufinalapp.databinding.FragmentFavoritesBinding;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.libraries.places.api.Places;
@@ -114,7 +111,7 @@ public class FavoritesFragment extends Fragment {
                 Place place = response.getPlace();
                 String message = place.getName() + "\n" + place.getAddress() + "\n" + placeId;
                 favorites.add(message);
-                favAdapter.notifyItemInserted(favorites.size()-1);
+                favAdapter.notifyItemInserted(0);
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
                     Log.e(TAG, "Place not found: " + exception.getMessage());
@@ -122,7 +119,7 @@ public class FavoritesFragment extends Fragment {
             });
         }
 
-
+//        favAdapter.notifyDataSetChanged();
     }
 
 

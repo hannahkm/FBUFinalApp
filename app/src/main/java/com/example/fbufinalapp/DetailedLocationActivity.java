@@ -7,14 +7,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.fbufinalapp.databinding.ActivityDetailedLocationBinding;
-import com.example.fbufinalapp.databinding.ActivityMainBinding;
-import com.example.fbufinalapp.models.Favorites;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -28,18 +25,12 @@ import com.parse.SaveCallback;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class DetailedLocationActivity extends AppCompatActivity {
     public static String TAG = "DetailedLocationActivity";
-//    TextView tvName;
-//    TextView tvAddress;
     TextView tvOpenHours;
     TextView tvPriceLevel;
     RatingBar ratingBar;
-//    Button btWebsite;
-//    Button btPhoneNumber;
-//    Button btDirections;
     PlacesClient placesClient;
     FloatingActionButton fabAddToFav;
     ParseUser currentUser;
@@ -55,14 +46,9 @@ public class DetailedLocationActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-//        tvName = findViewById(R.id.tvName);
-//        tvAddress = findViewById(R.id.tvAddress);
         tvOpenHours = findViewById(R.id.tvOpenHours);
         tvPriceLevel = findViewById(R.id.tvPriceLevel);
         ratingBar = findViewById(R.id.ratingBar);
-//        btWebsite = findViewById(R.id.btWebsite);
-//        btPhoneNumber = findViewById(R.id.btPhoneNumber);
-//        btDirections = findViewById(R.id.btDirections);
         fabAddToFav = findViewById(R.id.fabAddToFav);
 
         currentUser = ParseUser.getCurrentUser();
