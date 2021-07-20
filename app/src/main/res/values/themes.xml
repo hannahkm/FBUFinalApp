@@ -25,4 +25,14 @@
         <item name="colorPrimary">@color/brown_light</item>
         <item name="colorOnPrimary">@color/brown_light</item>
     </style>
+
+    <style name="spinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
+        <item name="android:background">@color/brown_light</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+        <item name="android:radius">5dp</item>
+        <item name="android:color">@color/brown_dark</item>
+    </style>
 </resources>

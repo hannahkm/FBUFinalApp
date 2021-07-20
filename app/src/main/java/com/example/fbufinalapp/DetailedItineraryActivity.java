@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -52,6 +53,16 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                 getDestinations(object.getDestinations());
             } else {
                 Toast.makeText(this, "Couldn't retrieve itinerary", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        binding.fabNewDest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(DetailedItineraryActivity.this, EditDestinationActivity.class);
+                i.putExtra("itinId", itinId);
+                startActivity(i);
+                adapter.notifyDataSetChanged();
             }
         });
     }
