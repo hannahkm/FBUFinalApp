@@ -64,6 +64,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
 
         public void bind(Destination dest) {
             String name = dest.getName();
+            Log.i("DestinationAdapter", name);
 
             if (dest.getIsDay()) {
                 tvTime.setVisibility(View.GONE);

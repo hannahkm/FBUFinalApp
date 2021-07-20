@@ -15,6 +15,8 @@ import com.example.fbufinalapp.adapters.DestinationAdapter;
 import com.example.fbufinalapp.databinding.ActivityDetailedItineraryBinding;
 import com.example.fbufinalapp.models.Destination;
 import com.example.fbufinalapp.models.Itinerary;
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
     RecyclerView rvDestinations;
     ArrayList<Destination> destinations;
     DestinationAdapter adapter;
+    Itinerary currentItinerary;
     String itinId;
 
     @Override
@@ -49,8 +52,9 @@ public class DetailedItineraryActivity extends AppCompatActivity {
 
         queryItinerary.getInBackground(itinId, (object, e) -> {
             if (e == null) {
+                currentItinerary = object;
                 binding.tvTitle.setText(object.getTitle());
-                getDestinations(object.getDestinations());
+                getDestinations();
             } else {
                 Toast.makeText(this, "Couldn't retrieve itinerary", Toast.LENGTH_SHORT).show();
             }
@@ -68,20 +72,23 @@ public class DetailedItineraryActivity extends AppCompatActivity {
     }
 
 
-    private void getDestinations(List<String> destinationIds){
+    private void getDestinations(){
         ParseQuery<Destination> queryDestination = ParseQuery.getQuery(Destination.class);
 
-        queryDestination.addAscendingOrder("createdAt");
+        queryDestination.whereEqualTo("itinerary", currentItinerary);
+        queryDestination.orderByAscending("date");
 
-        for (String destId : destinationIds) {
-            queryDestination.getInBackground(destId, (object, e) -> {
-               if (e == null){
-                   destinations.add(object);
-                   adapter.notifyItemInserted(0);
-               } else {
-                   Toast.makeText(this, "Couldn't retrieve destinations", Toast.LENGTH_SHORT).show();
-               }
-            });
-        }
+        queryDestination.findInBackground(new FindCallback<Destination>() {
+            @Override
+            public void done(List<Destination> objects, ParseException e) {
+                if (e == null){
+                    destinations.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Log.e("DetailedItinerary", String.valueOf(e));
+                    Toast.makeText(DetailedItineraryActivity.this, "Couldn't load destinations", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

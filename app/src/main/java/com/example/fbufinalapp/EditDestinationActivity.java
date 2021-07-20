@@ -39,6 +39,7 @@ public class EditDestinationActivity extends AppCompatActivity {
     String dateSelected;
     String timeSelected;
     Place place;
+    Itinerary currentItinerary;
     TextView tvLocation;
     private static int AUTOCOMPLETE_REQUEST_CODE = 600;
 
@@ -63,6 +64,7 @@ public class EditDestinationActivity extends AppCompatActivity {
 
         queryItinerary.getInBackground(itinId, (object, e) -> {
             if (e == null) {
+                currentItinerary = object;
                 binding.tvTripName.setText(object.getTitle());
 //                tripNames.add(object.getTitle());
                 Date start = object.getStartDate();
@@ -106,6 +108,7 @@ public class EditDestinationActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Destination destination = new Destination();
                 destination.setPlaceID(place.getId());
+                destination.setItinerary(currentItinerary);
 
                 String timeString = dateSelected + " " + binding.etTime.getText() + " " + timeSelected + " " + TimeZone.getDefault().getDisplayName();
                 SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm a zzzz");
