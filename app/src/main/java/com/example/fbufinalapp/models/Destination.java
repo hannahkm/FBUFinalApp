@@ -14,6 +14,7 @@ public class Destination extends ParseObject{
     public static String KEY_PLACEID = "placeID";
     public static String KEY_TIME = "time";
     public static String KEY_ISDAY = "isDay";
+    public static String KEY_DATE = "date";
 
     public String getName() {
         return getString(KEY_NAME);
@@ -54,6 +55,10 @@ public class Destination extends ParseObject{
     public void setIsDay(Boolean day){
         put(KEY_ISDAY, day);
     }
+
+    public Date getDate() { return getDate(KEY_DATE); }
+
+    public void setDate(Date date) { put(KEY_DATE, date); }
 
     public String reformatTime(Date time){
         String pattern = "hh:mm a";

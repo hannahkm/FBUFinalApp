@@ -1,6 +1,7 @@
 package com.example.fbufinalapp.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +14,14 @@ import com.example.fbufinalapp.R;
 import com.example.fbufinalapp.models.Destination;
 import com.example.fbufinalapp.models.Itinerary;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.ViewHolder> {
     private Context context;
@@ -57,14 +64,16 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
 
         public void bind(Destination dest) {
             String name = dest.getName();
-            tvName.setText(name);
 
             if (dest.getIsDay()) {
                 tvTime.setVisibility(View.GONE);
                 tvName.setTextSize(22);
             } else {
-                String time = dest.reformatTime(dest.getTime());
-                tvTime.setText(time);
+                LocalTime time = dest.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
+
+                tvTime.setText(formatter.format(time));
+                tvName.setText(name);
             }
 
         }

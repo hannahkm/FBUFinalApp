@@ -106,7 +106,7 @@
 
     <EditText
         android:id="@+id/etTime"
-        android:layout_width="match_parent"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvDatePrompt"
         android:layout_marginStart="10dp"
@@ -115,6 +115,25 @@
         android:layout_toEndOf="@+id/tvTimePrompt"
         android:ems="10"
         android:inputType="time" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/timeSpinner"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dateSpinner"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="8dp"
+        android:layout_toEndOf="@+id/etTime">
+
+        <AutoCompleteTextView
+            android:id="@+id/etTimeSelect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btFinish"
