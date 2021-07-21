@@ -111,7 +111,7 @@ public class FavoritesFragment extends Fragment {
                 Place place = response.getPlace();
                 String message = place.getName() + "\n" + place.getAddress() + "\n" + placeId;
                 favorites.add(message);
-                favAdapter.notifyItemInserted(0);
+                favAdapter.notifyItemInserted(favorites.size());
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
                     Log.e(TAG, "Place not found: " + exception.getMessage());

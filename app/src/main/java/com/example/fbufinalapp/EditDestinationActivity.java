@@ -15,8 +15,12 @@ import android.widget.Toast;
 import com.example.fbufinalapp.databinding.ActivityEditDestinationBinding;
 import com.example.fbufinalapp.models.Destination;
 import com.example.fbufinalapp.models.Itinerary;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.parse.ParseException;
@@ -53,12 +57,36 @@ public class EditDestinationActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-//        tripNames = new ArrayList<>();
         tripDates = new ArrayList<>();
         tvLocation = findViewById(R.id.tvLocation);
-        tvLocation.setOnFocusChangeListener(focusListener);
 
         String itinId = getIntent().getStringExtra("itinId");
+        if (getIntent().hasExtra("placeName")){
+            String placeName = getIntent().getStringExtra("placeName");
+            String placeId = getIntent().getStringExtra("placeId");
+
+            tvLocation.setText(placeName);
+            tvLocation.setFocusable(false);
+
+            // Specify the fields to return.
+            final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+
+            // Construct a request object, passing the place ID and fields array.
+            final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+
+            PlacesClient placesClient = Places.createClient(EditDestinationActivity.this);
+
+            placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+                place = response.getPlace();
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    final ApiException apiException = (ApiException) exception;
+                    Toast.makeText(EditDestinationActivity.this, "Error retrieving location", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            tvLocation.setOnFocusChangeListener(focusListener);
+        }
 
         ParseQuery<Itinerary> queryItinerary = ParseQuery.getQuery(Itinerary.class);
 
@@ -66,7 +94,6 @@ public class EditDestinationActivity extends AppCompatActivity {
             if (e == null) {
                 currentItinerary = object;
                 binding.tvTripName.setText(object.getTitle());
-//                tripNames.add(object.getTitle());
                 Date start = object.getStartDate();
                 Date end = object.getEndDate();
 
