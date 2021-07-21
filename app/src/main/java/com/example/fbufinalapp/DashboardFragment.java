@@ -95,7 +95,6 @@ public class DashboardFragment extends Fragment {
             public void onClick(View v) {
                 Intent i = new Intent(context, EditItineraryActivity.class);
                 startActivity(i);
-                adapter.notifyItemInserted(0);
                 adapter.notifyDataSetChanged();
             }
         });
