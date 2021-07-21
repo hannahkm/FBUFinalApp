@@ -3,6 +3,7 @@ package com.example.fbufinalapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import java.util.List;
 public class DetailedItineraryActivity extends AppCompatActivity {
     RecyclerView rvDestinations;
     ArrayList<Destination> destinations;
+    ActivityDetailedItineraryBinding binding;
     DestinationAdapter adapter;
     Itinerary currentItinerary;
     String itinId;
@@ -33,7 +35,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // using view binding
-        ActivityDetailedItineraryBinding binding = ActivityDetailedItineraryBinding.inflate(getLayoutInflater());
+        binding = ActivityDetailedItineraryBinding.inflate(getLayoutInflater());
 
         // layout of activity is stored in a special property called root
         View view = binding.getRoot();
@@ -69,6 +71,21 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             }
         });
+
+        // Setup refresh listener which triggers new data loading
+        binding.swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // refreshes the user's timeline
+                fetchTimelineAsync(0);
+            }
+        });
+    }
+
+    public void fetchTimelineAsync(int page) {
+        adapter.clear();
+        getDestinations();
+        binding.swipeContainer.setRefreshing(false);
     }
 
 

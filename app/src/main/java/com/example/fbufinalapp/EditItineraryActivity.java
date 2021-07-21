@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.fbufinalapp.databinding.ActivityEditItineraryBinding;
+import com.example.fbufinalapp.models.Destination;
 import com.example.fbufinalapp.models.Itinerary;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.model.Place;
@@ -22,6 +23,7 @@ import com.parse.SaveCallback;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -100,6 +102,39 @@ public class EditItineraryActivity extends AppCompatActivity {
 
                 itin.setDescription(notes);
                 itin.setPlaceID(place.getId());
+
+                Calendar cStart = Calendar.getInstance();
+                cStart.setTime(start);
+                Calendar cEnd = Calendar.getInstance();
+                cEnd.setTime(end);
+                cEnd.add(Calendar.DATE, 1);
+
+                String pattern = "MMMM dd, yyyy";
+                SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+                List<String> destinations = new ArrayList<>();
+
+                for (Calendar date = cStart; date.before(cEnd); date.add(Calendar.DATE, 1)){
+                    Destination newDest = new Destination();
+                    Date dateVar = date.getTime();
+
+                    newDest.setDate(dateVar);
+                    newDest.setName(dateFormat.format(dateVar));
+                    newDest.setIsDay(true);
+                    newDest.setItinerary(itin);
+
+                    newDest.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null){
+                                destinations.add(newDest.getObjectId());
+                            } else {
+                                Log.e("EditItinerary", String.valueOf(e));
+                                Toast.makeText(EditItineraryActivity.this, "Error saving dates", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+                itin.setDestinations(destinations);
 
                 itin.saveInBackground(new SaveCallback() {
                     @Override

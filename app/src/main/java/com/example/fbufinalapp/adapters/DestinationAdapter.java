@@ -51,6 +51,11 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
         return destinations.size();
     }
 
+    public void clear() {
+        destinations.clear();
+        notifyDataSetChanged();
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName;
         TextView tvTime;
@@ -64,17 +69,20 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
 
         public void bind(Destination dest) {
             String name = dest.getName();
-            Log.i("DestinationAdapter", name);
+            tvName.setText(name);
 
             if (dest.getIsDay()) {
+                Log.i("DestinationAdapter", name);
                 tvTime.setVisibility(View.GONE);
                 tvName.setTextSize(22);
             } else {
+                tvTime.setVisibility(View.VISIBLE);
+                tvName.setTextSize(20);
+
                 LocalTime time = dest.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
 
                 tvTime.setText(formatter.format(time));
-                tvName.setText(name);
             }
 
         }

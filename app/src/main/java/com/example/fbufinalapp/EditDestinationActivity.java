@@ -174,6 +174,7 @@ public class EditDestinationActivity extends AppCompatActivity {
                         }
                     }
                 });
+                finish();
             }
         });
 
