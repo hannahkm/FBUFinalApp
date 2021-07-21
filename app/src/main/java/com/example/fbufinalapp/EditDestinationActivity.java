@@ -137,9 +137,11 @@ public class EditDestinationActivity extends AppCompatActivity {
                 destination.setPlaceID(place.getId());
                 destination.setItinerary(currentItinerary);
 
-                String timeString = dateSelected + " " + binding.etTime.getText() + " " + timeSelected + " " + TimeZone.getDefault().getDisplayName();
+                SimpleDateFormat timezoneFormat = new SimpleDateFormat("zzzz");
+
+                String timeString = dateSelected + " " + binding.etTime.getText() + " " + timeSelected + " " + timezoneFormat.format(new Date());
                 SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm a zzzz");
-                formatter.setTimeZone(TimeZone.getDefault());
+
                 try {
                     destination.setDate(formatter.parse(timeString));
                 } catch (java.text.ParseException e) {
