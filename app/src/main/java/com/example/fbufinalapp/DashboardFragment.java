@@ -13,8 +13,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.fbufinalapp.adapters.ItineraryAdapter;
 import com.example.fbufinalapp.databinding.FragmentDashboardBinding;
@@ -37,6 +41,7 @@ public class DashboardFragment extends Fragment {
     List<Itinerary> trips;
     ItineraryAdapter adapter;
     FragmentDashboardBinding binding;
+    public static boolean editing;
 
     public DashboardFragment() {
         // Required empty public constructor
@@ -44,8 +49,6 @@ public class DashboardFragment extends Fragment {
 
     public static DashboardFragment newInstance() {
         DashboardFragment fragment = new DashboardFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -53,6 +56,8 @@ public class DashboardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setHasOptionsMenu(true);
+        editing = false;
         ((MainActivity) getActivity()).setActionBarTitle("Dashboard");
 
     }
@@ -66,6 +71,31 @@ public class DashboardFragment extends Fragment {
         View view = binding.getRoot();
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_bar, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                if (editing) {
+                    editing = false;
+                    item.setTitle("EDIT");
+                } else {
+                    editing = true;
+                    item.setTitle("DONE");
+                }
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     @Override
@@ -124,5 +154,4 @@ public class DashboardFragment extends Fragment {
             }
         });
     }
-
 }

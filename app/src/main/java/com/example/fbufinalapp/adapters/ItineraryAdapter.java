@@ -3,6 +3,7 @@ package com.example.fbufinalapp.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fbufinalapp.DashboardFragment;
 import com.example.fbufinalapp.DetailedItineraryActivity;
+import com.example.fbufinalapp.EditItineraryActivity;
 import com.example.fbufinalapp.R;
 import com.example.fbufinalapp.models.Itinerary;
 import com.google.android.material.snackbar.Snackbar;
@@ -82,8 +84,17 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent i = new Intent(context, DetailedItineraryActivity.class);
-                    String itinId = itins.get(getAdapterPosition()).getObjectId();
+                    Itinerary selected = itins.get(getAdapterPosition());
+                    String itinId = selected.getObjectId();
+                    Intent i;
+
+                    if (DashboardFragment.editing){
+                        i = new Intent(context, EditItineraryActivity.class);
+                        i.putExtra("editing", true);
+                    } else {
+                        i = new Intent(context, DetailedItineraryActivity.class);
+                    }
+
                     i.putExtra("itinId", itinId);
                     context.startActivity(i);
                 }
