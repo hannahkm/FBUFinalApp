@@ -41,13 +41,6 @@ public class DetailedItineraryActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        rvDestinations = view.findViewById(R.id.rvDestinations);
-        destinations = new ArrayList<>();
-        adapter = new DestinationAdapter(this, destinations);
-
-        rvDestinations.setAdapter(adapter);
-        rvDestinations.setLayoutManager(new LinearLayoutManager(this));
-
         itinId = getIntent().getStringExtra("itinId");
 
         ParseQuery<Itinerary> queryItinerary = ParseQuery.getQuery(Itinerary.class);
@@ -57,6 +50,13 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                 currentItinerary = object;
                 binding.tvTitle.setText(object.getTitle());
                 getDestinations();
+
+                rvDestinations = view.findViewById(R.id.rvDestinations);
+                destinations = new ArrayList<>();
+                adapter = new DestinationAdapter(this, destinations, currentItinerary);
+
+                rvDestinations.setAdapter(adapter);
+                rvDestinations.setLayoutManager(new LinearLayoutManager(this));
             } else {
                 Toast.makeText(this, "Couldn't retrieve itinerary", Toast.LENGTH_SHORT).show();
             }
