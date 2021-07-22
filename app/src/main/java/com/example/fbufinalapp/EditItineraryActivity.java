@@ -44,7 +44,7 @@ public class EditItineraryActivity extends AppCompatActivity {
     Itinerary itin;
     PlacesClient placesClient;
     ParseQuery<Itinerary> query;
-    boolean editing;
+    boolean editing = false;
 
     private static int AUTOCOMPLETE_REQUEST_CODE = 1;
     private static String TAG = "EditItineraryActivity";

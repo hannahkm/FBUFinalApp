@@ -41,6 +41,7 @@ public class DashboardFragment extends Fragment {
     List<Itinerary> trips;
     ItineraryAdapter adapter;
     FragmentDashboardBinding binding;
+    Menu menu;
     public static boolean editing;
 
     public DashboardFragment() {
@@ -50,6 +51,14 @@ public class DashboardFragment extends Fragment {
     public static DashboardFragment newInstance() {
         DashboardFragment fragment = new DashboardFragment();
         return fragment;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        editing = false;
+        menu.findItem(R.id.action_edit).setTitle("EDIT");
     }
 
     @Override
@@ -76,6 +85,7 @@ public class DashboardFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_bar, menu);
+        this.menu = menu;
     }
 
     @Override

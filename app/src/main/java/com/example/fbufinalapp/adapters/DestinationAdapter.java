@@ -2,6 +2,7 @@ package com.example.fbufinalapp.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fbufinalapp.DetailedItineraryActivity;
+import com.example.fbufinalapp.EditDestinationActivity;
 import com.example.fbufinalapp.R;
 import com.example.fbufinalapp.models.Destination;
 import com.example.fbufinalapp.models.Itinerary;
@@ -74,6 +77,22 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
 
             tvName = itemView.findViewById(R.id.tvName);
             tvTime = itemView.findViewById(R.id.tvTime);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (DetailedItineraryActivity.getEditing()) {
+                        Intent i = new Intent(context, EditDestinationActivity.class);
+                        Destination desti = destinations.get(getAdapterPosition());
+                        i.putExtra("itinId", currentItin.getObjectId());
+                        i.putExtra("placeId", desti.getPlaceID());
+                        i.putExtra("editing", true);
+                        i.putExtra("destinationId", desti.getObjectId());
+
+                        context.startActivity(i);
+                    }
+                }
+            });
 
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override

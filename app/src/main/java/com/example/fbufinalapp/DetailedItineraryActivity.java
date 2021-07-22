@@ -34,6 +34,21 @@ public class DetailedItineraryActivity extends AppCompatActivity {
     DestinationAdapter adapter;
     Itinerary currentItinerary;
     String itinId;
+    Menu menu;
+    static boolean editing;
+
+    public static boolean getEditing() {
+        return editing;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        editing = false;
+        menu.findItem(R.id.action_edit).setTitle("EDIT");
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +130,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.menu_bar, menu);
         return true;
     }
@@ -123,6 +139,13 @@ public class DetailedItineraryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit:
+                if (editing) {
+                    editing = false;
+                    item.setTitle("EDIT");
+                } else {
+                    editing = true;
+                    item.setTitle("DONE");
+                }
                 return true;
         }
         return(super.onOptionsItemSelected(item));
