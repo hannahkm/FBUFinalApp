@@ -23,6 +23,8 @@ import com.parse.ParseUser;
 public class ProfileFragment extends Fragment {
     Context context;
     FragmentProfileBinding binding;
+    ParseUser currentUser;
+    boolean newUser;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -47,6 +49,9 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
 
+        currentUser = ParseUser.getCurrentUser();
+        newUser = (currentUser.getEmail() == null);
+
         return view;
     }
 
@@ -55,12 +60,21 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ParseUser currentUser = ParseUser.getCurrentUser();
 
+        if (newUser){
+            binding.btLogOut.setText("Sign Up");
+        }
+
         binding.btLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseUser.logOut();
-                Intent i = new Intent(context, LoginActivity.class);
-                startActivity(i);
+                if (newUser) {
+                    Intent i = new Intent(context, SignUpActivity.class);
+                    startActivity(i);
+                } else {
+                    ParseUser.logOut();
+                    Intent i = new Intent(context, LoginActivity.class);
+                    startActivity(i);
+                }
             }
         });
 
