@@ -132,7 +132,7 @@ sing FAB
 | placeID     | String     | id of location given by Google Places API|
 | startDate | DateTime | day the trip begins |
 | endDate | DateTime | day the trip ends |
-| desintations | JSON Object| JSON of locations the user wants to visit|
+| destinations | Array | Array of Destination IDs |
 
 ### Model: User
 
@@ -145,13 +145,16 @@ sing FAB
 | favorites | Array | Array of pointers to Favorites |
 | itineraries | Array | Array of pointers to Itinerary |
 
-### Model: Favorites
+### Model: Destination
 
 | Property | Type | Description |
 | -------- | -------- | -------- |
-| objectID     | String     | default id for the favorite location |
-| placeID | String | place id according to Google Places API
-| notes | String | user's notes about the location |
+| objectID     | String     | default id for the destination |
+| placeID | String | place id according to Google Places API |
+| date | DateTime | date and time the user wants to visit this destination |
+| isDay | boolean | true if the destination indicates a day, false if it was user made |
+| itinerary | Pointer to Itinerary | indicates the itinerary this destination belongs to |
+| name | String | title to be shown in the detailed itinerary screen |
 
 ## Networking
 ### Parse Network Requests
