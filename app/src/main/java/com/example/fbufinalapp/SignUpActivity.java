@@ -12,6 +12,8 @@ import android.widget.Toast;
 import com.example.fbufinalapp.databinding.ActivitySignUpBinding;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
+
 public class SignUpActivity extends AppCompatActivity {
     TextView tvUsername;
     TextView tvPassword;
@@ -26,6 +28,8 @@ public class SignUpActivity extends AppCompatActivity {
         // layout of activity is stored in a special property called root
         View view = binding.getRoot();
         setContentView(view);
+
+        getSupportActionBar().setTitle("Register");
 
         tvUsername = findViewById(R.id.tvUsername);
         tvPassword = findViewById(R.id.tvPassword);
@@ -48,6 +52,8 @@ public class SignUpActivity extends AppCompatActivity {
         user.setUsername(username);
         user.setPassword(password);
         user.setEmail(email);
+        user.put("favorites", new ArrayList<>());
+        user.put("itineraries", new ArrayList<>());
 
         user.signUpInBackground(e -> {
             if (e == null) {

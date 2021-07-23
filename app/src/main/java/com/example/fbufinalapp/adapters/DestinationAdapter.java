@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fbufinalapp.DetailedItineraryActivity;
+import com.example.fbufinalapp.DetailedLocationActivity;
 import com.example.fbufinalapp.EditDestinationActivity;
 import com.example.fbufinalapp.R;
 import com.example.fbufinalapp.models.Destination;
@@ -90,6 +91,11 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
                         i.putExtra("editing", true);
                         i.putExtra("destinationId", desti.getObjectId());
 
+                        context.startActivity(i);
+                    } else if (!DetailedItineraryActivity.getEditing() && !desti.getIsDay()) {
+                        Intent i = new Intent(context, DetailedLocationActivity.class);
+                        i.putExtra("placeID", desti.getPlaceID());
+                        i.putExtra("name", tvName.getText());
                         context.startActivity(i);
                     }
                 }

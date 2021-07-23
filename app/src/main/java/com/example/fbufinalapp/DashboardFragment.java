@@ -26,6 +26,7 @@ import com.example.fbufinalapp.models.Itinerary;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,6 +150,8 @@ public class DashboardFragment extends Fragment {
     private void queryPosts() {
         ParseQuery<Itinerary> query = ParseQuery.getQuery(Itinerary.class);
         query.include(Itinerary.KEY_USER);
+        query.whereEqualTo("authors", ParseUser.getCurrentUser());
+
         // order posts by creation date (newest first)
         query.addDescendingOrder("createdAt");
         query.findInBackground(new FindCallback<Itinerary>() {
