@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fbufinalapp.DetailedItineraryActivity;
+import com.example.fbufinalapp.DetailedLocationActivity;
 import com.example.fbufinalapp.EditDestinationActivity;
 import com.example.fbufinalapp.R;
 import com.example.fbufinalapp.models.Destination;
@@ -81,14 +82,20 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (DetailedItineraryActivity.getEditing()) {
+                    Destination desti = destinations.get(getAdapterPosition());
+
+                    if (DetailedItineraryActivity.getEditing() && !desti.getIsDay()) {
                         Intent i = new Intent(context, EditDestinationActivity.class);
-                        Destination desti = destinations.get(getAdapterPosition());
                         i.putExtra("itinId", currentItin.getObjectId());
                         i.putExtra("placeId", desti.getPlaceID());
                         i.putExtra("editing", true);
                         i.putExtra("destinationId", desti.getObjectId());
 
+                        context.startActivity(i);
+                    } else if (!DetailedItineraryActivity.getEditing() && !desti.getIsDay()) {
+                        Intent i = new Intent(context, DetailedLocationActivity.class);
+                        i.putExtra("placeID", desti.getPlaceID());
+                        i.putExtra("name", tvName.getText());
                         context.startActivity(i);
                     }
                 }
@@ -99,10 +106,13 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
                 public boolean onLongClick(View view) {
                     int position = getAdapterPosition();
                     Destination deleted = destinations.get(position);
-                    destinations.remove(position);
-                    notifyItemRemoved(position);
 
-                    showUndoSnackbar(position, deleted);
+                    if (!deleted.getIsDay()) {
+                        destinations.remove(position);
+                        notifyItemRemoved(position);
+
+                        showUndoSnackbar(position, deleted);
+                    }
 
                     return true;
                 }
@@ -117,35 +127,35 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
             snackbar.addCallback(new Snackbar.Callback() {
                 @Override
                 public void onDismissed(Snackbar transientBottomBar, int event) {
-                    super.onDismissed(transientBottomBar, event);
+                super.onDismissed(transientBottomBar, event);
 
-                    if (event == BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_SWIPE || event == BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_TIMEOUT){
-                        // the snackbar disappears by itself; the user doesn't want to undo the deletion
-                        List<String> destIds = new ArrayList<>();
-                        for (Destination i : destinations){
-                            destIds.add(i.getObjectId());
-                        }
-                        currentItin.put("destinations", destIds);
-
-                        currentItin.saveInBackground(e -> {
-                            if(e!=null){
-                                Toast.makeText(context, "Unable to delete destination", Toast.LENGTH_SHORT).show();
-                            } else {
-                                ParseQuery<Destination> query = ParseQuery.getQuery("Destination");
-                                query.getInBackground(deleted.getObjectId(), (object, e2) -> {
-                                    if (e2 == null) {
-                                        object.deleteInBackground(e3 -> {
-                                            if(e2!=null){
-                                                Toast.makeText(context, "Unable to delete destination", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                                    }else{
-                                        Toast.makeText(context, "Unable to delete destination", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        });
+                if (event != BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION){
+                    // the snackbar disappears by itself; the user doesn't want to undo the deletion
+                    List<String> destIds = new ArrayList<>();
+                    for (Destination i : destinations){
+                        destIds.add(i.getObjectId());
                     }
+                    currentItin.put("destinations", destIds);
+
+                    currentItin.saveInBackground(e -> {
+                        if(e!=null){
+                            Toast.makeText(context, "Unable to delete destination", Toast.LENGTH_SHORT).show();
+                        } else {
+                            ParseQuery<Destination> query = ParseQuery.getQuery("Destination");
+                            query.getInBackground(deleted.getObjectId(), (object, e2) -> {
+                                if (e2 == null) {
+                                    object.deleteInBackground(e3 -> {
+                                        if(e2!=null){
+                                            Toast.makeText(context, "Unable to delete destination", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }else{
+                                    Toast.makeText(context, "Unable to delete destination", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    });
+                }
                 }
             });
 

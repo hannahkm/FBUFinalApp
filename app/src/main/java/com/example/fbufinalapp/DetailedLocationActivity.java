@@ -85,7 +85,6 @@ public class DetailedLocationActivity extends AppCompatActivity {
         pw.setContentView(layout);
         pw.setWidth((int) (screenWidth*0.9));
         pw.setOutsideTouchable(true);
-//        pw.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         placeId = getIntent().getStringExtra("placeID");
         String name = getIntent().getStringExtra("name");
@@ -181,6 +180,9 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
             place = response.getPlace();
+
+            Log.i("DetailedLocation", String.valueOf(place));
+
             binding.tvName.setText(place.getName());
             binding.tvAddress.setText(place.getAddress());
 
@@ -255,6 +257,9 @@ public class DetailedLocationActivity extends AppCompatActivity {
                 Log.e(TAG, "Place not found: " + exception.getMessage());
             }
         });
+
+
+
     }
 
     public void getAllItins(){

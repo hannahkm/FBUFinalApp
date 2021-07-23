@@ -18,6 +18,7 @@ import com.example.fbufinalapp.DetailedItineraryActivity;
 import com.example.fbufinalapp.EditItineraryActivity;
 import com.example.fbufinalapp.R;
 import com.example.fbufinalapp.models.Itinerary;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -123,8 +124,9 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
             snackbar.addCallback(new Snackbar.Callback() {
                 @Override
                 public void onDismissed(Snackbar transientBottomBar, int event) {
-                    super.onDismissed(transientBottomBar, event);
-                    // the snackbar disappears by itself; the user doesn't want to undo the deletion
+                super.onDismissed(transientBottomBar, event);
+                // the snackbar disappears by itself; the user doesn't want to undo the deletion
+                if (event != BaseTransientBottomBar.BaseCallback.DISMISS_EVENT_ACTION) {
                     List<String> itinIds = new ArrayList<>();
                     for (Itinerary i : itins){
                         itinIds.add(i.getObjectId());
@@ -150,6 +152,8 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
                             });
                         }
                     });
+                }
+
                 }
             });
 

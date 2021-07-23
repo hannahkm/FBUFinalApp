@@ -68,6 +68,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
             if (e == null) {
                 currentItinerary = object;
                 binding.tvTitle.setText(object.getTitle());
+                getSupportActionBar().setTitle(object.getTitle());
                 getDestinations();
 
                 rvDestinations = view.findViewById(R.id.rvDestinations);
