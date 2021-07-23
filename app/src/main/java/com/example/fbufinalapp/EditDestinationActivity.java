@@ -93,6 +93,15 @@ public class EditDestinationActivity extends AppCompatActivity {
                 query.getInBackground(getIntent().getStringExtra("destinationId"), (object, e) -> {
                     if (e == null) {
                         editingDestination = object;
+                        Date date = editingDestination.getDate();
+
+                        SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM dd, yyyy");
+                        SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm");
+                        SimpleDateFormat amPMFormatter = new SimpleDateFormat("a");
+
+                        binding.etDateSelect.setText(dateFormatter.format(date));
+                        binding.etTime.setText(timeFormatter.format(date));
+                        binding.etTimeSelect.setText(amPMFormatter.format(date));
                     } else {
                         // something went wrong
                         Toast.makeText(this, "Couldn't retrieve destination", Toast.LENGTH_SHORT).show();
