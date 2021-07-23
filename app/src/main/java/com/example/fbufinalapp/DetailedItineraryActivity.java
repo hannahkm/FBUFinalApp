@@ -1,5 +1,6 @@
 package com.example.fbufinalapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,6 +9,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +34,21 @@ public class DetailedItineraryActivity extends AppCompatActivity {
     DestinationAdapter adapter;
     Itinerary currentItinerary;
     String itinId;
+    Menu menu;
+    static boolean editing;
+
+    public static boolean getEditing() {
+        return editing;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        editing = false;
+        menu.findItem(R.id.action_edit).setTitle("EDIT");
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +60,6 @@ public class DetailedItineraryActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        rvDestinations = view.findViewById(R.id.rvDestinations);
-        destinations = new ArrayList<>();
-        adapter = new DestinationAdapter(this, destinations);
-
-        rvDestinations.setAdapter(adapter);
-        rvDestinations.setLayoutManager(new LinearLayoutManager(this));
-
         itinId = getIntent().getStringExtra("itinId");
 
         ParseQuery<Itinerary> queryItinerary = ParseQuery.getQuery(Itinerary.class);
@@ -57,6 +69,13 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                 currentItinerary = object;
                 binding.tvTitle.setText(object.getTitle());
                 getDestinations();
+
+                rvDestinations = view.findViewById(R.id.rvDestinations);
+                destinations = new ArrayList<>();
+                adapter = new DestinationAdapter(this, destinations, currentItinerary);
+
+                rvDestinations.setAdapter(adapter);
+                rvDestinations.setLayoutManager(new LinearLayoutManager(this));
             } else {
                 Toast.makeText(this, "Couldn't retrieve itinerary", Toast.LENGTH_SHORT).show();
             }
@@ -107,5 +126,28 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
+        getMenuInflater().inflate(R.menu.menu_bar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                if (editing) {
+                    editing = false;
+                    item.setTitle("EDIT");
+                } else {
+                    editing = true;
+                    item.setTitle("DONE");
+                }
+                return true;
+        }
+        return(super.onOptionsItemSelected(item));
     }
 }

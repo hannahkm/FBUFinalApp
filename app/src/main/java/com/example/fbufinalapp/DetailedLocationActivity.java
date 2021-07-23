@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -51,6 +54,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
     LayoutInflater inflater;
     PopupWindow pw;
     String placeId;
+    int screenWidth;
     List<String> itinNames;
     List<String> itinIds;
     String itinSelected;
@@ -65,6 +69,9 @@ public class DetailedLocationActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
+        DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
+        screenWidth = displayMetrics.widthPixels;
+
         tvOpenHours = findViewById(R.id.tvOpenHours);
         tvPriceLevel = findViewById(R.id.tvPriceLevel);
         ratingBar = findViewById(R.id.ratingBar);
@@ -76,6 +83,9 @@ public class DetailedLocationActivity extends AppCompatActivity {
         layout = inflater.inflate(R.layout.itinerary_popup, null);
         pw = new PopupWindow(DetailedLocationActivity.this);
         pw.setContentView(layout);
+        pw.setWidth((int) (screenWidth*0.9));
+        pw.setOutsideTouchable(true);
+//        pw.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         placeId = getIntent().getStringExtra("placeID");
         String name = getIntent().getStringExtra("name");
@@ -142,12 +152,16 @@ public class DetailedLocationActivity extends AppCompatActivity {
                 finished.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        pw.dismiss();
-                        Intent i = new Intent(DetailedLocationActivity.this, EditDestinationActivity.class);
-                        i.putExtra("itinId", itinSelected);
-                        i.putExtra("placeName", place.getName());
-                        i.putExtra("placeId", place.getId());
-                        startActivity(i);
+                        if (itinSelected == null){
+                            Toast.makeText(v.getContext(), "Please select an itinerary", Toast.LENGTH_SHORT).show();
+                        } else {
+                            pw.dismiss();
+                            Intent i = new Intent(DetailedLocationActivity.this, EditDestinationActivity.class);
+                            i.putExtra("itinId", itinSelected);
+                            i.putExtra("placeName", place.getName());
+                            i.putExtra("placeId", place.getId());
+                            startActivity(i);
+                        }
                     }
                 });
 

@@ -38,13 +38,14 @@ import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
 public class EditDestinationActivity extends AppCompatActivity {
-//    List<String> tripNames;
     List<String> tripDates;
     String dateSelected;
     String timeSelected;
     Place place;
     Itinerary currentItinerary;
+    Destination editingDestination;
     TextView tvLocation;
+    boolean editing = false;
     private static int AUTOCOMPLETE_REQUEST_CODE = 600;
 
     @Override
@@ -61,11 +62,9 @@ public class EditDestinationActivity extends AppCompatActivity {
         tvLocation = findViewById(R.id.tvLocation);
 
         String itinId = getIntent().getStringExtra("itinId");
-        if (getIntent().hasExtra("placeName")){
-            String placeName = getIntent().getStringExtra("placeName");
+        if (getIntent().hasExtra("placeId")){
             String placeId = getIntent().getStringExtra("placeId");
 
-            tvLocation.setText(placeName);
             tvLocation.setFocusable(false);
 
             // Specify the fields to return.
@@ -78,12 +77,29 @@ public class EditDestinationActivity extends AppCompatActivity {
 
             placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
                 place = response.getPlace();
+                tvLocation.setText(place.getName());
             }).addOnFailureListener((exception) -> {
                 if (exception instanceof ApiException) {
                     final ApiException apiException = (ApiException) exception;
                     Toast.makeText(EditDestinationActivity.this, "Error retrieving location", Toast.LENGTH_SHORT).show();
                 }
             });
+
+            if (getIntent().hasExtra("editing")){
+                editing = true;
+                tvLocation.setOnFocusChangeListener(focusListener);
+
+                ParseQuery<Destination> query = ParseQuery.getQuery("Destination");
+                query.getInBackground(getIntent().getStringExtra("destinationId"), (object, e) -> {
+                    if (e == null) {
+                        editingDestination = object;
+                    } else {
+                        // something went wrong
+                        Toast.makeText(this, "Couldn't retrieve destination", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
         } else {
             tvLocation.setOnFocusChangeListener(focusListener);
         }
@@ -133,13 +149,22 @@ public class EditDestinationActivity extends AppCompatActivity {
         binding.btFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Destination destination = new Destination();
+                Destination destination;
+
+                if (editing) {
+                    destination = editingDestination;
+                } else {
+                    destination = new Destination();
+                }
+
                 destination.setPlaceID(place.getId());
                 destination.setItinerary(currentItinerary);
 
-                String timeString = dateSelected + " " + binding.etTime.getText() + " " + timeSelected + " " + TimeZone.getDefault().getDisplayName();
+                SimpleDateFormat timezoneFormat = new SimpleDateFormat("zzzz");
+
+                String timeString = dateSelected + " " + binding.etTime.getText() + " " + timeSelected + " " + timezoneFormat.format(new Date());
                 SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm a zzzz");
-                formatter.setTimeZone(TimeZone.getDefault());
+
                 try {
                     destination.setDate(formatter.parse(timeString));
                 } catch (java.text.ParseException e) {
@@ -158,17 +183,19 @@ public class EditDestinationActivity extends AppCompatActivity {
                             binding.etDateSelect.setText("");
                             binding.etTime.setText("");
 
-                            queryItinerary.getInBackground(itinId, (object, error) -> {
-                                if (error != null){
-                                    Toast.makeText(EditDestinationActivity.this, "Couldn't save destination", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    List<String> currentDests = object.getDestinations();
-                                    currentDests.add(destination.getObjectId());
-                                    object.put("destinations", currentDests);
+                            if (!editing) {
+                                queryItinerary.getInBackground(itinId, (object, error) -> {
+                                    if (error != null){
+                                        Toast.makeText(EditDestinationActivity.this, "Couldn't save destination", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        List<String> currentDests = object.getDestinations();
+                                        currentDests.add(destination.getObjectId());
+                                        object.put("destinations", currentDests);
 
-                                    object.saveInBackground();
-                                }
-                            });
+                                        object.saveInBackground();
+                                    }
+                                });
+                            }
                         } else {
                             Toast.makeText(EditDestinationActivity.this, "Couldn't save destination", Toast.LENGTH_SHORT).show();
                         }
