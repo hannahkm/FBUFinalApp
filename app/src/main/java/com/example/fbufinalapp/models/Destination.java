@@ -1,10 +1,20 @@
 package com.example.fbufinalapp.models;
 
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * ParseObject class to access destination data from Parse backend. Parse models initialized in
