@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -57,6 +58,9 @@ public class EditDestinationActivity extends AppCompatActivity {
         // layout of activity is stored in a special property called root
         View view = binding.getRoot();
         setContentView(view);
+
+        getWindow().setEnterTransition(new Explode());
+        getWindow().setExitTransition(new Explode());
 
         tripDates = new ArrayList<>();
         tvLocation = findViewById(R.id.tvLocation);
@@ -212,7 +216,7 @@ public class EditDestinationActivity extends AppCompatActivity {
                         }
                     }
                 });
-                finish();
+                finishAfterTransition();
             }
         });
 

@@ -15,6 +15,9 @@
         <item name="android:textColor">@color/brown_dark</item>
         <item name="android:textSize">16dp</item>
         <item name="android:fontFamily">@font/liberation_mono</item>
+
+        <!-- enable window content transitions -->
+        <item name="android:windowActivityTransitions">true</item>
     </style>
 
     <style name="Widget.App.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView.Colored">

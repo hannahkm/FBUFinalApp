@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.transition.Explode;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -79,6 +80,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
         fabAddToFav = findViewById(R.id.fabAddToFav);
 
         currentUser = ParseUser.getCurrentUser();
+        getWindow().setEnterTransition(new Explode());
 
         // builds a popup window; to be used when the user adds the current location to an itinerary
         inflater = (LayoutInflater) DetailedLocationActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

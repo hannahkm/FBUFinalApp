@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -63,6 +64,8 @@ public class EditItineraryActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
+        getWindow().setEnterTransition(new Explode());
+
         tvTripName = findViewById(R.id.tvTripName);
         tvLocation = findViewById(R.id.tvLocation);
         etStartDate = findViewById(R.id.etStartDate);
@@ -113,7 +116,7 @@ public class EditItineraryActivity extends AppCompatActivity {
                     itin = new Itinerary();
                 }
                 parseItinerary();
-                finish();
+                finishAfterTransition();
             }
         });
     }

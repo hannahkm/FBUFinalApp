@@ -1,5 +1,7 @@
 package com.example.fbufinalapp.adapters;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -70,7 +72,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
                     Intent i = new Intent(context, DetailedLocationActivity.class);
                     i.putExtra("placeID", placeId);
                     i.putExtra("name", tvPrimary.getText());
-                    context.startActivity(i);
+                    context.startActivity(i, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
                 }
             });
         }

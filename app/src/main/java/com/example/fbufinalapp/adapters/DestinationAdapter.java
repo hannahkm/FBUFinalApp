@@ -1,6 +1,7 @@
 package com.example.fbufinalapp.adapters;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -90,7 +91,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
                         i.putExtra("editing", true);
                         i.putExtra("destinationId", desti.getObjectId());
 
-                        context.startActivity(i);
+                        context.startActivity(i, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
                     } else if (!DetailedItineraryActivity.getEditing() && !desti.getIsDay()) {
                         Intent i = new Intent(context, DetailedLocationActivity.class);
                         i.putExtra("placeID", desti.getPlaceID());

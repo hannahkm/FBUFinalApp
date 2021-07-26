@@ -6,8 +6,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.Explode;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,6 +66,8 @@ public class DetailedItineraryActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
+        getWindow().setEnterTransition(new Slide());
+
         itinId = getIntent().getStringExtra("itinId");
 
         ParseQuery<Itinerary> queryItinerary = ParseQuery.getQuery(Itinerary.class);
@@ -90,7 +96,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(DetailedItineraryActivity.this, EditDestinationActivity.class);
                 i.putExtra("itinId", itinId);
-                startActivity(i);
+                startActivity(i, ActivityOptions.makeSceneTransitionAnimation(DetailedItineraryActivity.this).toBundle());
                 adapter.notifyDataSetChanged();
             }
         });
