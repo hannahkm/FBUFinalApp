@@ -18,16 +18,17 @@
         <activity android:name=".DetailedLocationActivity" />
         <activity android:name=".EditItineraryActivity" />
         <activity android:name=".SignUpActivity" />
-        <activity android:name=".LoginActivity">
+        <activity android:name=".LoginActivity"/>
+        <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:windowSoftInputMode="adjustPan" />
     </application>
 
 </manifest>

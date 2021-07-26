@@ -15,9 +15,11 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 
 public class SignUpActivity extends AppCompatActivity {
+    ParseUser currentUser;
     TextView tvUsername;
     TextView tvPassword;
     TextView tvEmail;
+    boolean newUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +31,15 @@ public class SignUpActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
+        currentUser = ParseUser.getCurrentUser();
+
         getSupportActionBar().setTitle("Register");
 
         tvUsername = findViewById(R.id.tvUsername);
         tvPassword = findViewById(R.id.tvPassword);
         tvEmail = findViewById(R.id.tvEmail);
+
+        newUser = currentUser == null;
 
         binding.btSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,25 +54,40 @@ public class SignUpActivity extends AppCompatActivity {
         String password = String.valueOf(tvPassword.getText());
         String email = String.valueOf(tvEmail.getText());
 
-        ParseUser user = new ParseUser();
+        ParseUser user = newUser ? new ParseUser() : currentUser;
+
         user.setUsername(username);
         user.setPassword(password);
         user.setEmail(email);
-        user.put("favorites", new ArrayList<>());
-        user.put("itineraries", new ArrayList<>());
 
-        user.signUpInBackground(e -> {
-            if (e == null) {
-                // Hooray! Let them use the app now.
-                Intent i = new Intent(SignUpActivity.this, MainActivity.class);
-                Toast.makeText(SignUpActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
-                startActivity(i);
-            } else {
-                // Sign up didn't succeed. Look at the ParseException
-                // to figure out what went wrong
-                Log.i("SignUp Failed", String.valueOf(e));
-                Toast.makeText(SignUpActivity.this, "Couldn't sign you up", Toast.LENGTH_SHORT).show();
-            }
-        });
+        if (newUser){
+            user.put("favorites", new ArrayList<>());
+            user.put("itineraries", new ArrayList<>());
+
+            user.signUpInBackground(e -> {
+                if (e == null) {
+                    // Hooray! Let them use the app now.
+                    Intent i = new Intent(SignUpActivity.this, MainActivity.class);
+                    Toast.makeText(SignUpActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
+                    startActivity(i);
+                } else {
+                    // Sign up didn't succeed. Look at the ParseException
+                    // to figure out what went wrong
+                    Log.i("SignUp Failed", String.valueOf(e));
+                    Toast.makeText(SignUpActivity.this, "Couldn't sign you up", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            user.saveInBackground(e -> {
+                if (e == null){
+                    Intent i = new Intent(SignUpActivity.this, MainActivity.class);
+                    Toast.makeText(SignUpActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
+                    startActivity(i);
+                } else {
+                    Toast.makeText(SignUpActivity.this, "Couldn't sign you up", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 }

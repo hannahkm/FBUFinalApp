@@ -12,6 +12,7 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -19,7 +20,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.ParseUser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,6 +40,26 @@ public class MainActivity extends AppCompatActivity {
         // layout of activity is stored in a special property called root
         View view = binding.getRoot();
         setContentView(view);
+
+        if (ParseUser.getCurrentUser() == null){
+            ParseUser user = new ParseUser();
+            user.setUsername("Guest");
+            user.setPassword("default");
+            user.put("favorites", new ArrayList<>());
+            user.put("itineraries", new ArrayList<>());
+
+            user.signUpInBackground(e -> {
+                if (e == null) {
+                    Log.i("MainActivity", "signing up!");
+                    // Hooray! Let them use the app now.
+                    Toast.makeText(MainActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Sign up didn't succeed. Look at the ParseException
+                    // to figure out what went wrong
+                    Log.i("SignUp Failed", String.valueOf(e));
+                }
+            });
+        }
 
         // Initialize the SDK
         Places.initialize(getApplicationContext(), getResources().getString(R.string.apiKey));
