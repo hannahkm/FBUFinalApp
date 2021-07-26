@@ -43,6 +43,7 @@ public class EditDestinationActivity extends AppCompatActivity {
     String timeSelected;
     Place place;
     Itinerary currentItinerary;
+    ActivityEditDestinationBinding binding;
     Destination editingDestination;
     TextView tvLocation;
     boolean editing = false;
@@ -52,7 +53,7 @@ public class EditDestinationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // using view binding
-        ActivityEditDestinationBinding binding = ActivityEditDestinationBinding.inflate(getLayoutInflater());
+        binding = ActivityEditDestinationBinding.inflate(getLayoutInflater());
 
         // layout of activity is stored in a special property called root
         View view = binding.getRoot();
@@ -69,23 +70,24 @@ public class EditDestinationActivity extends AppCompatActivity {
 
             tvLocation.setFocusable(false);
 
-            // Specify the fields to return.
-            final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+            if (placeId != null){
+                // Specify the fields to return.
+                final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
 
-            // Construct a request object, passing the place ID and fields array.
-            final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+                // Construct a request object, passing the place ID and fields array.
+                final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
 
-            PlacesClient placesClient = Places.createClient(EditDestinationActivity.this);
+                PlacesClient placesClient = Places.createClient(EditDestinationActivity.this);
 
-            placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-                place = response.getPlace();
-                tvLocation.setText(place.getName());
-            }).addOnFailureListener((exception) -> {
-                if (exception instanceof ApiException) {
-                    final ApiException apiException = (ApiException) exception;
-                    Toast.makeText(EditDestinationActivity.this, "Error retrieving location", Toast.LENGTH_SHORT).show();
-                }
-            });
+                placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+                    place = response.getPlace();
+                    tvLocation.setText(place.getName());
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        Toast.makeText(EditDestinationActivity.this, "Error retrieving location", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
 
             if (getIntent().hasExtra("editing")){
                 editing = true;
@@ -104,6 +106,7 @@ public class EditDestinationActivity extends AppCompatActivity {
                         binding.etDateSelect.setText(dateFormatter.format(date));
                         binding.etTime.setText(timeFormatter.format(date));
                         binding.etTimeSelect.setText(amPMFormatter.format(date));
+                        binding.etDestName.setText(object.getName());
                     } else {
                         // something went wrong
                         Toast.makeText(this, "Couldn't retrieve destination", Toast.LENGTH_SHORT).show();
@@ -168,7 +171,10 @@ public class EditDestinationActivity extends AppCompatActivity {
                     destination = new Destination();
                 }
 
-                destination.setPlaceID(place.getId());
+                if (place != null) {
+                    destination.setPlaceID(place.getId());
+                }
+
                 destination.setItinerary(currentItinerary);
 
                 SimpleDateFormat timezoneFormat = new SimpleDateFormat("zzzz");
@@ -183,7 +189,7 @@ public class EditDestinationActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 destination.setIsDay(false);
-                destination.setName(String.valueOf(binding.tvLocation.getText()));
+                destination.setName(String.valueOf(binding.etDestName.getText()));
 
                 destination.saveInBackground(new SaveCallback() {
                     @Override
@@ -241,7 +247,11 @@ public class EditDestinationActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Place location = Autocomplete.getPlaceFromIntent(data);
                 place = location;
-                tvLocation.setText(place.getName());
+                String name = place.getName();
+                tvLocation.setText(name);
+                if (String.valueOf(binding.etDestName.getText()).equals("")) {
+                    binding.etDestName.setText(name);
+                }
             } else {
                 Status status = Autocomplete.getStatusFromIntent(data);
             }

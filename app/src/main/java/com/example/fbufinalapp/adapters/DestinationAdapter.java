@@ -91,7 +91,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
                         i.putExtra("destinationId", desti.getObjectId());
 
                         context.startActivity(i);
-                    } else if (!DetailedItineraryActivity.getEditing() && !desti.getIsDay()) {
+                    } else if (!DetailedItineraryActivity.getEditing() && !desti.getIsDay() && desti.getPlaceID() != null) {
                         Intent i = new Intent(context, DetailedLocationActivity.class);
                         i.putExtra("placeID", desti.getPlaceID());
                         i.putExtra("name", tvName.getText());
