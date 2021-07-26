@@ -30,9 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link SearchFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment subclass for the search page, where the user can search for locations using the
+ * Google Places SDK
  */
 public class SearchFragment extends Fragment {
     public static final String TAG = "SearchFragment";
@@ -91,6 +90,9 @@ public class SearchFragment extends Fragment {
         placesClient = Places.createClient(context);
     }
 
+    /**
+     * Listens to when the user types into the search bar and displays matching results underneath
+     */
     private TextWatcher searchListener = new TextWatcher () {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {

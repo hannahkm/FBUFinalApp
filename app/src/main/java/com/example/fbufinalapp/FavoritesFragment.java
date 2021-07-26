@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Fragment subclass; shows the user a list of the places they liked
+ */
 public class FavoritesFragment extends Fragment {
     FragmentFavoritesBinding binding;
     Context context;
@@ -101,6 +104,9 @@ public class FavoritesFragment extends Fragment {
         binding.swipeContainer.setRefreshing(false);
     }
 
+    /**
+     * Gets the list of the user's favorites and has them displayed on the page
+     */
     private void queryFavorites(){
         for (Object fav: currentUser.getList("favorites")) {
             String placeId = String.valueOf(fav);
@@ -118,8 +124,6 @@ public class FavoritesFragment extends Fragment {
                 }
             });
         }
-
-//        favAdapter.notifyDataSetChanged();
     }
 
 

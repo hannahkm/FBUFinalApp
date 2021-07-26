@@ -2,11 +2,14 @@ package com.example.fbufinalapp.models;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * ParseObject class to access destination data from Parse backend. Parse models initialized in
+ * ParseApplication.java.
+ */
 @ParseClassName("Destination")
 public class Destination extends ParseObject{
     public static String KEY_DESCRIPTION = "notes";

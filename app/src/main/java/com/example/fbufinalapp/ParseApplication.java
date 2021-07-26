@@ -3,7 +3,6 @@ package com.example.fbufinalapp;
 import android.app.Application;
 
 import com.example.fbufinalapp.models.Destination;
-import com.example.fbufinalapp.models.Favorites;
 import com.example.fbufinalapp.models.Itinerary;
 import com.parse.Parse;
 import com.parse.ParseObject;
@@ -28,7 +27,6 @@ public class ParseApplication extends Application {
 
         // Register your parse models
         ParseObject.registerSubclass(Itinerary.class);
-        ParseObject.registerSubclass(Favorites.class);
         ParseObject.registerSubclass(Destination.class);
 
         Parse.initialize(new Parse.Configuration.Builder(this)

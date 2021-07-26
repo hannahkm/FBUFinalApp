@@ -7,12 +7,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.fbufinalapp.databinding.ActivityMainBinding;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.PlacesClient;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -23,24 +18,23 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
+/**
+ * Main Activity of the app; builds the bottom navigation to allow the user to move to other fragments
+ */
 public class MainActivity extends AppCompatActivity {
     // define your fragments here
     Fragment dashboardFragment, searchFragment, favoritesFragment, profileFragment;
-    static Place place;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // using view binding
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
-
-        // layout of activity is stored in a special property called root
         View view = binding.getRoot();
         setContentView(view);
 
+        // creates default guest user if current user isn't logged in
         if (ParseUser.getCurrentUser() == null){
             ParseUser user = new ParseUser();
             user.setUsername("Guest");
@@ -51,11 +45,8 @@ public class MainActivity extends AppCompatActivity {
             user.signUpInBackground(e -> {
                 if (e == null) {
                     Log.i("MainActivity", "signing up!");
-                    // Hooray! Let them use the app now.
                     Toast.makeText(MainActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Sign up didn't succeed. Look at the ParseException
-                    // to figure out what went wrong
                     Log.i("SignUp Failed", String.valueOf(e));
                 }
             });
@@ -111,27 +102,4 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(title);
     }
 
-    public static Place getPlace(String placeId, Context context) {
-        PlacesClient placesClient = Places.createClient(context);
-
-        // Specify the fields to return.
-        List<Place.Field> placeFields = Arrays.asList(Place.Field.ID,
-                Place.Field.NAME, Place.Field.ADDRESS, Place.Field.RATING, Place.Field.PRICE_LEVEL,
-                Place.Field.WEBSITE_URI, Place.Field.PHONE_NUMBER);
-
-        // Construct a request object, passing the place ID and fields array.
-        FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
-
-        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-            place = response.getPlace();
-            Log.i("CommonFunctions", "inside: " + String.valueOf(place));
-        }).addOnFailureListener((exception) -> {
-            Log.e("CommonFunctions", String.valueOf(exception));
-            Toast.makeText(context, "Error retrieving location", Toast.LENGTH_SHORT).show();
-        });
-
-        Log.i("CommonFunctions", "outside: " + String.valueOf(place));
-        return place;
-
-    }
 }

@@ -15,6 +15,9 @@ import com.example.fbufinalapp.R;
 
 import java.util.List;
 
+/**
+ * Adapter for recyclerview with locations for items.
+ */
 public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.ViewHolder>{
 
     private Context context;
@@ -60,6 +63,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
             tvPrimary = itemView.findViewById(R.id.tvPrimary);
             tvSecondary = itemView.findViewById(R.id.tvSecondary);
 
+            // user can click on item to view more details about that location
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -10,10 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.fbufinalapp.adapters.DestinationAdapter;
@@ -27,6 +25,10 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Screen where the user can see the details of their itinerary; displays days and destinations in
+ * chronological order.
+ */
 public class DetailedItineraryActivity extends AppCompatActivity {
     RecyclerView rvDestinations;
     ArrayList<Destination> destinations;
@@ -82,6 +84,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
             }
         });
 
+        // Allows the user to create a new destination to add to this itinerary
         binding.fabNewDest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,7 +111,10 @@ public class DetailedItineraryActivity extends AppCompatActivity {
         binding.swipeContainer.setRefreshing(false);
     }
 
-
+    /**
+     * Queries destinations that belong to the current itinerary from the Parse backend. Displays
+     * these destinations on the page in increasing date order.
+     */
     private void getDestinations(){
         ParseQuery<Destination> queryDestination = ParseQuery.getQuery(Destination.class);
 

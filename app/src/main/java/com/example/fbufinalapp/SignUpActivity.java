@@ -14,6 +14,9 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
+/**
+ * Activity for the user to sign up for an account
+ */
 public class SignUpActivity extends AppCompatActivity {
     ParseUser currentUser;
     TextView tvUsername;
@@ -49,6 +52,9 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Either creates a new account or updates the current guest account with the user's information
+     */
     public void SignUp(){
         String username = String.valueOf(tvUsername.getText());
         String password = String.valueOf(tvPassword.getText());

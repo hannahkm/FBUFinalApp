@@ -3,7 +3,6 @@ package com.example.fbufinalapp.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,11 +22,13 @@ import com.google.android.material.snackbar.Snackbar;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Adapter to build recyclerview with itineraries for items.
+ */
 public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.ViewHolder>{
     private Context context;
     private List<Itinerary> itins;
@@ -64,14 +65,6 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
         notifyDataSetChanged();
     }
 
-    public List<Itinerary> getItems() {
-        return itins;
-    }
-
-    public void setItems(List<Itinerary> newItins) {
-        itins = newItins;
-    }
-
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle;
         TextView tvDates;
@@ -82,6 +75,7 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvDates = itemView.findViewById(R.id.tvDates);
 
+            // allow user to click on itineraries to either edit info or view detailed page
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -101,6 +95,7 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
                 }
             });
 
+            // user can delete itineraries
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
@@ -116,6 +111,11 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
             });
         }
 
+        /**
+         * Displays a snackbar that prompts the user to undo the deletion if they want to.
+         * Pressing undo stops the itinerary from being deleted.
+         * If the snackbar is dismissed naturally, delete the itinerary from the Parse backend.
+         */
         public boolean showUndoSnackbar(int position, Itinerary deletedItin){
             Snackbar snackbar = Snackbar.make(((Activity) context).findViewById(R.id.content), "Itinerary deleted", Snackbar.LENGTH_SHORT);
             snackbar.setAction("Undo", v -> undoDelete(position, deletedItin));

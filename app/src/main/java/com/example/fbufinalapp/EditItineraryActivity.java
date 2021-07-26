@@ -33,6 +33,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * User can create an itinerary or edit an existing one. If they are editing an existing itinerary,
+ * the page is populated with its data.
+ */
 public class EditItineraryActivity extends AppCompatActivity {
     TextView tvTripName;
     TextView tvLocation;
@@ -106,17 +110,17 @@ public class EditItineraryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!editing) {
-                    // we need new itinerary
                     itin = new Itinerary();
                 }
                 parseItinerary();
-
                 finish();
             }
         });
     }
 
-
+    /**
+     * Process and save the itinerary. Info that's left blank are given default values or warn the user.
+     */
     private void parseItinerary(){
         String title = String.valueOf(tvTripName.getText());
         String notes = String.valueOf(etNotes.getText());
@@ -241,6 +245,9 @@ public class EditItineraryActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Helper method: removes the date markers from the current itinerary so that new ones can be made
+     */
     private List<String> removeDates(Date start, Date end){
         ParseQuery<Destination> query = ParseQuery.getQuery("Destination");
 
@@ -269,6 +276,7 @@ public class EditItineraryActivity extends AppCompatActivity {
                 }
             } else {
                 Log.e("EditItinerary", String.valueOf(e));
+                Toast.makeText(EditItineraryActivity.this, "Error updating dates", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -277,6 +285,10 @@ public class EditItineraryActivity extends AppCompatActivity {
         return itinDestinations;
     }
 
+    /**
+     * Opens the Google Places SDK Autocomplete search page when the user focuses on the edittext;
+     * lets them search for locations.
+     */
     private View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {

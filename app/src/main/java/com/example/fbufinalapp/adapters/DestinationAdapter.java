@@ -22,18 +22,16 @@ import com.example.fbufinalapp.models.Itinerary;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
+/**
+ * Adapter to build a recyclerview with destination items. Displays the destination name and time.
+ */
 public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.ViewHolder> {
     private Context context;
     private List<Destination> destinations;
@@ -79,6 +77,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
             tvName = itemView.findViewById(R.id.tvName);
             tvTime = itemView.findViewById(R.id.tvTime);
 
+            // user can either click to view details or click to edit destination
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -119,6 +118,12 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
             });
         }
 
+        /**
+         * Displays a snackbar that prompts the user to undo the deletion if they want to.
+         * Pressing undo stops the destination from being deleted.
+         * If the snackbar is dismissed naturally, delete the destination from the itinerary and from
+         * the Parse backend.
+         */
         public boolean showUndoSnackbar(int position, Destination deleted){
             Snackbar snackbar = Snackbar.make(((Activity) context).findViewById(R.id.content), "Destination deleted", Snackbar.LENGTH_SHORT);
             snackbar.setAction("Undo", v -> undoDelete(position, deleted));

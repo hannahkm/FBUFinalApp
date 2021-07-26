@@ -8,7 +8,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-//@Parcel(analyze = Itinerary.class)
+/**
+ * ParseObject class to access itinerary data from Parse backend. Parse models initialized in
+ * ParseApplication.java.
+ */
 @ParseClassName("Itinerary")
 public class Itinerary extends ParseObject {
     public static String KEY_DESCRIPTION = "description";

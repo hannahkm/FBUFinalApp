@@ -16,9 +16,8 @@ import com.example.fbufinalapp.databinding.FragmentProfileBinding;
 import com.parse.ParseUser;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Fragment subclass for the user's profile page. Allows the user to log out or sign up
+ * for an account
  */
 public class ProfileFragment extends Fragment {
     Context context;

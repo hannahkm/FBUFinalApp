@@ -12,6 +12,9 @@ import android.widget.Toast;
 import com.example.fbufinalapp.databinding.ActivityLoginBinding;
 import com.parse.ParseUser;
 
+/**
+ * Activity for the user to log into their account. Allows them to also register for an account.
+ */
 public class LoginActivity extends AppCompatActivity {
     TextView tvUsername;
     TextView tvPassword;

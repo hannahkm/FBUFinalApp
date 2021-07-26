@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +23,6 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
@@ -34,9 +32,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.SimpleTimeZone;
-import java.util.TimeZone;
 
+/**
+ * Page where user can edit/create a new destination for their itinerary. Allows them to put in
+ * information regarding the location and save to an itinerary
+ */
 public class EditDestinationActivity extends AppCompatActivity {
     List<String> tripDates;
     String dateSelected;
@@ -62,6 +62,8 @@ public class EditDestinationActivity extends AppCompatActivity {
         tvLocation = findViewById(R.id.tvLocation);
 
         String itinId = getIntent().getStringExtra("itinId");
+
+        // populates page with existing values, if there are any
         if (getIntent().hasExtra("placeId")){
             String placeId = getIntent().getStringExtra("placeId");
 
@@ -216,6 +218,10 @@ public class EditDestinationActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Opens Google Places SDK Autocomplete page when the user focuses on the EditText box. Lets them
+     * search for a location.
+     */
     private View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {

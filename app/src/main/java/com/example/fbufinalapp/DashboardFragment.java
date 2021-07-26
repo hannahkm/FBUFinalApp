@@ -18,7 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.fbufinalapp.adapters.ItineraryAdapter;
 import com.example.fbufinalapp.databinding.FragmentDashboardBinding;
@@ -32,9 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link DashboardFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A Fragment subclass to create the user's dashboard page
+ * Builds the list of itineraries that the user has created and presents it as a list
+ * Allows the user to move to the EditItinerary page to create new trips/edit current ones
  */
 public class DashboardFragment extends Fragment {
     Context context;
@@ -54,6 +53,9 @@ public class DashboardFragment extends Fragment {
         return fragment;
     }
 
+    /**
+     * Resets the appearance of the edit button when the user leaves this page
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -75,7 +77,6 @@ public class DashboardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         context = container.getContext();
         binding = FragmentDashboardBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
@@ -89,6 +90,9 @@ public class DashboardFragment extends Fragment {
         this.menu = menu;
     }
 
+    /**
+     * Handles menu item clicks when the user clicks the Edit button on the page
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -102,8 +106,7 @@ public class DashboardFragment extends Fragment {
                 }
                 return true;
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
+                // Invoke the superclass to handle unknown menu clicks
                 return super.onOptionsItemSelected(item);
 
         }
@@ -129,8 +132,9 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        queryPosts();
+        queryTrips();
 
+        // Allows the user to create new itineraries
         binding.fabNewItin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,11 +147,15 @@ public class DashboardFragment extends Fragment {
 
     public void fetchTimelineAsync(int page) {
         adapter.clear();
-        queryPosts();
+        queryTrips();
         binding.swipeContainer.setRefreshing(false);
     }
 
-    private void queryPosts() {
+    /**
+     * Obtains all the itineraries that the user owns in the Parse backend and displays them on
+     * the user's dashboard from most to least recent.
+     */
+    private void queryTrips() {
         ParseQuery<Itinerary> query = ParseQuery.getQuery(Itinerary.class);
         query.include(Itinerary.KEY_USER);
         query.whereEqualTo("authors", ParseUser.getCurrentUser());

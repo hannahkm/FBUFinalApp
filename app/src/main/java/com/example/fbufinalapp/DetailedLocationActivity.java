@@ -4,8 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -40,6 +38,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Screen to show the user details about a given location. Data obtained from the Google Places SDK.
+ */
 public class DetailedLocationActivity extends AppCompatActivity {
     public static String TAG = "DetailedLocationActivity";
     ActivityDetailedLocationBinding binding;
@@ -79,6 +80,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
         currentUser = ParseUser.getCurrentUser();
 
+        // builds a popup window; to be used when the user adds the current location to an itinerary
         inflater = (LayoutInflater) DetailedLocationActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         layout = inflater.inflate(R.layout.itinerary_popup, null);
         pw = new PopupWindow(DetailedLocationActivity.this);
@@ -88,25 +90,25 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
         placeId = getIntent().getStringExtra("placeID");
         String name = getIntent().getStringExtra("name");
+        getSupportActionBar().setTitle(name);
 
+        // changes drawable of the favorites button if the location is already in the user's favorites
         if (currentUser.getList("favorites").contains(placeId)){
             fabAddToFav.setImageResource(R.drawable.ic_favorite_filled);
         }
 
-        getSupportActionBar().setTitle(name);
-
         placesClient = Places.createClient(this);
 
-        populatePage();
+        populatePage(); // obtain place data and fill page
         getAllItins();
 
+        /**
+         * the user clicked on the favorites button, so we add/remove it from their favorites
+         */
         fabAddToFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 List<String> currentFavs = currentUser.getList("favorites");
-                if (currentFavs == null){
-                    currentFavs = new ArrayList<String>();
-                }
 
                 if (currentFavs.contains(placeId)){
                     // we're disliking; remove the id from favorites
@@ -132,9 +134,13 @@ public class DetailedLocationActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * Allows the user to add the current location to an existing itinerary
+         */
         binding.fabAddToItin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // show popup and let user select an itinerary from the list.
                 pw.showAtLocation(binding.main, Gravity.CENTER, 0, 0);
                 AutoCompleteTextView etItinSelect = layout.findViewById(R.id.etItinSelect);
 
@@ -169,19 +175,20 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Pulls data about the given destination (by ID) from the Google Places SDK and adds all
+     * relevant information to the page. Data that returns as None display "unavailable" or are
+     * removed from the page
+     */
     public void populatePage(){
-        // Specify the fields to return.
         final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID,
                 Place.Field.NAME, Place.Field.ADDRESS, Place.Field.RATING, Place.Field.PRICE_LEVEL,
                 Place.Field.WEBSITE_URI, Place.Field.PHONE_NUMBER);
 
-        // Construct a request object, passing the place ID and fields array.
         final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
 
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
             place = response.getPlace();
-
-            Log.i("DetailedLocation", String.valueOf(place));
 
             binding.tvName.setText(place.getName());
             binding.tvAddress.setText(place.getAddress());
@@ -247,7 +254,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
                         mapIntent.setPackage("com.google.android.apps.maps");
                         startActivity(mapIntent);
                     } catch (NullPointerException e) {
-
+                        Toast.makeText(DetailedLocationActivity.this, "Couldn't get directions", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -262,6 +269,9 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Obtains a list of all the itineraries the current user has made to display in the popup window
+     */
     public void getAllItins(){
         ParseQuery<Itinerary> query = ParseQuery.getQuery("Itinerary");
         query.whereEqualTo("authors", currentUser);
