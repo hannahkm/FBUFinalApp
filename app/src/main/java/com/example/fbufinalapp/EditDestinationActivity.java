@@ -103,9 +103,11 @@ public class EditDestinationActivity extends AppCompatActivity {
                         SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm");
                         SimpleDateFormat amPMFormatter = new SimpleDateFormat("a");
 
-                        binding.etDateSelect.setText(dateFormatter.format(date));
+                        dateSelected = dateFormatter.format(date);
+                        timeSelected = amPMFormatter.format(date);
+                        binding.etDateSelect.setText(dateSelected);
                         binding.etTime.setText(timeFormatter.format(date));
-                        binding.etTimeSelect.setText(amPMFormatter.format(date));
+                        binding.etTimeSelect.setText(timeSelected);
                         binding.etDestName.setText(object.getName());
                     } else {
                         // something went wrong
