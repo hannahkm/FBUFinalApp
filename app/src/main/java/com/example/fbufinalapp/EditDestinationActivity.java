@@ -105,9 +105,9 @@ public class EditDestinationActivity extends AppCompatActivity {
 
                         dateSelected = dateFormatter.format(date);
                         timeSelected = amPMFormatter.format(date);
-                        binding.etDateSelect.setText(dateSelected);
+                        binding.etDateSelect.setHint(dateSelected);
                         binding.etTime.setText(timeFormatter.format(date));
-                        binding.etTimeSelect.setText(timeSelected);
+                        binding.etTimeSelect.setHint(timeSelected);
                         binding.etDestName.setText(object.getName());
                     } else {
                         // something went wrong
