@@ -184,12 +184,18 @@ public class EditDestinationActivity extends AppCompatActivity {
                 String timeString = dateSelected + " " + binding.etTime.getText() + " " + timeSelected + " " + timezoneFormat.format(new Date());
                 SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm a zzzz");
 
+                boolean timeValid = true;
                 try {
-                    destination.setDate(formatter.parse(timeString));
+                    Date selectedDate = formatter.parse(timeString);
+                    if (place.isOpen(selectedDate.getTime())){
+                        destination.setDate(selectedDate);
+                    } else {
+                        timeValid = false;
+                    }
                 } catch (java.text.ParseException e) {
-                    Log.e("EditDestination", String.valueOf(e));
                     e.printStackTrace();
                 }
+
                 destination.setIsDay(false);
 
                 String placeName = place.getName();
@@ -200,35 +206,39 @@ public class EditDestinationActivity extends AppCompatActivity {
                     destination.setName(inputtedName + "\n" + placeName);
                 }
 
+                if (timeValid){
+                    destination.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null){
+                                binding.tvTripName.setText("");
+                                tvLocation.setText("");
+                                binding.etDateSelect.setText("");
+                                binding.etTime.setText("");
 
-                destination.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null){
-                            binding.tvTripName.setText("");
-                            tvLocation.setText("");
-                            binding.etDateSelect.setText("");
-                            binding.etTime.setText("");
+                                if (!editing) {
+                                    queryItinerary.getInBackground(itinId, (object, error) -> {
+                                        if (error != null){
+                                            Toast.makeText(EditDestinationActivity.this, "Couldn't save destination", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            List<String> currentDests = object.getDestinations();
+                                            currentDests.add(destination.getObjectId());
+                                            object.put("destinations", currentDests);
 
-                            if (!editing) {
-                                queryItinerary.getInBackground(itinId, (object, error) -> {
-                                    if (error != null){
-                                        Toast.makeText(EditDestinationActivity.this, "Couldn't save destination", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        List<String> currentDests = object.getDestinations();
-                                        currentDests.add(destination.getObjectId());
-                                        object.put("destinations", currentDests);
-
-                                        object.saveInBackground();
-                                    }
-                                });
+                                            object.saveInBackground();
+                                        }
+                                    });
+                                }
+                            } else {
+                                Toast.makeText(EditDestinationActivity.this, "Couldn't save destination", Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            Toast.makeText(EditDestinationActivity.this, "Couldn't save destination", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                });
-                finish();
+                    });
+                    finish();
+                } else {
+                    Toast.makeText(EditDestinationActivity.this, "This location won't be open at that time.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -242,7 +252,8 @@ public class EditDestinationActivity extends AppCompatActivity {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if (hasFocus){
-                List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+                List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME,
+                        Place.Field.OPENING_HOURS, Place.Field.UTC_OFFSET);
 
                 Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
                         .build(EditDestinationActivity.this);

@@ -53,6 +53,6 @@
         android:layout_marginTop="3dp"
         android:layout_marginEnd="5dp"
         android:layout_toEndOf="@+id/tvTime"
-        android:textSize="18sp"
+        android:textSize="16sp"
         tools:text="address" />
 </RelativeLayout>
