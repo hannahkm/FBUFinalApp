@@ -177,7 +177,6 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
             tvName.setText(name);
 
             if (dest.getIsDay()) {
-                Log.i("DestinationAdapter", name);
                 tvTime.setVisibility(View.GONE);
                 tvName.setTextSize(22);
             } else {

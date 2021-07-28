@@ -171,12 +171,8 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
             Date end = itin.getEndDate();
 
             String dates = "";
-            if (start == null && end == null) {
-                dates = "Date undecided";
-            } else if (start != null && end == null) {
-                dates = "Starting " + itin.reformatDate(start);
-            } else if (start == null && end != null){
-                dates = "Ending " + itin.reformatDate(end);
+            if (start.equals(end)) {
+                dates = itin.reformatDate(start);
             } else {
                 dates = itin.reformatDate(start) + " - " + itin.reformatDate(end);
             }

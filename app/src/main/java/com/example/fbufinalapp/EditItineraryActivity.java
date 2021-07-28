@@ -112,8 +112,12 @@ public class EditItineraryActivity extends AppCompatActivity {
                 if (!editing) {
                     itin = new Itinerary();
                 }
-                parseItinerary();
-                finish();
+                try {
+                    parseItinerary();
+                } catch (java.text.ParseException e) {
+                    e.printStackTrace();
+                    Toast.makeText(EditItineraryActivity.this, "Failed to make itinerary", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -121,128 +125,135 @@ public class EditItineraryActivity extends AppCompatActivity {
     /**
      * Process and save the itinerary. Info that's left blank are given default values or warn the user.
      */
-    private void parseItinerary(){
+    private void parseItinerary() throws java.text.ParseException {
         String title = String.valueOf(tvTripName.getText());
         String notes = String.valueOf(etNotes.getText());
 
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-        Date start = null;
-        Date end = null;
+        Date start;
+        Date end;
         String startInput = String.valueOf(etStartDate.getText());
         String endInput = String.valueOf(etEndDate.getText());
 
-        if (!startInput.equals("")){
+
+        if (!startInput.equals("") || !endInput.equals("")) {
             try {
-                start = sdf.parse(String.valueOf(etStartDate.getText()));
-                itin.setStartDate(start);
+                start = sdf.parse(startInput);
             } catch (java.text.ParseException e) {
+                start = sdf.parse(endInput);
                 Log.e("EditItinerary", String.valueOf(e));
             }
-        }
 
-        if (!endInput.equals("")){
             try {
-                end = sdf.parse(String.valueOf(etEndDate.getText()));
-                itin.setEndDate(end);
+                end = sdf.parse(endInput);
             } catch (java.text.ParseException e) {
+                end = sdf.parse(startInput);
                 Log.e("EditItinerary", String.valueOf(e));
             }
-        }
+            itin.setStartDate(start);
+            itin.setEndDate(end);
 
-        if (title == null || title.equals("")){
+            if (title == null || title.equals("")){
+                if (place != null){
+                    title = "Trip to " + place.getName();
+                } else {
+                    title = "New Trip";
+                }
+            }
+            itin.setTitle(title);
+
+            ParseUser currentUser = ParseUser.getCurrentUser();
+            itin.setAuthor(currentUser);
+
+            itin.setDescription(notes);
+
             if (place != null){
-                title = "Trip to " + place.getName();
-            } else {
-                title = "New Trip";
+                itin.setPlaceID(place.getId());
+            } else if (editing){
+                itin.setPlaceID(itin.getPlaceID());
             }
-        }
-        itin.setTitle(title);
 
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        itin.setAuthor(currentUser);
+            List<String> destinations;
 
-        itin.setDescription(notes);
+            if (editing){
+                destinations = removeDates(start, end);
+            } else {
+                destinations = new ArrayList<>();
+            }
 
-        if (place != null){
-            itin.setPlaceID(place.getId());
-        } else if (editing){
-            itin.setPlaceID(itin.getPlaceID());
-        }
+            Calendar cStart = Calendar.getInstance();
+            cStart.setTime(start);
+            Calendar cEnd = Calendar.getInstance();
+            cEnd.setTime(end);
+            cEnd.add(Calendar.DATE, 1);
 
-        List<String> destinations;
+            String pattern = "MMMM dd, yyyy";
+            SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 
-        if (editing){
-            destinations = removeDates(start, end);
-        } else {
-            destinations = new ArrayList<>();
-        }
+            for (Calendar date = cStart; date.before(cEnd); date.add(Calendar.DATE, 1)){
+                Log.i("ghoeiwgaw", String.valueOf(date));
+                Destination newDest = new Destination();
+                Date dateVar = date.getTime();
 
-        Calendar cStart = Calendar.getInstance();
-        cStart.setTime(start);
-        Calendar cEnd = Calendar.getInstance();
-        cEnd.setTime(end);
-        cEnd.add(Calendar.DATE, 1);
+                newDest.setDate(dateVar);
+                newDest.setName(dateFormat.format(dateVar));
+                newDest.setIsDay(true);
+                newDest.setItinerary(itin);
 
-        String pattern = "MMMM dd, yyyy";
-        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+                newDest.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null){
+                            destinations.add(newDest.getObjectId());
+                        } else {
+                            Log.e("EditItinerary", String.valueOf(e));
+                            Toast.makeText(EditItineraryActivity.this, "Error saving dates", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
 
-        for (Calendar date = cStart; date.before(cEnd); date.add(Calendar.DATE, 1)){
-            Destination newDest = new Destination();
-            Date dateVar = date.getTime();
+            itin.setDestinations(destinations);
 
-            newDest.setDate(dateVar);
-            newDest.setName(dateFormat.format(dateVar));
-            newDest.setIsDay(true);
-            newDest.setItinerary(itin);
 
-            newDest.saveInBackground(new SaveCallback() {
+            itin.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
-                    if (e == null){
-                        destinations.add(newDest.getObjectId());
+                    if (e != null){
+                        Log.e("New Trip", String.valueOf(e));
+                        Toast.makeText(EditItineraryActivity.this, "Error posting", Toast.LENGTH_SHORT).show();
                     } else {
-                        Log.e("EditItinerary", String.valueOf(e));
-                        Toast.makeText(EditItineraryActivity.this, "Error saving dates", Toast.LENGTH_SHORT).show();
+                        tvTripName.setText("");
+                        tvLocation.setText("");
+                        etNotes.setText("");
+                        etStartDate.setText("");
+                        etEndDate.setText("");
+
+                        List<String> currentItins = currentUser.getList("itineraries");
+                        if (currentItins == null){
+                            currentItins = new ArrayList<String>();
+                        }
+                        currentItins.add(itin.getObjectId());
+                        currentUser.put("itineraries", currentItins);
+
+                        currentUser.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e != null){
+                                    Log.e("Saving user", String.valueOf(e));
+                                    Toast.makeText(EditItineraryActivity.this, "Error saving your trip", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    finish();
+                                }
+                            }
+                        });
                     }
                 }
             });
+        } else {
+            Toast.makeText(EditItineraryActivity.this, "Please check your dates", Toast.LENGTH_SHORT).show();
         }
 
-        itin.setDestinations(destinations);
-
-
-        itin.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null){
-                    Log.e("New Trip", String.valueOf(e));
-                    Toast.makeText(EditItineraryActivity.this, "Error posting", Toast.LENGTH_SHORT).show();
-                } else {
-                    tvTripName.setText("");
-                    tvLocation.setText("");
-                    etNotes.setText("");
-                    etStartDate.setText("");
-                    etEndDate.setText("");
-
-                    List<String> currentItins = currentUser.getList("itineraries");
-                    if (currentItins == null){
-                        currentItins = new ArrayList<String>();
-                    }
-                    currentItins.add(itin.getObjectId());
-                    currentUser.put("itineraries", currentItins);
-
-                    currentUser.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e != null){
-                                Log.e("Saving user", String.valueOf(e));
-                                Toast.makeText(EditItineraryActivity.this, "Error saving your trip", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                }
-            }
-        });
     }
 
     /**
