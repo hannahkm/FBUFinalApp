@@ -191,7 +191,15 @@ public class EditDestinationActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 destination.setIsDay(false);
-                destination.setName(String.valueOf(binding.etDestName.getText()));
+
+                String placeName = place.getName();
+                String inputtedName = String.valueOf(binding.etDestName.getText());
+                if (placeName.equals(inputtedName)){
+                    destination.setName(inputtedName);
+                } else {
+                    destination.setName(inputtedName + "\n" + placeName);
+                }
+
 
                 destination.saveInBackground(new SaveCallback() {
                     @Override
