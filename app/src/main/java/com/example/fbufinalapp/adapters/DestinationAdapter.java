@@ -70,12 +70,14 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName;
         TextView tvTime;
+        TextView tvAddress;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             tvName = itemView.findViewById(R.id.tvName);
             tvTime = itemView.findViewById(R.id.tvTime);
+            tvAddress = itemView.findViewById(R.id.tvAddress);
 
             // user can either click to view details or click to edit destination
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -174,10 +176,17 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
 
         public void bind(Destination dest) {
             String name = dest.getName();
-            tvName.setText(name);
+
+            int index = name.indexOf("\n");
+            if (index > 0) {
+                tvName.setText(name.substring(0, index));
+                tvAddress.setText(name.substring(index+1));
+            } else {
+                tvName.setText(name);
+                tvAddress.setVisibility(View.GONE);
+            }
 
             if (dest.getIsDay()) {
-                Log.i("DestinationAdapter", name);
                 tvTime.setVisibility(View.GONE);
                 tvName.setTextSize(22);
             } else {
