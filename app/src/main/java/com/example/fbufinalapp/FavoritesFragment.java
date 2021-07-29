@@ -1,6 +1,7 @@
 package com.example.fbufinalapp;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.parse.ParseUser;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,6 +68,8 @@ public class FavoritesFragment extends Fragment {
         binding = FragmentFavoritesBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
 
+        ((AVLoadingIndicatorView) view.findViewById(R.id.avi)).show();
+
         return view;
     }
 
@@ -94,35 +99,45 @@ public class FavoritesFragment extends Fragment {
             }
         });
 
-        queryFavorites();
-
+        new queryFavoritesAsync().execute();
     }
 
     public void fetchTimelineAsync(int page) {
         favAdapter.clear();
-        queryFavorites();
+        new queryFavoritesAsync().execute();
         binding.swipeContainer.setRefreshing(false);
     }
 
-    /**
-     * Gets the list of the user's favorites and has them displayed on the page
-     */
-    private void queryFavorites(){
-        for (Object fav: currentUser.getList("favorites")) {
-            String placeId = String.valueOf(fav);
+    private class queryFavoritesAsync extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... args) {
+            for (Object fav: currentUser.getList("favorites")) {
+                String placeId = String.valueOf(fav);
 
-            final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+                final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
 
-            placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-                Place place = response.getPlace();
-                String message = place.getName() + "\n" + place.getAddress() + "\n" + placeId;
-                favorites.add(message);
-                favAdapter.notifyItemInserted(favorites.size());
-            }).addOnFailureListener((exception) -> {
-                if (exception instanceof ApiException) {
-                    Log.e(TAG, "Place not found: " + exception.getMessage());
-                }
-            });
+                placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+                    Place place = response.getPlace();
+                    String message = place.getName() + "\n" + place.getAddress() + "\n" + placeId;
+                    favorites.add(message);
+                    favAdapter.notifyItemInserted(favorites.size());
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        Log.e(TAG, "Place not found: " + exception.getMessage());
+                    }
+                });
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            binding.avi.hide();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            binding.avi.show();
         }
     }
 
