@@ -42,7 +42,7 @@
         android:id="@+id/tvLocPrompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvTrip"
+        android:layout_below="@+id/tvDestName"
         android:layout_alignParentStart="true"
         android:layout_marginStart="15dp"
         android:layout_marginTop="20dp"
@@ -53,9 +53,9 @@
         android:id="@+id/tvLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvTripName"
+        android:layout_below="@+id/etDestName"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="2dp"
         android:layout_marginEnd="10dp"
         android:layout_toEndOf="@+id/tvLocPrompt"
         android:ems="10"
@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvLocation"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_toEndOf="@+id/tvDatePrompt">
 
@@ -88,7 +88,6 @@
             android:id="@+id/etDateSelect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Select a date"
             android:inputType="none" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -143,4 +142,28 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="300dp"
         android:text="Save Trip" />
+
+    <TextView
+        android:id="@+id/tvDestName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTrip"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="false"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:text="Name:"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/etDestName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTripName"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@+id/tvDestName"
+        android:ems="10" />
 </RelativeLayout>
