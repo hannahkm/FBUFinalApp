@@ -48,7 +48,7 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
 
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = CommonValues.CURRENT_USER;
         newUser = (currentUser.getEmail() == null);
 
         return view;
@@ -57,7 +57,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ParseUser currentUser = ParseUser.getCurrentUser();
 
         if (newUser){
             binding.btLogOut.setText("Sign Up");

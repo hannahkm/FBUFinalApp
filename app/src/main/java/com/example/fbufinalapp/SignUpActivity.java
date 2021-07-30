@@ -36,7 +36,7 @@ public class SignUpActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = CommonValues.CURRENT_USER;
 
         getSupportActionBar().setTitle("Register");
 
@@ -77,8 +77,8 @@ public class SignUpActivity extends AppCompatActivity {
         user.setEmail(email);
 
         if (newUser){
-            user.put("favorites", new ArrayList<>());
-            user.put("itineraries", new ArrayList<>());
+            user.put(CommonValues.KEY_FAVORITES, new ArrayList<>());
+            user.put(CommonValues.KEY_ITINERARY_USER, new ArrayList<>());
 
             user.signUpInBackground(e -> {
                 userSave(e);

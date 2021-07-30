@@ -161,8 +161,8 @@ public class DashboardFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... args) {
             ParseQuery<Itinerary> query = ParseQuery.getQuery(Itinerary.class);
-            query.include(Itinerary.KEY_USER);
-            query.whereEqualTo("authors", ParseUser.getCurrentUser());
+            query.include(CommonValues.KEY_USER);
+            query.whereEqualTo("authors", CommonValues.CURRENT_USER);
 
             // order posts by creation date (newest first)
             query.addDescendingOrder("createdAt");

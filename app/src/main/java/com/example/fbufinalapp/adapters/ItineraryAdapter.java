@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fbufinalapp.CommonValues;
 import com.example.fbufinalapp.DashboardFragment;
 import com.example.fbufinalapp.DetailedItineraryActivity;
 import com.example.fbufinalapp.EditItineraryActivity;
@@ -132,8 +133,8 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
                     for (Itinerary i : itins){
                         itinIds.add(i.getObjectId());
                     }
-                    currentUser = ParseUser.getCurrentUser();
-                    currentUser.put("itineraries", itinIds);
+                    currentUser = CommonValues.CURRENT_USER;
+                    currentUser.put(CommonValues.KEY_ITINERARY_USER, itinIds);
 
                     currentUser.saveInBackground(e -> {
                         if(e!=null){

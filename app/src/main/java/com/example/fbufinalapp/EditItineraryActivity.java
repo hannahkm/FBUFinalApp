@@ -117,7 +117,6 @@ public class EditItineraryActivity extends AppCompatActivity {
                             tvLocation.setText(place.getName());
                         }).addOnFailureListener((exception) -> {
                             if (exception instanceof ApiException) {
-                                final ApiException apiException = (ApiException) exception;
                                 Log.e(TAG, "Place not found: " + exception.getMessage());
                             }
                         });
@@ -188,7 +187,7 @@ public class EditItineraryActivity extends AppCompatActivity {
             }
             itin.setTitle(title);
 
-            ParseUser currentUser = ParseUser.getCurrentUser();
+            ParseUser currentUser = CommonValues.CURRENT_USER;
             itin.setAuthor(currentUser);
 
             itin.setDescription(notes);
@@ -217,7 +216,6 @@ public class EditItineraryActivity extends AppCompatActivity {
             SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 
             for (Calendar date = cStart; date.before(cEnd); date.add(Calendar.DATE, 1)){
-                Log.i("ghoeiwgaw", String.valueOf(date));
                 Destination newDest = new Destination();
                 Date dateVar = date.getTime();
 
@@ -255,12 +253,12 @@ public class EditItineraryActivity extends AppCompatActivity {
                         etStartDate.setText("");
                         etEndDate.setText("");
 
-                        List<String> currentItins = currentUser.getList("itineraries");
+                        List<String> currentItins = currentUser.getList(CommonValues.KEY_ITINERARY_USER);
                         if (currentItins == null){
                             currentItins = new ArrayList<String>();
                         }
                         currentItins.add(itin.getObjectId());
-                        currentUser.put("itineraries", currentItins);
+                        currentUser.put(CommonValues.KEY_ITINERARY_USER, currentItins);
 
                         currentUser.saveInBackground(new SaveCallback() {
                             @Override
@@ -288,7 +286,7 @@ public class EditItineraryActivity extends AppCompatActivity {
     private List<String> removeDates(Date start, Date end){
         ParseQuery<Destination> query = ParseQuery.getQuery("Destination");
 
-        query.whereEqualTo("itinerary", itin);
+        query.whereEqualTo(CommonValues.KEY_ITINERARY_DESTINATION, itin);
 
         List<String> itinDestinations = itin.getDestinations();
         List<String> toDelete = new ArrayList<>();
@@ -348,7 +346,6 @@ public class EditItineraryActivity extends AppCompatActivity {
                 tvLocation.setText(place.getName());
             } else {
                 Status status = Autocomplete.getStatusFromIntent(data);
-                Log.i(TAG, status.getStatusMessage());
             }
             return;
         }

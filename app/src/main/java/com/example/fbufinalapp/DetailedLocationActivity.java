@@ -80,7 +80,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
         ratingBar = findViewById(R.id.ratingBar);
         fabAddToFav = findViewById(R.id.fabAddToFav);
 
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = CommonValues.CURRENT_USER;
         getWindow().setEnterTransition(new Explode());
 
         // builds a popup window; to be used when the user adds the current location to an itinerary
@@ -96,7 +96,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(name);
 
         // changes drawable of the favorites button if the location is already in the user's favorites
-        if (currentUser.getList("favorites").contains(placeId)){
+        if (currentUser.getList(CommonValues.KEY_FAVORITES).contains(placeId)){
             fabAddToFav.setImageResource(R.drawable.ic_favorite_filled);
         }
 
@@ -110,7 +110,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
         fabAddToFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<String> currentFavs = currentUser.getList("favorites");
+                List<String> currentFavs = currentUser.getList(CommonValues.KEY_FAVORITES);
 
                 if (currentFavs.contains(placeId)){
                     // we're disliking; remove the id from favorites
@@ -121,7 +121,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
                     currentFavs.add(placeId);
                     fabAddToFav.setImageResource(R.drawable.ic_favorite_filled);
                 }
-                currentUser.put("favorites", currentFavs);
+                currentUser.put(CommonValues.KEY_FAVORITES, currentFavs);
 
 
                 currentUser.saveInBackground(new SaveCallback() {
@@ -297,7 +297,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
      */
     public void getAllItins(){
         ParseQuery<Itinerary> query = ParseQuery.getQuery("Itinerary");
-        query.whereEqualTo("authors", currentUser);
+        query.whereEqualTo(CommonValues.KEY_USER, currentUser);
 
         itinNames = new ArrayList<>();
         itinIds = new ArrayList<>();

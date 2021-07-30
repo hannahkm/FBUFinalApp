@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.transition.Explode;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -185,7 +184,7 @@ public class EditDestinationActivity extends AppCompatActivity {
                                         } else {
                                             List<String> currentDests = object.getDestinations();
                                             currentDests.add(destination.getObjectId());
-                                            object.put("destinations", currentDests);
+                                            object.put(CommonValues.KEY_DESTINATIONS, currentDests);
 
                                             object.saveInBackground();
                                         }

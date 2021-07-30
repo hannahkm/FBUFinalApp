@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fbufinalapp.CommonValues;
 import com.example.fbufinalapp.DetailedItineraryActivity;
 import com.example.fbufinalapp.DetailedLocationActivity;
 import com.example.fbufinalapp.EditDestinationActivity;
@@ -143,7 +143,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
                     for (Destination i : destinations){
                         destIds.add(i.getObjectId());
                     }
-                    currentItin.put("destinations", destIds);
+                    currentItin.put(CommonValues.KEY_DESTINATIONS, destIds);
 
                     currentItin.saveInBackground(e -> {
                         if(e!=null){
