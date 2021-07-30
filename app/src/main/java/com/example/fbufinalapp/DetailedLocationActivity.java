@@ -93,7 +93,6 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
         placeId = getIntent().getStringExtra("placeID");
         String name = getIntent().getStringExtra("name");
-        getSupportActionBar().setTitle(name);
 
         // changes drawable of the favorites button if the location is already in the user's favorites
         if (currentUser.getList(CommonValues.KEY_FAVORITES).contains(placeId)){
@@ -218,6 +217,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
             place = response.getPlace();
 
             binding.tvName.setText(place.getName());
+            getSupportActionBar().setTitle(place.getName());
             binding.tvAddress.setText(place.getAddress());
 
             try {

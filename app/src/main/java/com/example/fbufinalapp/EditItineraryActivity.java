@@ -112,6 +112,7 @@ public class EditItineraryActivity extends AppCompatActivity {
                     if (e == null){
                         itin = object;
                         tvTripName.setText(object.getTitle());
+                        getSupportActionBar().setTitle(object.getTitle());
 
                         final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
                         final FetchPlaceRequest request = FetchPlaceRequest.newInstance(object.getPlaceID(), placeFields);
@@ -134,6 +135,8 @@ public class EditItineraryActivity extends AppCompatActivity {
                         Toast.makeText(EditItineraryActivity.this, "Couldn't retrive itinerary", Toast.LENGTH_SHORT).show();
                     }
                 });
+            } else {
+                getSupportActionBar().setTitle("New Itinerary");
             }
             return null;
         }

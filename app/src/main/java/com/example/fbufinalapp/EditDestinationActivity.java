@@ -238,6 +238,7 @@ public class EditDestinationActivity extends AppCompatActivity {
                 placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
                     place = response.getPlace();
                     tvLocation.setText(place.getName());
+                    getSupportActionBar().setTitle(place.getName());
                 }).addOnFailureListener((exception) -> {
                     if (exception instanceof ApiException) {
                         Toast.makeText(EditDestinationActivity.this, "Error retrieving location", Toast.LENGTH_SHORT).show();
@@ -267,9 +268,12 @@ public class EditDestinationActivity extends AppCompatActivity {
 
                         String name = object.getName();
                         if (name.contains("\n")) {
-                            binding.etDestName.setText(name.substring(0, name.indexOf("\n")));
+                            String destiName = name.substring(0, name.indexOf("\n"));
+                            binding.etDestName.setText(destiName);
+                            getSupportActionBar().setTitle(destiName);
                         } else {
                             binding.etDestName.setText(name);
+                            getSupportActionBar().setTitle(name);
                         }
                     } else {
                         // something went wrong
