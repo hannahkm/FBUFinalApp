@@ -68,7 +68,7 @@ public class FavoritesFragment extends Fragment {
         binding = FragmentFavoritesBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
 
-        ((AVLoadingIndicatorView) view.findViewById(R.id.avi)).show();
+        binding.avi.show();
 
         return view;
     }
@@ -133,10 +133,12 @@ public class FavoritesFragment extends Fragment {
         @Override
         protected void onPostExecute(Void result) {
             binding.avi.hide();
+            binding.rvFavorites.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected void onPreExecute() {
+            binding.rvFavorites.setVisibility(View.INVISIBLE);
             binding.avi.show();
         }
     }

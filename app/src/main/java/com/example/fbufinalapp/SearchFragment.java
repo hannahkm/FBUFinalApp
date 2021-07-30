@@ -25,6 +25,7 @@ import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,12 +64,20 @@ public class SearchFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        binding.avi.show();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         context = container.getContext();
         binding = FragmentSearchBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
+
+        binding.avi.show();
 
         return view;
     }
@@ -86,6 +95,8 @@ public class SearchFragment extends Fragment {
         searchResults.setLayoutManager(new LinearLayoutManager(context));
 
         binding.etSearch.addTextChangedListener(searchListener);
+
+        binding.avi.hide();
 
         placesClient = Places.createClient(context);
     }
@@ -129,7 +140,6 @@ public class SearchFragment extends Fragment {
                     Toast.makeText(context, "Place not found", Toast.LENGTH_SHORT).show();
                 }
             });
-
         }
 
         @Override

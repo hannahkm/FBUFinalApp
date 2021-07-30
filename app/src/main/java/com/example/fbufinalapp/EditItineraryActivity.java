@@ -3,6 +3,7 @@ package com.example.fbufinalapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.transition.Explode;
 import android.util.Log;
@@ -47,6 +48,7 @@ public class EditItineraryActivity extends AppCompatActivity {
     Place place;
     String itinId;
     Itinerary itin;
+    ActivityEditItineraryBinding binding;
     PlacesClient placesClient;
     ParseQuery<Itinerary> query;
     boolean editing = false;
@@ -58,7 +60,7 @@ public class EditItineraryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // using view binding
-        ActivityEditItineraryBinding binding = ActivityEditItineraryBinding.inflate(getLayoutInflater());
+        binding = ActivityEditItineraryBinding.inflate(getLayoutInflater());
 
         // layout of activity is stored in a special property called root
         View view = binding.getRoot();
@@ -76,38 +78,7 @@ public class EditItineraryActivity extends AppCompatActivity {
 
         itinId = getIntent().getStringExtra("itinId");
 
-        placesClient = Places.createClient(this);
-        if (getIntent().hasExtra("editing")){
-            query = ParseQuery.getQuery("Itinerary");
-            editing = true;
-            query.getInBackground(itinId, (object, e) -> {
-                if (e == null){
-                    itin = object;
-                    tvTripName.setText(object.getTitle());
-
-                    final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
-                    final FetchPlaceRequest request = FetchPlaceRequest.newInstance(object.getPlaceID(), placeFields);
-
-                    placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-                        Place place = response.getPlace();
-                        tvLocation.setText(place.getName());
-                    }).addOnFailureListener((exception) -> {
-                        if (exception instanceof ApiException) {
-                            final ApiException apiException = (ApiException) exception;
-                            Log.e(TAG, "Place not found: " + exception.getMessage());
-                        }
-                    });
-
-                    String pattern = "MM/dd/yyy";
-                    SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
-
-                    etStartDate.setText(dateFormat.format(object.getStartDate()));
-                    etEndDate.setText(dateFormat.format(object.getEndDate()));
-                } else {
-                    Toast.makeText(EditItineraryActivity.this, "Couldn't retrive itinerary", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
+        new queryDefaultValues().execute();
 
         binding.btFinish.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,6 +95,57 @@ public class EditItineraryActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private class queryDefaultValues extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... args) {
+            placesClient = Places.createClient(EditItineraryActivity.this);
+            if (getIntent().hasExtra("editing")){
+                query = ParseQuery.getQuery("Itinerary");
+                editing = true;
+                query.getInBackground(itinId, (object, e) -> {
+                    if (e == null){
+                        itin = object;
+                        tvTripName.setText(object.getTitle());
+
+                        final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+                        final FetchPlaceRequest request = FetchPlaceRequest.newInstance(object.getPlaceID(), placeFields);
+
+                        placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+                            Place place = response.getPlace();
+                            tvLocation.setText(place.getName());
+                        }).addOnFailureListener((exception) -> {
+                            if (exception instanceof ApiException) {
+                                final ApiException apiException = (ApiException) exception;
+                                Log.e(TAG, "Place not found: " + exception.getMessage());
+                            }
+                        });
+
+                        String pattern = "MM/dd/yyy";
+                        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+
+                        etStartDate.setText(dateFormat.format(object.getStartDate()));
+                        etEndDate.setText(dateFormat.format(object.getEndDate()));
+                    } else {
+                        Toast.makeText(EditItineraryActivity.this, "Couldn't retrive itinerary", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            binding.avi.hide();
+            super.onPostExecute(result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            binding.avi.show();
+        }
     }
 
     /**

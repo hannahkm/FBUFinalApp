@@ -84,6 +84,8 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
 
+        binding.avi.show();
+
         return view;
     }
 
@@ -181,7 +183,6 @@ public class DashboardFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void result) {
-            binding.avi.setVisibility(View.INVISIBLE);
             binding.avi.hide();
             super.onPostExecute(result);
         }
@@ -189,7 +190,6 @@ public class DashboardFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            binding.avi.setVisibility(View.VISIBLE);
             binding.avi.show();
         }
     }

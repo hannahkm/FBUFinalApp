@@ -3,6 +3,7 @@ package com.example.fbufinalapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.fbufinalapp.databinding.ActivitySignUpBinding;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -50,6 +52,14 @@ public class SignUpActivity extends AppCompatActivity {
                 SignUp();
             }
         });
+
+        binding.btLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     /**
@@ -71,29 +81,23 @@ public class SignUpActivity extends AppCompatActivity {
             user.put("itineraries", new ArrayList<>());
 
             user.signUpInBackground(e -> {
-                if (e == null) {
-                    // Hooray! Let them use the app now.
-                    Intent i = new Intent(SignUpActivity.this, MainActivity.class);
-                    Toast.makeText(SignUpActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
-                    startActivity(i);
-                } else {
-                    // Sign up didn't succeed. Look at the ParseException
-                    // to figure out what went wrong
-                    Log.i("SignUp Failed", String.valueOf(e));
-                    Toast.makeText(SignUpActivity.this, "Couldn't sign you up", Toast.LENGTH_SHORT).show();
-                }
+                userSave(e);
             });
         } else {
             user.saveInBackground(e -> {
-                if (e == null){
-                    Intent i = new Intent(SignUpActivity.this, MainActivity.class);
-                    Toast.makeText(SignUpActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
-                    startActivity(i);
-                } else {
-                    Toast.makeText(SignUpActivity.this, "Couldn't sign you up", Toast.LENGTH_SHORT).show();
-                }
+                userSave(e);
             });
         }
 
+    }
+
+    public void userSave(ParseException e) {
+        if (e == null) {
+            Intent i = new Intent(SignUpActivity.this, MainActivity.class);
+            Toast.makeText(SignUpActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
+            startActivity(i);
+        } else {
+            Toast.makeText(SignUpActivity.this, "Couldn't sign you up", Toast.LENGTH_SHORT).show();
+        }
     }
 }
