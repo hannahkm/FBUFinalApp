@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.transition.Explode;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -185,7 +184,7 @@ public class EditDestinationActivity extends AppCompatActivity {
                                         } else {
                                             List<String> currentDests = object.getDestinations();
                                             currentDests.add(destination.getObjectId());
-                                            object.put("destinations", currentDests);
+                                            object.put(CommonValues.KEY_DESTINATIONS, currentDests);
 
                                             object.saveInBackground();
                                         }
@@ -230,10 +229,8 @@ public class EditDestinationActivity extends AppCompatActivity {
             tvLocation.setFocusable(false);
 
             if (placeId != null){
-                // Specify the fields to return.
                 final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
 
-                // Construct a request object, passing the place ID and fields array.
                 final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
 
                 PlacesClient placesClient = Places.createClient(EditDestinationActivity.this);
@@ -241,6 +238,7 @@ public class EditDestinationActivity extends AppCompatActivity {
                 placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
                     place = response.getPlace();
                     tvLocation.setText(place.getName());
+                    getSupportActionBar().setTitle(place.getName());
                 }).addOnFailureListener((exception) -> {
                     if (exception instanceof ApiException) {
                         Toast.makeText(EditDestinationActivity.this, "Error retrieving location", Toast.LENGTH_SHORT).show();
@@ -258,7 +256,7 @@ public class EditDestinationActivity extends AppCompatActivity {
                         editingDestination = object;
                         Date date = editingDestination.getDate();
 
-                        SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM dd, yyyy");
+                        SimpleDateFormat dateFormatter = new SimpleDateFormat("MMMM dd, yyyy");
                         SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm");
                         SimpleDateFormat amPMFormatter = new SimpleDateFormat("a");
 
@@ -270,9 +268,12 @@ public class EditDestinationActivity extends AppCompatActivity {
 
                         String name = object.getName();
                         if (name.contains("\n")) {
-                            binding.etDestName.setText(name.substring(0, name.indexOf("\n")));
+                            String destiName = name.substring(0, name.indexOf("\n"));
+                            binding.etDestName.setText(destiName);
+                            getSupportActionBar().setTitle(destiName);
                         } else {
                             binding.etDestName.setText(name);
+                            getSupportActionBar().setTitle(name);
                         }
                     } else {
                         // something went wrong
@@ -312,7 +313,7 @@ public class EditDestinationActivity extends AppCompatActivity {
                 place = location;
                 String name = place.getName();
                 tvLocation.setText(name);
-                if (String.valueOf(binding.etDestName.getText()).equals("")) {
+                if (String.valueOf(binding.etDestName.getText()).isEmpty()) {
                     binding.etDestName.setText(name);
                 }
             } else {

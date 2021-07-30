@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.fbufinalapp.CommonValues;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
@@ -22,61 +23,53 @@ import java.util.List;
  */
 @ParseClassName("Destination")
 public class Destination extends ParseObject{
-    public static String KEY_DESCRIPTION = "notes";
-    public static String KEY_NAME = "name";
-    public static String KEY_PLACEID = "placeID";
-    public static String KEY_TIME = "time";
-    public static String KEY_ISDAY = "isDay";
-    public static String KEY_DATE = "date";
-    public static String KEY_ITINERARY = "itinerary";
-
     public String getName() {
-        return getString(KEY_NAME);
+        return getString(CommonValues.KEY_NAME);
     }
 
     public void setName(String name){
-        put(KEY_NAME, name);
+        put(CommonValues.KEY_NAME, name);
     }
 
     public String getDescription() {
-        return getString(KEY_DESCRIPTION);
+        return getString(CommonValues.KEY_DESCRIPTION_DESTINATION);
     }
 
     public void setDescription(String notes){
-        put(KEY_DESCRIPTION, notes);
+        put(CommonValues.KEY_DESCRIPTION_DESTINATION, notes);
     }
 
     public String getPlaceID() {
-        return getString(KEY_PLACEID);
+        return getString(CommonValues.KEY_PLACEID);
     }
 
     public void setPlaceID(String id){
-        put(KEY_PLACEID, id);
+        put(CommonValues.KEY_PLACEID, id);
     }
 
     public Date getTime(){
-        return getDate(KEY_TIME);
+        return getDate(CommonValues.KEY_TIME);
     }
 
     public void setTime(Date time){
-        put(KEY_TIME, time);
+        put(CommonValues.KEY_TIME, time);
     }
 
     public boolean getIsDay(){
-        return getBoolean(KEY_ISDAY);
+        return getBoolean(CommonValues.KEY_ISDAY);
     }
 
     public void setIsDay(Boolean day){
-        put(KEY_ISDAY, day);
+        put(CommonValues.KEY_ISDAY, day);
     }
 
-    public Date getDate() { return getDate(KEY_DATE); }
+    public Date getDate() { return getDate(CommonValues.KEY_DATE); }
 
-    public void setDate(Date date) { put(KEY_DATE, date); }
+    public void setDate(Date date) { put(CommonValues.KEY_DATE, date); }
 
-    public ParseObject getItinerary() { return getParseObject(KEY_ITINERARY); }
+    public ParseObject getItinerary() { return getParseObject(CommonValues.KEY_ITINERARY_DESTINATION); }
 
-    public void setItinerary(Itinerary itin) { put(KEY_ITINERARY, itin); }
+    public void setItinerary(Itinerary itin) { put(CommonValues.KEY_ITINERARY_DESTINATION, itin); }
 
     public String reformatTime(Date time){
         String pattern = "hh:mm a";

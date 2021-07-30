@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +24,6 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.parse.ParseUser;
-import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,7 +77,7 @@ public class FavoritesFragment extends Fragment {
 
         rvFavorites = view.findViewById(R.id.rvFavorites);
 
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = CommonValues.CURRENT_USER;
 
         placesClient = Places.createClient(context);
         placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS);
@@ -94,7 +92,6 @@ public class FavoritesFragment extends Fragment {
         binding.swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // refreshes the user's page
                 fetchTimelineAsync(0);
             }
         });
@@ -108,10 +105,14 @@ public class FavoritesFragment extends Fragment {
         binding.swipeContainer.setRefreshing(false);
     }
 
+    /**
+     * Queries the favorite locations of the current user in the background. In the meantime, the
+     * loading progress symbol is shown.
+     */
     private class queryFavoritesAsync extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... args) {
-            for (Object fav: currentUser.getList("favorites")) {
+            for (Object fav: currentUser.getList(CommonValues.KEY_FAVORITES)) {
                 String placeId = String.valueOf(fav);
 
                 final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);

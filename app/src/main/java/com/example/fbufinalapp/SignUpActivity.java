@@ -29,14 +29,12 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // using view binding
         ActivitySignUpBinding binding = ActivitySignUpBinding.inflate(getLayoutInflater());
 
-        // layout of activity is stored in a special property called root
         View view = binding.getRoot();
         setContentView(view);
 
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = CommonValues.CURRENT_USER;
 
         getSupportActionBar().setTitle("Register");
 
@@ -77,8 +75,8 @@ public class SignUpActivity extends AppCompatActivity {
         user.setEmail(email);
 
         if (newUser){
-            user.put("favorites", new ArrayList<>());
-            user.put("itineraries", new ArrayList<>());
+            user.put(CommonValues.KEY_FAVORITES, new ArrayList<>());
+            user.put(CommonValues.KEY_ITINERARY_USER, new ArrayList<>());
 
             user.signUpInBackground(e -> {
                 userSave(e);

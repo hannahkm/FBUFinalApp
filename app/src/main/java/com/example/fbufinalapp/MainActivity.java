@@ -23,7 +23,6 @@ import java.util.ArrayList;
  * Main Activity of the app; builds the bottom navigation to allow the user to move to other fragments
  */
 public class MainActivity extends AppCompatActivity {
-    // define your fragments here
     Fragment dashboardFragment, searchFragment, favoritesFragment, profileFragment;
 
     @Override
@@ -34,22 +33,8 @@ public class MainActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        // creates default guest user if current user isn't logged in
-        if (ParseUser.getCurrentUser() == null){
-            ParseUser user = new ParseUser();
-            user.setUsername("Guest");
-            user.setPassword("default");
-            user.put("favorites", new ArrayList<>());
-            user.put("itineraries", new ArrayList<>());
-
-            user.signUpInBackground(e -> {
-                if (e == null) {
-                    Log.i("MainActivity", "signing up!");
-                    Toast.makeText(MainActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.i("SignUp Failed", String.valueOf(e));
-                }
-            });
+        if (CommonValues.CURRENT_USER == null){
+            setGuestUser();
         }
 
         // Initialize the SDK
@@ -100,6 +85,22 @@ public class MainActivity extends AppCompatActivity {
 
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
+    }
+
+    public void setGuestUser(){
+        ParseUser user = new ParseUser();
+        user.setUsername("Guest");
+        user.setPassword("default");
+        user.put(CommonValues.KEY_FAVORITES, new ArrayList<>());
+        user.put(CommonValues.KEY_ITINERARY_USER, new ArrayList<>());
+
+        user.signUpInBackground(e -> {
+            if (e == null) {
+                Toast.makeText(MainActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.e("SignUp Failed", String.valueOf(e));
+            }
+        });
     }
 
 }
