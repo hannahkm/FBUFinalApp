@@ -61,7 +61,6 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
         return itins.size();
     }
 
-    // Clean all elements of the recycler
     public void clear() {
         itins.clear();
         notifyDataSetChanged();

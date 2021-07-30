@@ -162,7 +162,7 @@ public class DashboardFragment extends Fragment {
         protected Void doInBackground(Void... args) {
             ParseQuery<Itinerary> query = ParseQuery.getQuery(Itinerary.class);
             query.include(CommonValues.KEY_USER);
-            query.whereEqualTo("authors", CommonValues.CURRENT_USER);
+            query.whereEqualTo(CommonValues.KEY_USER, CommonValues.CURRENT_USER);
 
             // order posts by creation date (newest first)
             query.addDescendingOrder("createdAt");
@@ -172,7 +172,6 @@ public class DashboardFragment extends Fragment {
                     if (e != null){
                         Log.e("DashboardFragment", String.valueOf(e));
                     } else {
-                        // save received posts to list and notify adapter of new data
                         trips.addAll(itineraries);
                         adapter.notifyDataSetChanged();
                     }

@@ -229,10 +229,8 @@ public class EditDestinationActivity extends AppCompatActivity {
             tvLocation.setFocusable(false);
 
             if (placeId != null){
-                // Specify the fields to return.
                 final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
 
-                // Construct a request object, passing the place ID and fields array.
                 final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
 
                 PlacesClient placesClient = Places.createClient(EditDestinationActivity.this);
@@ -257,7 +255,7 @@ public class EditDestinationActivity extends AppCompatActivity {
                         editingDestination = object;
                         Date date = editingDestination.getDate();
 
-                        SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM dd, yyyy");
+                        SimpleDateFormat dateFormatter = new SimpleDateFormat("MMMM dd, yyyy");
                         SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm");
                         SimpleDateFormat amPMFormatter = new SimpleDateFormat("a");
 
@@ -311,7 +309,7 @@ public class EditDestinationActivity extends AppCompatActivity {
                 place = location;
                 String name = place.getName();
                 tvLocation.setText(name);
-                if (String.valueOf(binding.etDestName.getText()).equals("")) {
+                if (String.valueOf(binding.etDestName.getText()).isEmpty()) {
                     binding.etDestName.setText(name);
                 }
             } else {

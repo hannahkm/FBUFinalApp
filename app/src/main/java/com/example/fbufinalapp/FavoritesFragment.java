@@ -105,6 +105,10 @@ public class FavoritesFragment extends Fragment {
         binding.swipeContainer.setRefreshing(false);
     }
 
+    /**
+     * Queries the favorite locations of the current user in the background. In the meantime, the
+     * loading progress symbol is shown.
+     */
     private class queryFavoritesAsync extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... args) {

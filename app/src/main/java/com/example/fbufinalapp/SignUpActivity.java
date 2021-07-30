@@ -29,10 +29,8 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // using view binding
         ActivitySignUpBinding binding = ActivitySignUpBinding.inflate(getLayoutInflater());
 
-        // layout of activity is stored in a special property called root
         View view = binding.getRoot();
         setContentView(view);
 

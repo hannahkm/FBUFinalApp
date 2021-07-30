@@ -97,6 +97,10 @@ public class EditItineraryActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Queries the default values (exists if the user is editing an existing itinerary) of the
+     * current itinerary in the background. In the meantime, the loading progress symbol is shown.
+     */
     private class queryDefaultValues extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... args) {
@@ -149,6 +153,10 @@ public class EditItineraryActivity extends AppCompatActivity {
 
     /**
      * Process and save the itinerary. Info that's left blank are given default values or warn the user.
+     * Title: if null, defaulted to "Trip to ____" or "New Trip" depending on location value
+     * Location: left as null if null
+     * Dates: if both the start and end dates are null, user is warned. if one or the other is null,
+     * values are set to be equal to each other
      */
     private void parseItinerary() throws java.text.ParseException {
         String title = String.valueOf(tvTripName.getText());

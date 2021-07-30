@@ -91,6 +91,10 @@ public class DetailedItineraryActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Queries the destinations of the current itinerary in the background. In the meantime, the
+     * loading progress symbol is shown.
+     */
     private class queryDestinationsAsync extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... args) {

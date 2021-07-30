@@ -177,6 +177,10 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Queries the details of the current location in the background. In the meantime, the
+     * loading progress symbol is shown.
+     */
     private class queryPageAsync extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... args) {
@@ -307,7 +311,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
             public void done(List<Itinerary> itineraries, ParseException e) {
                 if (e != null){
                     Toast.makeText(DetailedLocationActivity.this, "Unable to get itineraries", Toast.LENGTH_SHORT).show();
-                    Log.e("DashboardFragment", String.valueOf(e));
+                    Log.e("DetailedLocation", String.valueOf(e));
                 } else {
                     // save received posts to list and notify adapter of new data
                     for (Itinerary itin : itineraries){
