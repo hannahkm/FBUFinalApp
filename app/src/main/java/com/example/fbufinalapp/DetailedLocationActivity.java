@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.transition.Explode;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -79,6 +81,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
         fabAddToFav = findViewById(R.id.fabAddToFav);
 
         currentUser = ParseUser.getCurrentUser();
+        getWindow().setEnterTransition(new Explode());
 
         // builds a popup window; to be used when the user adds the current location to an itinerary
         inflater = (LayoutInflater) DetailedLocationActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -99,8 +102,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
         placesClient = Places.createClient(this);
 
-        populatePage(); // obtain place data and fill page
-        getAllItins();
+        new queryPageAsync().execute();
 
         /**
          * the user clicked on the favorites button, so we add/remove it from their favorites
@@ -173,6 +175,27 @@ public class DetailedLocationActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private class queryPageAsync extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... args) {
+            populatePage(); // obtain place data and fill page
+            getAllItins();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            binding.avi.hide();
+            super.onPostExecute(result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            binding.avi.show();
+        }
     }
 
     /**

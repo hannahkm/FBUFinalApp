@@ -1,6 +1,7 @@
 package com.example.fbufinalapp.adapters;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -91,7 +92,7 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
                     }
 
                     i.putExtra("itinId", itinId);
-                    context.startActivity(i);
+                    context.startActivity(i, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
                 }
             });
 

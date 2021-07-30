@@ -3,7 +3,9 @@ package com.example.fbufinalapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.transition.Explode;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -46,6 +48,7 @@ public class EditDestinationActivity extends AppCompatActivity {
     ActivityEditDestinationBinding binding;
     Destination editingDestination;
     TextView tvLocation;
+    String itinId;
     boolean editing = false;
     private static int AUTOCOMPLETE_REQUEST_CODE = 600;
 
@@ -59,66 +62,16 @@ public class EditDestinationActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
+        getWindow().setEnterTransition(new Explode());
+        getWindow().setExitTransition(new Explode());
+
         tripDates = new ArrayList<>();
         tvLocation = findViewById(R.id.tvLocation);
 
-        String itinId = getIntent().getStringExtra("itinId");
+        itinId = getIntent().getStringExtra("itinId");
 
         // populates page with existing values, if there are any
-        if (getIntent().hasExtra("placeId")){
-            String placeId = getIntent().getStringExtra("placeId");
-
-            tvLocation.setFocusable(false);
-
-            if (placeId != null){
-                // Specify the fields to return.
-                final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
-
-                // Construct a request object, passing the place ID and fields array.
-                final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
-
-                PlacesClient placesClient = Places.createClient(EditDestinationActivity.this);
-
-                placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
-                    place = response.getPlace();
-                    tvLocation.setText(place.getName());
-                }).addOnFailureListener((exception) -> {
-                    if (exception instanceof ApiException) {
-                        Toast.makeText(EditDestinationActivity.this, "Error retrieving location", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            if (getIntent().hasExtra("editing")){
-                editing = true;
-                tvLocation.setOnFocusChangeListener(focusListener);
-
-                ParseQuery<Destination> query = ParseQuery.getQuery("Destination");
-                query.getInBackground(getIntent().getStringExtra("destinationId"), (object, e) -> {
-                    if (e == null) {
-                        editingDestination = object;
-                        Date date = editingDestination.getDate();
-
-                        SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM dd, yyyy");
-                        SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm");
-                        SimpleDateFormat amPMFormatter = new SimpleDateFormat("a");
-
-                        dateSelected = dateFormatter.format(date);
-                        timeSelected = amPMFormatter.format(date);
-                        binding.etDateSelect.setHint(dateSelected);
-                        binding.etTime.setText(timeFormatter.format(date));
-                        binding.etTimeSelect.setHint(timeSelected);
-                        binding.etDestName.setText(object.getName());
-                    } else {
-                        // something went wrong
-                        Toast.makeText(this, "Couldn't retrieve destination", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            }
-        } else {
-            tvLocation.setOnFocusChangeListener(focusListener);
-        }
+        new queryDefaultValues().execute();
 
         ParseQuery<Itinerary> queryItinerary = ParseQuery.getQuery(Itinerary.class);
 
@@ -185,15 +138,24 @@ public class EditDestinationActivity extends AppCompatActivity {
                 SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm a zzzz");
 
                 boolean timeValid = true;
+                Date selectedDate;
                 try {
-                    Date selectedDate = formatter.parse(timeString);
+                    selectedDate = formatter.parse(timeString);
+                } catch (java.text.ParseException e) {
+                    e.printStackTrace();
+                    selectedDate = null;
+                    timeValid = false;
+                }
+
+                try {
                     if (place.isOpen(selectedDate.getTime())){
                         destination.setDate(selectedDate);
                     } else {
                         timeValid = false;
                     }
-                } catch (java.text.ParseException e) {
+                } catch (NullPointerException e) {
                     e.printStackTrace();
+                    destination.setDate(selectedDate);
                 }
 
                 destination.setIsDay(false);
@@ -234,14 +196,94 @@ public class EditDestinationActivity extends AppCompatActivity {
                             }
                         }
                     });
-                    finish();
+                    finishAfterTransition();
                 } else {
                     Toast.makeText(EditDestinationActivity.this, "This location won't be open at that time.", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
 
+    }
+
+    private class queryDefaultValues extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... args) {
+            populateDefaultValues();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            binding.avi.hide();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            binding.avi.show();
+        }
+    }
+
+    private void populateDefaultValues() {
+        if (getIntent().hasExtra("placeId")){
+            String placeId = getIntent().getStringExtra("placeId");
+
+            tvLocation.setFocusable(false);
+
+            if (placeId != null){
+                // Specify the fields to return.
+                final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+
+                // Construct a request object, passing the place ID and fields array.
+                final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+
+                PlacesClient placesClient = Places.createClient(EditDestinationActivity.this);
+
+                placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+                    place = response.getPlace();
+                    tvLocation.setText(place.getName());
+                }).addOnFailureListener((exception) -> {
+                    if (exception instanceof ApiException) {
+                        Toast.makeText(EditDestinationActivity.this, "Error retrieving location", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            if (getIntent().hasExtra("editing")){
+                editing = true;
+                tvLocation.setOnFocusChangeListener(focusListener);
+
+                ParseQuery<Destination> query = ParseQuery.getQuery("Destination");
+                query.getInBackground(getIntent().getStringExtra("destinationId"), (object, e) -> {
+                    if (e == null) {
+                        editingDestination = object;
+                        Date date = editingDestination.getDate();
+
+                        SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM dd, yyyy");
+                        SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm");
+                        SimpleDateFormat amPMFormatter = new SimpleDateFormat("a");
+
+                        dateSelected = dateFormatter.format(date);
+                        timeSelected = amPMFormatter.format(date);
+                        binding.etDateSelect.setHint(dateSelected);
+                        binding.etTime.setText(timeFormatter.format(date));
+                        binding.etTimeSelect.setHint(timeSelected);
+
+                        String name = object.getName();
+                        if (name.contains("\n")) {
+                            binding.etDestName.setText(name.substring(0, name.indexOf("\n")));
+                        } else {
+                            binding.etDestName.setText(name);
+                        }
+                    } else {
+                        // something went wrong
+                        Toast.makeText(this, "Couldn't retrieve destination", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+        } else {
+            tvLocation.setOnFocusChangeListener(focusListener);
+        }
     }
 
     /**

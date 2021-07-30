@@ -36,7 +36,6 @@ public class LoginActivity extends AppCompatActivity {
 
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser != null) {
-            // send user straight to main activity
             Intent i = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(i);
         }
@@ -63,12 +62,10 @@ public class LoginActivity extends AppCompatActivity {
 
         ParseUser.logInInBackground(username, password, (user, e) -> {
             if (user != null) {
-                // Hooray! The user is logged in.
                 Intent i = new Intent(LoginActivity.this, MainActivity.class);
                 Toast.makeText(LoginActivity.this, "Welcome back!", Toast.LENGTH_SHORT).show();
                 startActivity(i);
             } else {
-                // Login failed. Look at the ParseException to see what happened.
                 Log.e("Login Failed", String.valueOf(e));
                 Toast.makeText(LoginActivity.this, "Couldn't log you in", Toast.LENGTH_SHORT).show();
             }

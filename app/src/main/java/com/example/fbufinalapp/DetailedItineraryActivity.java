@@ -6,8 +6,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.transition.Explode;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +26,7 @@ import com.example.fbufinalapp.models.Itinerary;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +55,6 @@ public class DetailedItineraryActivity extends AppCompatActivity {
 
         editing = false;
         menu.findItem(R.id.action_edit).setTitle("EDIT");
-
     }
 
     @Override
@@ -62,27 +67,11 @@ public class DetailedItineraryActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
+        getWindow().setEnterTransition(new Slide());
+
         itinId = getIntent().getStringExtra("itinId");
 
-        ParseQuery<Itinerary> queryItinerary = ParseQuery.getQuery(Itinerary.class);
-
-        queryItinerary.getInBackground(itinId, (object, e) -> {
-            if (e == null) {
-                currentItinerary = object;
-                binding.tvTitle.setText(object.getTitle());
-                getSupportActionBar().setTitle(object.getTitle());
-                getDestinations();
-
-                rvDestinations = view.findViewById(R.id.rvDestinations);
-                destinations = new ArrayList<>();
-                adapter = new DestinationAdapter(this, destinations, currentItinerary);
-
-                rvDestinations.setAdapter(adapter);
-                rvDestinations.setLayoutManager(new LinearLayoutManager(this));
-            } else {
-                Toast.makeText(this, "Couldn't retrieve itinerary", Toast.LENGTH_SHORT).show();
-            }
-        });
+        new queryDestinationsAsync().execute();
 
         // Allows the user to create a new destination to add to this itinerary
         binding.fabNewDest.setOnClickListener(new View.OnClickListener() {
@@ -90,7 +79,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(DetailedItineraryActivity.this, EditDestinationActivity.class);
                 i.putExtra("itinId", itinId);
-                startActivity(i);
+                startActivity(i, ActivityOptions.makeSceneTransitionAnimation(DetailedItineraryActivity.this).toBundle());
                 adapter.notifyDataSetChanged();
             }
         });
@@ -103,6 +92,44 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                 fetchTimelineAsync(0);
             }
         });
+    }
+
+    private class queryDestinationsAsync extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... args) {
+            ParseQuery<Itinerary> queryItinerary = ParseQuery.getQuery(Itinerary.class);
+
+            queryItinerary.getInBackground(itinId, (object, e) -> {
+                if (e == null) {
+                    currentItinerary = object;
+                    binding.tvTitle.setText(object.getTitle());
+                    getSupportActionBar().setTitle(object.getTitle());
+                    getDestinations();
+
+                    rvDestinations = binding.rvDestinations;
+                    destinations = new ArrayList<>();
+                    adapter = new DestinationAdapter(DetailedItineraryActivity.this, destinations, currentItinerary);
+
+                    rvDestinations.setAdapter(adapter);
+                    rvDestinations.setLayoutManager(new LinearLayoutManager(DetailedItineraryActivity.this));
+                } else {
+                    Toast.makeText(DetailedItineraryActivity.this, "Couldn't retrieve itinerary", Toast.LENGTH_SHORT).show();
+                }
+            });
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            binding.avi.hide();
+            super.onPostExecute(result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            binding.avi.show();
+        }
     }
 
     public void fetchTimelineAsync(int page) {

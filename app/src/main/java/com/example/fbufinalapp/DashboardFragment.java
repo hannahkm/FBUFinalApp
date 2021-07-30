@@ -2,6 +2,7 @@ package com.example.fbufinalapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -22,6 +23,9 @@ import android.view.ViewGroup;
 import com.example.fbufinalapp.adapters.ItineraryAdapter;
 import com.example.fbufinalapp.databinding.FragmentDashboardBinding;
 import com.example.fbufinalapp.models.Itinerary;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -29,7 +33,6 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * A Fragment subclass to create the user's dashboard page
  * Builds the list of itineraries that the user has created and presents it as a list
@@ -80,6 +83,8 @@ public class DashboardFragment extends Fragment {
         context = container.getContext();
         binding = FragmentDashboardBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
+
+        binding.avi.show();
 
         return view;
     }
@@ -132,7 +137,7 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        queryTrips();
+        new queryTripsAsync().execute();
 
         // Allows the user to create new itineraries
         binding.fabNewItin.setOnClickListener(new View.OnClickListener() {
@@ -145,34 +150,48 @@ public class DashboardFragment extends Fragment {
         });
     }
 
+
     public void fetchTimelineAsync(int page) {
         adapter.clear();
-        queryTrips();
+        new queryTripsAsync().execute();
         binding.swipeContainer.setRefreshing(false);
     }
 
-    /**
-     * Obtains all the itineraries that the user owns in the Parse backend and displays them on
-     * the user's dashboard from most to least recent.
-     */
-    private void queryTrips() {
-        ParseQuery<Itinerary> query = ParseQuery.getQuery(Itinerary.class);
-        query.include(Itinerary.KEY_USER);
-        query.whereEqualTo("authors", ParseUser.getCurrentUser());
+    private class queryTripsAsync extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... args) {
+            ParseQuery<Itinerary> query = ParseQuery.getQuery(Itinerary.class);
+            query.include(Itinerary.KEY_USER);
+            query.whereEqualTo("authors", ParseUser.getCurrentUser());
 
-        // order posts by creation date (newest first)
-        query.addDescendingOrder("createdAt");
-        query.findInBackground(new FindCallback<Itinerary>() {
-            @Override
-            public void done(List<Itinerary> itineraries, ParseException e) {
-                if (e != null){
-                    Log.e("DashboardFragment", String.valueOf(e));
-                } else {
-                    // save received posts to list and notify adapter of new data
-                    trips.addAll(itineraries);
-                    adapter.notifyDataSetChanged();
+            // order posts by creation date (newest first)
+            query.addDescendingOrder("createdAt");
+            query.findInBackground(new FindCallback<Itinerary>() {
+                @Override
+                public void done(List<Itinerary> itineraries, ParseException e) {
+                    if (e != null){
+                        Log.e("DashboardFragment", String.valueOf(e));
+                    } else {
+                        // save received posts to list and notify adapter of new data
+                        trips.addAll(itineraries);
+                        adapter.notifyDataSetChanged();
+                    }
                 }
-            }
-        });
+            });
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            binding.avi.hide();
+            super.onPostExecute(result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            binding.avi.show();
+        }
     }
+
 }

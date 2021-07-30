@@ -112,6 +112,16 @@
         app:backgroundTint="@color/brown_light"
         app:srcCompat="@drawable/ic_favorite" />
 
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/avi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        style="@style/AVLoadingIndicatorView"
+        app:indicatorName="BallClipRotateIndicator"
+        app:indicatorColor="@color/brown"
+        />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddToItin"
         android:layout_width="wrap_content"
