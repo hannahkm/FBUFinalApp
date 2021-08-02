@@ -71,10 +71,10 @@
         android:id="@+id/btWebsite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvPriceLevel"
+        android:layout_below="@+id/tvDetailedForecast"
         android:layout_alignParentStart="true"
         android:layout_marginStart="65dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:text="website"
         app:icon="@drawable/ic_launch" />
 
@@ -82,9 +82,9 @@
         android:id="@+id/btPhoneNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvPriceLevel"
+        android:layout_below="@+id/tvDetailedForecast"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="65dp"
         android:text="Call"
         app:icon="@android:drawable/stat_sys_phone_call" />
@@ -135,6 +135,43 @@
         app:backgroundTint="@color/brown_light"
         app:srcCompat="@drawable/ic_travel" />
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lavWeather"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@+id/tvPriceLevel"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="-20dp"
+        android:layout_marginStart="10dp"
+        android:scaleType="centerCrop"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true" />
+
+    <TextView
+        android:id="@+id/tvWeatherTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvPriceLevel"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/lavWeather"
+        android:text="Today's Weather"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tvDetailedForecast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvWeatherTitle"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/lavWeather"
+        android:textSize="18sp"
+        tools:text="Sunny, with a high near 85. Northeast wind around 7 mph." />
 
 
 </RelativeLayout>

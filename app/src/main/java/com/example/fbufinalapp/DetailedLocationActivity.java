@@ -24,28 +24,42 @@ import android.widget.Toast;
 
 import com.example.fbufinalapp.databinding.ActivityDetailedLocationBinding;
 import com.example.fbufinalapp.models.Itinerary;
+import com.example.fbufinalapp.models.WeatherForecast;
+import com.example.fbufinalapp.models.WeatherForecastWrapper;
+import com.example.fbufinalapp.models.WeatherPoint;
+import com.example.fbufinalapp.models.WeatherPointWrapper;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.internal.LinkedTreeMap;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Screen to show the user details about a given location. Data obtained from the Google Places SDK.
  */
 public class DetailedLocationActivity extends AppCompatActivity {
     public static String TAG = "DetailedLocationActivity";
-    ActivityDetailedLocationBinding binding;
+    public static ActivityDetailedLocationBinding binding;
     View layout;
     TextView tvOpenHours;
     TextView tvPriceLevel;
@@ -176,6 +190,73 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
     }
 
+    public void getForecast(double lat, double lon) {
+        WeatherApplication.getWeatherData service = WeatherApplication.getRetrofitInstance().create(WeatherApplication.getWeatherData.class);
+        Call<WeatherPointWrapper> call = service.getWeather(lat, lon);
+        call.enqueue(new Callback<WeatherPointWrapper>() {
+            @Override
+            public void onResponse(Call<WeatherPointWrapper> call, Response<WeatherPointWrapper> response) {
+                WeatherPointWrapper pointWrapper = response.body();
+
+                if (pointWrapper == null){
+                    Toast.makeText(DetailedLocationActivity.this, "Weather forecast unavailable", Toast.LENGTH_SHORT).show();
+                    binding.tvDetailedForecast.setText("Sorry, this feature is unavailable in this location.");
+                    binding.lavWeather.setAnimation("lottie-error.json");
+                } else {
+                    WeatherPoint point = pointWrapper.properties;
+                    String gridId = String.valueOf(point.getGridId());
+                    int gridX = point.getGridX();
+                    int gridY = point.getGridY();
+
+                    Call<WeatherForecastWrapper> callForecast = service.getForecast(gridId, gridX, gridY);
+                    callForecast.enqueue(new Callback<WeatherForecastWrapper>() {
+                        @Override
+                        public void onResponse(Call<WeatherForecastWrapper> call, Response<WeatherForecastWrapper> response) {
+                            if (response == null){
+                                Log.e("WeatherApplication", "no response");
+                                binding.tvDetailedForecast.setText("Sorry, this feature is unavailable in this location.");
+                                binding.lavWeather.setAnimation("lottie-error.json");
+                            } else {
+                                WeatherForecastWrapper forecastWrapper = response.body();
+                                WeatherForecast forecast = forecastWrapper.properties;
+
+                                ArrayList<LinkedTreeMap> periods = ((ArrayList<LinkedTreeMap>) forecast.getPeriods());
+                                LinkedTreeMap<String, Object> todayForecast = periods.get(0);
+                                String detailedForecast = (String) todayForecast.get("detailedForecast");
+                                binding.tvDetailedForecast.setText(detailedForecast);
+
+                                if (detailedForecast.contains("thunderstorm")) {
+                                    binding.lavWeather.setAnimation("lottie-thunderstorm.json");
+                                } else if (detailedForecast.contains("showers")) {
+                                    binding.lavWeather.setAnimation("lottie-rain.json");
+                                } else if (detailedForecast.contains("snow")) {
+                                    binding.lavWeather.setAnimation("lottie-snow.json");
+                                } else if (detailedForecast.contains("cloudy")) {
+                                    binding.lavWeather.setAnimation("lottie-cloudy.json");
+                                } else {
+                                    binding.lavWeather.setAnimation("lottie-sunny.json");
+                                }
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<WeatherForecastWrapper> call, Throwable t) {
+                            Log.e("WeatherApplication", String.valueOf(t));
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeatherPointWrapper> call, Throwable t) {
+                Log.e("DetailedLocation", String.valueOf(t));
+            }
+        });
+        
+        binding.lavWeather.setScale(0.3F);
+    }
+
     /**
      * Queries the details of the current location in the background. In the meantime, the
      * loading progress symbol is shown.
@@ -209,12 +290,15 @@ public class DetailedLocationActivity extends AppCompatActivity {
     public void populatePage(){
         final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID,
                 Place.Field.NAME, Place.Field.ADDRESS, Place.Field.RATING, Place.Field.PRICE_LEVEL,
-                Place.Field.WEBSITE_URI, Place.Field.PHONE_NUMBER);
+                Place.Field.WEBSITE_URI, Place.Field.PHONE_NUMBER, Place.Field.LAT_LNG);
 
         final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
 
         placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
             place = response.getPlace();
+            LatLng coords = place.getLatLng();
+
+            getForecast(coords.latitude, coords.longitude);
 
             binding.tvName.setText(place.getName());
             getSupportActionBar().setTitle(place.getName());

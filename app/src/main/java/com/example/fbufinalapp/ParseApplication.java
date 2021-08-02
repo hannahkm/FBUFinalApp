@@ -1,6 +1,7 @@
 package com.example.fbufinalapp;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.example.fbufinalapp.models.Destination;
 import com.example.fbufinalapp.models.Itinerary;
@@ -9,6 +10,8 @@ import com.parse.ParseObject;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+
+import static java.security.AccessController.getContext;
 
 public class ParseApplication extends Application {
     @Override
@@ -35,7 +38,6 @@ public class ParseApplication extends Application {
                 .server("https://parseapi.back4app.com")
                 .build()
         );
-
 
     }
 }
