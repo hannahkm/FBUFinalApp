@@ -28,10 +28,7 @@ import com.example.fbufinalapp.models.AccuweatherLocation;
 import com.example.fbufinalapp.models.DailyForecast;
 import com.example.fbufinalapp.models.Day;
 import com.example.fbufinalapp.models.Itinerary;
-import com.example.fbufinalapp.models.WeatherForecast;
-import com.example.fbufinalapp.models.WeatherForecastWrapper;
-import com.example.fbufinalapp.models.WeatherPoint;
-import com.example.fbufinalapp.models.WeatherPointWrapper;
+
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
@@ -39,16 +36,11 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.internal.LinkedTreeMap;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,7 +102,6 @@ public class DetailedLocationActivity extends AppCompatActivity {
         pw.setOutsideTouchable(true);
 
         placeId = getIntent().getStringExtra("placeID");
-        String name = getIntent().getStringExtra("name");
 
         // changes drawable of the favorites button if the location is already in the user's favorites
         if (currentUser.getList(CommonValues.KEY_FAVORITES).contains(placeId)){
@@ -194,77 +185,6 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
     }
 
-    public void getForecast(double lat, double lon) {
-        WeatherApplication.getWeatherData service = WeatherApplication.getRetrofitInstance().create(WeatherApplication.getWeatherData.class);
-        String latlng = lat + "," + lon;
-        Call<AccuweatherLocation> call = service.getLocation(getResources().getString(R.string.weatherKey), latlng);
-        call.enqueue(new Callback<AccuweatherLocation>() {
-            @Override
-            public void onResponse(Call<AccuweatherLocation> call, Response<AccuweatherLocation> response) {
-                AccuweatherLocation location = response.body();
-
-                if (location == null){
-                    Toast.makeText(DetailedLocationActivity.this, "Weather forecast unavailable", Toast.LENGTH_SHORT).show();
-                    binding.tvDetailedForecast.setText("Sorry, this feature is unavailable in this location.");
-                    binding.lavWeather.setAnimation("lottie-error.json");
-                } else {
-                    String locationKey = location.Key;
-                    Log.i("DetailedLocation", "locationKey: " + locationKey);
-
-                    Call<AccuweatherForecast> callForecast = service.getForecast(locationKey, getResources().getString(R.string.weatherKey));
-                    callForecast.enqueue(new Callback<AccuweatherForecast>() {
-                        @Override
-                        public void onResponse(Call<AccuweatherForecast> call, Response<AccuweatherForecast> response) {
-                            if (response == null){
-                                Log.e("WeatherApplication", "no response");
-                                binding.tvDetailedForecast.setText("Sorry, this feature is unavailable in this location.");
-                                binding.lavWeather.setAnimation("lottie-error.json");
-                            } else {
-                                AccuweatherForecast forecastWrapper = response.body();
-                                List<DailyForecast> forecast = forecastWrapper.getDailyForecasts();
-                                Day todayForecast = forecast.get(0).getDay();
-
-                                String detailedForecast = todayForecast.getIconPhrase();
-
-                                if (detailedForecast.contains("t-storm")) {
-                                    binding.lavWeather.setAnimation("lottie-thunderstorm.json");
-                                    detailedForecast.replace("t-storm", "thunderstorm");
-                                } else if (detailedForecast.contains("showers")) {
-                                    binding.lavWeather.setAnimation("lottie-rainy.json");
-                                } else if (detailedForecast.contains("snow")) {
-                                    binding.lavWeather.setAnimation("lottie-snow.json");
-                                } else if (detailedForecast.contains("cloudy") || detailedForecast.contains("clouds")) {
-                                    binding.lavWeather.setAnimation("lottie-cloudy.json");
-                                } else {
-                                    binding.lavWeather.setAnimation("lottie-sunny.json");
-                                }
-
-                                binding.tvDetailedForecast.setText(detailedForecast);
-
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<AccuweatherForecast> call, Throwable t) {
-                            Log.e("WeatherApplication", String.valueOf(t));
-                            binding.tvDetailedForecast.setText("Sorry, this feature is unavailable.");
-                            binding.lavWeather.setAnimation("lottie-error.json");
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AccuweatherLocation> call, Throwable t) {
-                Log.e("DetailedLocation", String.valueOf(t));
-                binding.tvDetailedForecast.setText("Sorry, this feature is unavailable.");
-                binding.lavWeather.setAnimation("lottie-error.json");
-            }
-        });
-        
-        binding.lavWeather.setScale(0.3F);
-    }
-
     /**
      * Queries the details of the current location in the background. In the meantime, the
      * loading progress symbol is shown.
@@ -279,14 +199,14 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void result) {
-            binding.avi.hide();
             super.onPostExecute(result);
+            binding.avi.hide();
         }
 
         @Override
         protected void onPreExecute() {
-            super.onPreExecute();
             binding.avi.show();
+            super.onPreExecute();
         }
     }
 
@@ -383,9 +303,82 @@ public class DetailedLocationActivity extends AppCompatActivity {
                 Log.e(TAG, "Place not found: " + exception.getMessage());
             }
         });
+    }
 
+    /**
+     * Function to retrieve the forecast for a given location from Accuweather
+     * Calls two APIs: the Location API and the forecast API. The location API provides the locationKey for
+     * the given coordinates, and the forecast API uses this key to return the current forecast
+     *
+     * Weather forecast values are set in the activity, and a lottie animation is displayed to represent it
+     */
+    public void getForecast(double lat, double lon) {
+        WeatherApplication.getWeatherData service = WeatherApplication.getRetrofitInstance().create(WeatherApplication.getWeatherData.class);
+        String latlng = lat + "," + lon;
+        Call<AccuweatherLocation> call = service.getLocation(getResources().getString(R.string.weatherKey), latlng);
+        call.enqueue(new Callback<AccuweatherLocation>() {
+            @Override
+            public void onResponse(Call<AccuweatherLocation> call, Response<AccuweatherLocation> response) {
+                AccuweatherLocation location = response.body();
 
+                if (location == null){
+                    binding.tvDetailedForecast.setText("Sorry, this feature is unavailable in this location.");
+                    binding.lavWeather.setAnimation("lottie-error.json");
+                } else {
+                    String locationKey = location.Key;
 
+                    Call<AccuweatherForecast> callForecast = service.getForecast(locationKey, getResources().getString(R.string.weatherKey));
+                    callForecast.enqueue(new Callback<AccuweatherForecast>() {
+                        @Override
+                        public void onResponse(Call<AccuweatherForecast> call, Response<AccuweatherForecast> response) {
+                            if (response == null){
+                                Log.e("WeatherApplication", "no response");
+                                binding.tvDetailedForecast.setText("Sorry, this feature is unavailable in this location.");
+                                binding.lavWeather.setAnimation("lottie-error.json");
+                            } else {
+                                AccuweatherForecast forecastWrapper = response.body();
+                                List<DailyForecast> forecast = forecastWrapper.getDailyForecasts();
+                                Day todayForecast = forecast.get(0).getDay();
+
+                                String detailedForecast = todayForecast.getIconPhrase();
+
+                                if (detailedForecast.contains("t-storm")) {
+                                    binding.lavWeather.setAnimation("lottie-thunderstorm.json");
+                                    detailedForecast.replace("t-storm", "thunderstorm");
+                                } else if (detailedForecast.contains("showers")) {
+                                    binding.lavWeather.setAnimation("lottie-rainy.json");
+                                } else if (detailedForecast.contains("snow")) {
+                                    binding.lavWeather.setAnimation("lottie-snow.json");
+                                } else if (detailedForecast.contains("cloudy") || detailedForecast.contains("clouds")) {
+                                    binding.lavWeather.setAnimation("lottie-cloudy.json");
+                                } else {
+                                    binding.lavWeather.setAnimation("lottie-sunny.json");
+                                }
+
+                                binding.tvDetailedForecast.setText(detailedForecast);
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<AccuweatherForecast> call, Throwable t) {
+                            Log.e("WeatherApplication", String.valueOf(t));
+                            binding.tvDetailedForecast.setText("Sorry, this feature is unavailable.");
+                            binding.lavWeather.setAnimation("lottie-error.json");
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AccuweatherLocation> call, Throwable t) {
+                Log.e("DetailedLocation", String.valueOf(t));
+                binding.tvDetailedForecast.setText("Sorry, this feature is unavailable.");
+                binding.lavWeather.setAnimation("lottie-error.json");
+            }
+        });
+
+        binding.lavWeather.setScale(0.3F);
     }
 
     /**
