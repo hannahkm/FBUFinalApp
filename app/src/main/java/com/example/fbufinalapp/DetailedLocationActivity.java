@@ -315,14 +315,16 @@ public class DetailedLocationActivity extends AppCompatActivity {
     public void getForecast(double lat, double lon) {
         WeatherApplication.getWeatherData service = WeatherApplication.getRetrofitInstance().create(WeatherApplication.getWeatherData.class);
         String latlng = lat + "," + lon;
+        Log.i("DetailedLocation", latlng);
         Call<AccuweatherLocation> call = service.getLocation(getResources().getString(R.string.weatherKey), latlng);
         call.enqueue(new Callback<AccuweatherLocation>() {
             @Override
             public void onResponse(Call<AccuweatherLocation> call, Response<AccuweatherLocation> response) {
                 AccuweatherLocation location = response.body();
+                Log.i("DetailedLocation", String.valueOf(response));
 
                 if (location == null){
-                    binding.tvDetailedForecast.setText("Sorry, this feature is unavailable in this location.");
+                    binding.tvDetailedForecast.setText("Sorry, this feature is currently unavailable.");
                     binding.lavWeather.setAnimation("lottie-error.json");
                 } else {
                     String locationKey = location.Key;
@@ -347,7 +349,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
                                     detailedForecast.replace("t-storm", "thunderstorm");
                                 } else if (detailedForecast.contains("showers")) {
                                     binding.lavWeather.setAnimation("lottie-rainy.json");
-                                } else if (detailedForecast.contains("snow")) {
+                                } else if (detailedForecast.contains("snow") || detailedForecast.contains("flurries")) {
                                     binding.lavWeather.setAnimation("lottie-snow.json");
                                 } else if (detailedForecast.contains("cloudy") || detailedForecast.contains("clouds")) {
                                     binding.lavWeather.setAnimation("lottie-cloudy.json");
@@ -363,7 +365,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(Call<AccuweatherForecast> call, Throwable t) {
                             Log.e("WeatherApplication", String.valueOf(t));
-                            binding.tvDetailedForecast.setText("Sorry, this feature is unavailable.");
+                            binding.tvDetailedForecast.setText("Sorry, this feature is currently unavailable.");
                             binding.lavWeather.setAnimation("lottie-error.json");
                         }
                     });
@@ -373,7 +375,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<AccuweatherLocation> call, Throwable t) {
                 Log.e("DetailedLocation", String.valueOf(t));
-                binding.tvDetailedForecast.setText("Sorry, this feature is unavailable.");
+                binding.tvDetailedForecast.setText("Sorry, this feature is currently unavailable.");
                 binding.lavWeather.setAnimation("lottie-error.json");
             }
         });
