@@ -54,7 +54,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
         notifyDataSetChanged();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder{
         TextView tvPrimary;
         TextView tvSecondary;
         String placeId;
@@ -89,7 +89,5 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
             tvPrimary.setText(primary);
             tvSecondary.setText(secondary);
         }
-
-
     }
 }
