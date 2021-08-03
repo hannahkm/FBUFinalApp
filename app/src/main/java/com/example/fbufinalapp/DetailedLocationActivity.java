@@ -23,6 +23,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.fbufinalapp.databinding.ActivityDetailedLocationBinding;
+import com.example.fbufinalapp.models.AccuweatherForecast;
+import com.example.fbufinalapp.models.AccuweatherLocation;
+import com.example.fbufinalapp.models.DailyForecast;
+import com.example.fbufinalapp.models.Day;
 import com.example.fbufinalapp.models.Itinerary;
 import com.example.fbufinalapp.models.WeatherForecast;
 import com.example.fbufinalapp.models.WeatherForecastWrapper;
@@ -192,56 +196,56 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
     public void getForecast(double lat, double lon) {
         WeatherApplication.getWeatherData service = WeatherApplication.getRetrofitInstance().create(WeatherApplication.getWeatherData.class);
-        Call<WeatherPointWrapper> call = service.getWeather(lat, lon);
-        call.enqueue(new Callback<WeatherPointWrapper>() {
+        String latlng = lat + "," + lon;
+        Call<AccuweatherLocation> call = service.getLocation(getResources().getString(R.string.weatherKey), latlng);
+        call.enqueue(new Callback<AccuweatherLocation>() {
             @Override
-            public void onResponse(Call<WeatherPointWrapper> call, Response<WeatherPointWrapper> response) {
-                WeatherPointWrapper pointWrapper = response.body();
+            public void onResponse(Call<AccuweatherLocation> call, Response<AccuweatherLocation> response) {
+                AccuweatherLocation location = response.body();
 
-                if (pointWrapper == null){
+                if (location == null){
                     Toast.makeText(DetailedLocationActivity.this, "Weather forecast unavailable", Toast.LENGTH_SHORT).show();
                     binding.tvDetailedForecast.setText("Sorry, this feature is unavailable in this location.");
                     binding.lavWeather.setAnimation("lottie-error.json");
                 } else {
-                    WeatherPoint point = pointWrapper.properties;
-                    String gridId = String.valueOf(point.getGridId());
-                    int gridX = point.getGridX();
-                    int gridY = point.getGridY();
+                    String locationKey = location.Key;
+                    Log.i("DetailedLocation", "locationKey: " + locationKey);
 
-                    Call<WeatherForecastWrapper> callForecast = service.getForecast(gridId, gridX, gridY);
-                    callForecast.enqueue(new Callback<WeatherForecastWrapper>() {
+                    Call<AccuweatherForecast> callForecast = service.getForecast(locationKey, getResources().getString(R.string.weatherKey));
+                    callForecast.enqueue(new Callback<AccuweatherForecast>() {
                         @Override
-                        public void onResponse(Call<WeatherForecastWrapper> call, Response<WeatherForecastWrapper> response) {
+                        public void onResponse(Call<AccuweatherForecast> call, Response<AccuweatherForecast> response) {
                             if (response == null){
                                 Log.e("WeatherApplication", "no response");
                                 binding.tvDetailedForecast.setText("Sorry, this feature is unavailable in this location.");
                                 binding.lavWeather.setAnimation("lottie-error.json");
                             } else {
-                                WeatherForecastWrapper forecastWrapper = response.body();
-                                WeatherForecast forecast = forecastWrapper.properties;
+                                AccuweatherForecast forecastWrapper = response.body();
+                                List<DailyForecast> forecast = forecastWrapper.getDailyForecasts();
+                                Day todayForecast = forecast.get(0).getDay();
 
-                                ArrayList<LinkedTreeMap> periods = ((ArrayList<LinkedTreeMap>) forecast.getPeriods());
-                                LinkedTreeMap<String, Object> todayForecast = periods.get(0);
-                                String detailedForecast = (String) todayForecast.get("detailedForecast");
-                                binding.tvDetailedForecast.setText(detailedForecast);
+                                String detailedForecast = todayForecast.getIconPhrase();
 
-                                if (detailedForecast.contains("thunderstorm")) {
+                                if (detailedForecast.contains("t-storm")) {
                                     binding.lavWeather.setAnimation("lottie-thunderstorm.json");
+                                    detailedForecast.replace("t-storm", "thunderstorm");
                                 } else if (detailedForecast.contains("showers")) {
-                                    binding.lavWeather.setAnimation("lottie-rain.json");
+                                    binding.lavWeather.setAnimation("lottie-rainy.json");
                                 } else if (detailedForecast.contains("snow")) {
                                     binding.lavWeather.setAnimation("lottie-snow.json");
-                                } else if (detailedForecast.contains("cloudy")) {
+                                } else if (detailedForecast.contains("cloudy") || detailedForecast.contains("clouds")) {
                                     binding.lavWeather.setAnimation("lottie-cloudy.json");
                                 } else {
                                     binding.lavWeather.setAnimation("lottie-sunny.json");
                                 }
 
+                                binding.tvDetailedForecast.setText(detailedForecast);
+
                             }
                         }
 
                         @Override
-                        public void onFailure(Call<WeatherForecastWrapper> call, Throwable t) {
+                        public void onFailure(Call<AccuweatherForecast> call, Throwable t) {
                             Log.e("WeatherApplication", String.valueOf(t));
                         }
                     });
@@ -249,7 +253,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<WeatherPointWrapper> call, Throwable t) {
+            public void onFailure(Call<AccuweatherLocation> call, Throwable t) {
                 Log.e("DetailedLocation", String.valueOf(t));
             }
         });
