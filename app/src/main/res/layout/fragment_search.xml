@@ -47,14 +47,12 @@
         android:paddingTop="10dp"
         android:paddingEnd="12dp" />
 
-    <com.wang.avi.AVLoadingIndicatorView
-        android:id="@+id/avi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        style="@style/AVLoadingIndicatorView"
-        app:indicatorName="BallClipRotateIndicator"
-        app:indicatorColor="@color/brown"
-        />
+    <com.victor.loading.rotate.RotateLoading
+        android:id="@+id/rotateloading"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:loading_width="5dp"
+        app:loading_color="@color/brown"
+        android:layout_centerInParent="true"/>
 
 </RelativeLayout>

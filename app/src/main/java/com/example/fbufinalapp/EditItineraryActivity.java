@@ -78,6 +78,7 @@ public class EditItineraryActivity extends AppCompatActivity {
         itinId = getIntent().getStringExtra("itinId");
 
         queryDefaultValues queryDefaults = new queryDefaultValues();
+        binding.rotateloading.start();
         queryDefaults.start();
         try {
             queryDefaults.join();
@@ -85,7 +86,7 @@ public class EditItineraryActivity extends AppCompatActivity {
             Log.e("Favorites", String.valueOf(e));
         }
 
-        binding.avi.hide();
+        binding.rotateloading.stop();
 
         binding.btFinish.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +112,6 @@ public class EditItineraryActivity extends AppCompatActivity {
     class queryDefaultValues extends Thread{
         @Override
         public void run() {
-            binding.avi.show();
             placesClient = Places.createClient(EditItineraryActivity.this);
             if (getIntent().hasExtra("editing")){
                 query = ParseQuery.getQuery("Itinerary");

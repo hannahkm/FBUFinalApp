@@ -25,7 +25,6 @@ import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
-import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +65,7 @@ public class SearchFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        binding.avi.show();
+        binding.rotateloading.start();
     }
 
     @Override
@@ -77,7 +76,7 @@ public class SearchFragment extends Fragment {
         binding = FragmentSearchBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
 
-        binding.avi.show();
+        binding.rotateloading.start();
 
         return view;
     }
@@ -96,7 +95,7 @@ public class SearchFragment extends Fragment {
 
         binding.etSearch.addTextChangedListener(searchListener);
 
-        binding.avi.hide();
+        binding.rotateloading.stop();
 
         placesClient = Places.createClient(context);
     }

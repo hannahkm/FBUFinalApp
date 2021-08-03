@@ -109,8 +109,8 @@ public class DetailedLocationActivity extends AppCompatActivity{
 
         placesClient = Places.createClient(this);
 
-//        new queryPageAsync().execute();
         queryPageAsync queryPage = new queryPageAsync();
+        binding.rotateloading.start();
         queryPage.start();
 
         try {
@@ -120,7 +120,7 @@ public class DetailedLocationActivity extends AppCompatActivity{
             System.out.println(e);
         }
 
-        binding.avi.hide();
+        binding.rotateloading.stop();
 
 
         /**
@@ -203,8 +203,6 @@ public class DetailedLocationActivity extends AppCompatActivity{
     class queryPageAsync extends Thread{
         @Override
         public void run() {
-            binding.avi.show();
-
             populatePage();
             getAllItins();
         }

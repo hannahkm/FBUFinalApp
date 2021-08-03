@@ -71,6 +71,8 @@ public class EditDestinationActivity extends AppCompatActivity {
 
         // populates page with existing values, if there are any
         queryDefaultValues queryDefault = new queryDefaultValues();
+        binding.rotateloading.start();
+
         queryDefault.start();
         try {
             queryDefault.join();
@@ -78,7 +80,7 @@ public class EditDestinationActivity extends AppCompatActivity {
             Log.e("Favorites", String.valueOf(e));
         }
 
-        binding.avi.hide();
+        binding.rotateloading.stop();
 
         ParseQuery<Itinerary> queryItinerary = ParseQuery.getQuery(Itinerary.class);
 
@@ -220,8 +222,6 @@ public class EditDestinationActivity extends AppCompatActivity {
     }
 
     private void populateDefaultValues() {
-        binding.avi.show();
-
         if (getIntent().hasExtra("placeId")){
             String placeId = getIntent().getStringExtra("placeId");
 

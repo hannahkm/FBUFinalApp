@@ -65,8 +65,6 @@ public class FavoritesFragment extends Fragment {
         binding = FragmentFavoritesBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
 
-        binding.avi.show();
-
         return view;
     }
 
@@ -96,6 +94,7 @@ public class FavoritesFragment extends Fragment {
         });
 
         queryFavoritesAsync queryFavorites = new queryFavoritesAsync();
+        binding.rotateloading.start();
         queryFavorites.start();
         try {
             queryFavorites.join();
@@ -103,14 +102,14 @@ public class FavoritesFragment extends Fragment {
             Log.e("Favorites", String.valueOf(e));
         }
 
-        binding.avi.hide();
-        Log.i("Favorites", "finished async" + binding.avi.getVisibility());
+        binding.rotateloading.stop();
 
     }
 
     public void fetchTimelineAsync(int page) {
         favAdapter.clear();
         queryFavoritesAsync queryFavorites = new queryFavoritesAsync();
+        binding.rotateloading.start();
         queryFavorites.start();
         try {
             queryFavorites.join();
@@ -118,7 +117,7 @@ public class FavoritesFragment extends Fragment {
             Log.e("Favorites", String.valueOf(e));
         }
 
-        binding.avi.hide();
+        binding.rotateloading.stop();
         binding.swipeContainer.setRefreshing(false);
     }
 
@@ -129,8 +128,6 @@ public class FavoritesFragment extends Fragment {
     class queryFavoritesAsync extends Thread{
         @Override
         public void run() {
-            binding.avi.show();
-
             for (Object fav: currentUser.getList(CommonValues.KEY_FAVORITES)) {
                 String placeId = String.valueOf(fav);
 
@@ -147,7 +144,6 @@ public class FavoritesFragment extends Fragment {
                     }
                 });
             }
-            Log.i("Favorites", "finished query" + String.valueOf(binding.avi.getVisibility() == View.VISIBLE));
         }
     }
 

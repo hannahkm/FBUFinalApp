@@ -68,6 +68,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
         itinId = getIntent().getStringExtra("itinId");
 
         queryDestinationsAsync queryDestinations = new queryDestinationsAsync();
+        binding.rotateloading.start();
         queryDestinations.start();
         try {
             queryDestinations.join();
@@ -75,7 +76,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
             Log.e("DetailedItinerary", String.valueOf(e));
         }
 
-        binding.avi.hide();
+        binding.rotateloading.stop();
 
         // Allows the user to create a new destination to add to this itinerary
         binding.fabNewDest.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +107,6 @@ public class DetailedItineraryActivity extends AppCompatActivity {
     class queryDestinationsAsync extends Thread{
         @Override
         public void run() {
-            binding.avi.show();
 
             ParseQuery<Itinerary> queryItinerary = ParseQuery.getQuery(Itinerary.class);
 

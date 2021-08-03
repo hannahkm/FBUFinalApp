@@ -80,7 +80,7 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
 
-        binding.avi.show();
+        binding.rotateloading.start();
 
         return view;
     }
@@ -134,6 +134,7 @@ public class DashboardFragment extends Fragment {
         });
 
         queryTripsAsync queryTrips = new queryTripsAsync();
+        binding.rotateloading.start();
         queryTrips.start();
         try {
             queryTrips.join();
@@ -141,7 +142,7 @@ public class DashboardFragment extends Fragment {
             Log.e("Dashboard", String.valueOf(e));
         }
 
-        binding.avi.hide();
+        binding.rotateloading.stop();
 
         // Allows the user to create new itineraries
         binding.fabNewItin.setOnClickListener(new View.OnClickListener() {
@@ -165,14 +166,13 @@ public class DashboardFragment extends Fragment {
             Log.e("Dashboard", String.valueOf(e));
         }
 
-        binding.avi.hide();
+        binding.rotateloading.stop();
         binding.swipeContainer.setRefreshing(false);
     }
 
     class queryTripsAsync extends Thread{
         @Override
         public void run() {
-            binding.avi.show();
 
             ParseQuery<Itinerary> query = ParseQuery.getQuery(Itinerary.class);
             query.include(CommonValues.KEY_USER);
