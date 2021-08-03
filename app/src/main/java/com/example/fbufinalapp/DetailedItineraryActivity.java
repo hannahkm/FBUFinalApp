@@ -8,7 +8,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.transition.Slide;
 import android.util.Log;
@@ -68,7 +67,15 @@ public class DetailedItineraryActivity extends AppCompatActivity {
 
         itinId = getIntent().getStringExtra("itinId");
 
-        new queryDestinationsAsync().execute();
+        queryDestinationsAsync queryDestinations = new queryDestinationsAsync();
+        queryDestinations.start();
+        try {
+            queryDestinations.join();
+        } catch (Exception e){
+            Log.e("DetailedItinerary", String.valueOf(e));
+        }
+
+        binding.avi.hide();
 
         // Allows the user to create a new destination to add to this itinerary
         binding.fabNewDest.setOnClickListener(new View.OnClickListener() {
@@ -95,9 +102,12 @@ public class DetailedItineraryActivity extends AppCompatActivity {
      * Queries the destinations of the current itinerary in the background. In the meantime, the
      * loading progress symbol is shown.
      */
-    private class queryDestinationsAsync extends AsyncTask<Void, Void, Void> {
+
+    class queryDestinationsAsync extends Thread{
         @Override
-        protected Void doInBackground(Void... args) {
+        public void run() {
+            binding.avi.show();
+
             ParseQuery<Itinerary> queryItinerary = ParseQuery.getQuery(Itinerary.class);
 
             queryItinerary.getInBackground(itinId, (object, e) -> {
@@ -117,19 +127,6 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                     Toast.makeText(DetailedItineraryActivity.this, "Couldn't retrieve itinerary", Toast.LENGTH_SHORT).show();
                 }
             });
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            binding.avi.hide();
-            super.onPostExecute(result);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            binding.avi.show();
         }
     }
 
