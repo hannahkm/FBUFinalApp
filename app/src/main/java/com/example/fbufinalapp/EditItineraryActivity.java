@@ -3,7 +3,6 @@ package com.example.fbufinalapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.transition.Explode;
 import android.util.Log;
@@ -78,7 +77,16 @@ public class EditItineraryActivity extends AppCompatActivity {
 
         itinId = getIntent().getStringExtra("itinId");
 
-        new queryDefaultValues().execute();
+        queryDefaultValues queryDefaults = new queryDefaultValues();
+        binding.rotateloading.start();
+        queryDefaults.start();
+        try {
+            queryDefaults.join();
+        } catch (Exception e){
+            Log.e("Favorites", String.valueOf(e));
+        }
+
+        binding.rotateloading.stop();
 
         binding.btFinish.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,9 +109,9 @@ public class EditItineraryActivity extends AppCompatActivity {
      * Queries the default values (exists if the user is editing an existing itinerary) of the
      * current itinerary in the background. In the meantime, the loading progress symbol is shown.
      */
-    private class queryDefaultValues extends AsyncTask<Void, Void, Void> {
+    class queryDefaultValues extends Thread{
         @Override
-        protected Void doInBackground(Void... args) {
+        public void run() {
             placesClient = Places.createClient(EditItineraryActivity.this);
             if (getIntent().hasExtra("editing")){
                 query = ParseQuery.getQuery("Itinerary");
@@ -138,19 +146,6 @@ public class EditItineraryActivity extends AppCompatActivity {
             } else {
                 getSupportActionBar().setTitle("New Itinerary");
             }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            binding.avi.hide();
-            super.onPostExecute(result);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            binding.avi.show();
         }
     }
 

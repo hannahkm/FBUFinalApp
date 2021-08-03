@@ -1,7 +1,6 @@
 package com.example.fbufinalapp;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -66,8 +65,6 @@ public class FavoritesFragment extends Fragment {
         binding = FragmentFavoritesBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
 
-        binding.avi.show();
-
         return view;
     }
 
@@ -96,12 +93,31 @@ public class FavoritesFragment extends Fragment {
             }
         });
 
-        new queryFavoritesAsync().execute();
+        queryFavoritesAsync queryFavorites = new queryFavoritesAsync();
+        binding.rotateloading.start();
+        queryFavorites.start();
+        try {
+            queryFavorites.join();
+        } catch (Exception e){
+            Log.e("Favorites", String.valueOf(e));
+        }
+
+        binding.rotateloading.stop();
+
     }
 
     public void fetchTimelineAsync(int page) {
         favAdapter.clear();
-        new queryFavoritesAsync().execute();
+        queryFavoritesAsync queryFavorites = new queryFavoritesAsync();
+        binding.rotateloading.start();
+        queryFavorites.start();
+        try {
+            queryFavorites.join();
+        } catch (Exception e){
+            Log.e("Favorites", String.valueOf(e));
+        }
+
+        binding.rotateloading.stop();
         binding.swipeContainer.setRefreshing(false);
     }
 
@@ -109,9 +125,9 @@ public class FavoritesFragment extends Fragment {
      * Queries the favorite locations of the current user in the background. In the meantime, the
      * loading progress symbol is shown.
      */
-    private class queryFavoritesAsync extends AsyncTask<Void, Void, Void> {
+    class queryFavoritesAsync extends Thread{
         @Override
-        protected Void doInBackground(Void... args) {
+        public void run() {
             for (Object fav: currentUser.getList(CommonValues.KEY_FAVORITES)) {
                 String placeId = String.valueOf(fav);
 
@@ -128,19 +144,6 @@ public class FavoritesFragment extends Fragment {
                     }
                 });
             }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            binding.avi.hide();
-            binding.rvFavorites.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            binding.rvFavorites.setVisibility(View.INVISIBLE);
-            binding.avi.show();
         }
     }
 

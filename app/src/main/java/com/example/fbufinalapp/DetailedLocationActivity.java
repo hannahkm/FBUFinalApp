@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.transition.Explode;
 import android.util.DisplayMetrics;
@@ -53,7 +52,7 @@ import retrofit2.Response;
 /**
  * Screen to show the user details about a given location. Data obtained from the Google Places SDK.
  */
-public class DetailedLocationActivity extends AppCompatActivity {
+public class DetailedLocationActivity extends AppCompatActivity{
     public static String TAG = "DetailedLocationActivity";
     public static ActivityDetailedLocationBinding binding;
     View layout;
@@ -110,7 +109,19 @@ public class DetailedLocationActivity extends AppCompatActivity {
 
         placesClient = Places.createClient(this);
 
-        new queryPageAsync().execute();
+        queryPageAsync queryPage = new queryPageAsync();
+        binding.rotateloading.start();
+        queryPage.start();
+
+        try {
+            queryPage.join();
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+
+        binding.rotateloading.stop();
+
 
         /**
          * the user clicked on the favorites button, so we add/remove it from their favorites
@@ -189,24 +200,11 @@ public class DetailedLocationActivity extends AppCompatActivity {
      * Queries the details of the current location in the background. In the meantime, the
      * loading progress symbol is shown.
      */
-    private class queryPageAsync extends AsyncTask<Void, Void, Void> {
+    class queryPageAsync extends Thread{
         @Override
-        protected Void doInBackground(Void... args) {
-            populatePage(); // obtain place data and fill page
+        public void run() {
+            populatePage();
             getAllItins();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            binding.avi.hide();
-        }
-
-        @Override
-        protected void onPreExecute() {
-            binding.avi.show();
-            super.onPreExecute();
         }
     }
 
@@ -387,6 +385,7 @@ public class DetailedLocationActivity extends AppCompatActivity {
      * Obtains a list of all the itineraries the current user has made to display in the popup window
      */
     public void getAllItins(){
+
         ParseQuery<Itinerary> query = ParseQuery.getQuery("Itinerary");
         query.whereEqualTo(CommonValues.KEY_USER, currentUser);
 

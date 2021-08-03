@@ -3,9 +3,9 @@ package com.example.fbufinalapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.transition.Explode;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -70,7 +70,17 @@ public class EditDestinationActivity extends AppCompatActivity {
         itinId = getIntent().getStringExtra("itinId");
 
         // populates page with existing values, if there are any
-        new queryDefaultValues().execute();
+        queryDefaultValues queryDefault = new queryDefaultValues();
+        binding.rotateloading.start();
+
+        queryDefault.start();
+        try {
+            queryDefault.join();
+        } catch (Exception e){
+            Log.e("Favorites", String.valueOf(e));
+        }
+
+        binding.rotateloading.stop();
 
         ParseQuery<Itinerary> queryItinerary = ParseQuery.getQuery(Itinerary.class);
 
@@ -204,21 +214,10 @@ public class EditDestinationActivity extends AppCompatActivity {
 
     }
 
-    private class queryDefaultValues extends AsyncTask<Void, Void, Void> {
+    class queryDefaultValues extends Thread{
         @Override
-        protected Void doInBackground(Void... args) {
+        public void run() {
             populateDefaultValues();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            binding.avi.hide();
-        }
-
-        @Override
-        protected void onPreExecute() {
-            binding.avi.show();
         }
     }
 

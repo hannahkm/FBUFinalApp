@@ -2,7 +2,6 @@ package com.example.fbufinalapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,13 +22,10 @@ import android.view.ViewGroup;
 import com.example.fbufinalapp.adapters.ItineraryAdapter;
 import com.example.fbufinalapp.databinding.FragmentDashboardBinding;
 import com.example.fbufinalapp.models.Itinerary;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +80,7 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
 
-        binding.avi.show();
+        binding.rotateloading.start();
 
         return view;
     }
@@ -137,7 +133,16 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        new queryTripsAsync().execute();
+        queryTripsAsync queryTrips = new queryTripsAsync();
+        binding.rotateloading.start();
+        queryTrips.start();
+        try {
+            queryTrips.join();
+        } catch (Exception e){
+            Log.e("Dashboard", String.valueOf(e));
+        }
+
+        binding.rotateloading.stop();
 
         // Allows the user to create new itineraries
         binding.fabNewItin.setOnClickListener(new View.OnClickListener() {
@@ -153,13 +158,22 @@ public class DashboardFragment extends Fragment {
 
     public void fetchTimelineAsync(int page) {
         adapter.clear();
-        new queryTripsAsync().execute();
+        queryTripsAsync queryTrips = new queryTripsAsync();
+        queryTrips.start();
+        try {
+            queryTrips.join();
+        } catch (Exception e){
+            Log.e("Dashboard", String.valueOf(e));
+        }
+
+        binding.rotateloading.stop();
         binding.swipeContainer.setRefreshing(false);
     }
 
-    private class queryTripsAsync extends AsyncTask<Void, Void, Void> {
+    class queryTripsAsync extends Thread{
         @Override
-        protected Void doInBackground(Void... args) {
+        public void run() {
+
             ParseQuery<Itinerary> query = ParseQuery.getQuery(Itinerary.class);
             query.include(CommonValues.KEY_USER);
             query.whereEqualTo(CommonValues.KEY_USER, CommonValues.CURRENT_USER);
@@ -177,19 +191,6 @@ public class DashboardFragment extends Fragment {
                     }
                 }
             });
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            binding.avi.hide();
-            super.onPostExecute(result);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            binding.avi.show();
         }
     }
 
