@@ -15,6 +15,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -33,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        if (CommonValues.CURRENT_USER == null){
+        if (ParseUser.getCurrentUser() == null){
             setGuestUser();
         }
 
@@ -89,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void setGuestUser(){
         ParseUser user = new ParseUser();
-        user.setUsername("Guest");
+
+        user.setUsername("Guest #" + findNumGuests());
         user.setPassword("default");
         user.put(CommonValues.KEY_FAVORITES, new ArrayList<>());
         user.put(CommonValues.KEY_ITINERARY_USER, new ArrayList<>());
@@ -101,6 +105,20 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("SignUp Failed", String.valueOf(e));
             }
         });
+    }
+
+    public int findNumGuests(){
+        int count = 0;
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereStartsWith(CommonValues.KEY_USERNAME, "Guest #");
+
+        try {
+            count = query.count();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return count;
     }
 
 }

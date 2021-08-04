@@ -34,7 +34,7 @@ public class SignUpActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        currentUser = CommonValues.CURRENT_USER;
+        currentUser = ParseUser.getCurrentUser();
 
         getSupportActionBar().setTitle("Register");
 

@@ -132,7 +132,7 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
                     for (Itinerary i : itins){
                         itinIds.add(i.getObjectId());
                     }
-                    currentUser = CommonValues.CURRENT_USER;
+                    currentUser = ParseUser.getCurrentUser();
                     currentUser.put(CommonValues.KEY_ITINERARY_USER, itinIds);
 
                     currentUser.saveInBackground(e -> {

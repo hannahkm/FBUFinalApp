@@ -283,6 +283,7 @@ public class EditDestinationActivity extends AppCompatActivity {
             }
         } else {
             tvLocation.setOnFocusChangeListener(focusListener);
+            getSupportActionBar().setTitle("New Destination");
         }
     }
 

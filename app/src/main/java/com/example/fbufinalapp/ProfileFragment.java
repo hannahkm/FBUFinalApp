@@ -47,7 +47,7 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(getLayoutInflater(), container, false);
         View view = binding.getRoot();
 
-        currentUser = CommonValues.CURRENT_USER;
+        currentUser = ParseUser.getCurrentUser();
         newUser = (currentUser.getEmail() == null);
 
         return view;

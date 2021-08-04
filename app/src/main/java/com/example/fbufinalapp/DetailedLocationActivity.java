@@ -89,7 +89,7 @@ public class DetailedLocationActivity extends AppCompatActivity{
         ratingBar = findViewById(R.id.ratingBar);
         fabAddToFav = findViewById(R.id.fabAddToFav);
 
-        currentUser = CommonValues.CURRENT_USER;
+        currentUser = ParseUser.getCurrentUser();
         getWindow().setEnterTransition(new Explode());
 
         // builds a popup window; to be used when the user adds the current location to an itinerary
