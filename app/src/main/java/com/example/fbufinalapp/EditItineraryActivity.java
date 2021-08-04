@@ -193,7 +193,7 @@ public class EditItineraryActivity extends AppCompatActivity {
             }
             itin.setTitle(title);
 
-            ParseUser currentUser = CommonValues.CURRENT_USER;
+            ParseUser currentUser = ParseUser.getCurrentUser();
             itin.setAuthor(currentUser);
 
             itin.setDescription(notes);

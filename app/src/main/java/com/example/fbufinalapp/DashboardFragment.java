@@ -26,6 +26,7 @@ import com.example.fbufinalapp.models.Itinerary;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -176,7 +177,7 @@ public class DashboardFragment extends Fragment {
 
             ParseQuery<Itinerary> query = ParseQuery.getQuery(Itinerary.class);
             query.include(CommonValues.KEY_USER);
-            query.whereEqualTo(CommonValues.KEY_USER, CommonValues.CURRENT_USER);
+            query.whereEqualTo(CommonValues.KEY_USER, ParseUser.getCurrentUser());
 
             // order posts by creation date (newest first)
             query.addDescendingOrder("createdAt");

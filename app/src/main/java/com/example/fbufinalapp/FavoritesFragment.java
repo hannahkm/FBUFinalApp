@@ -74,7 +74,7 @@ public class FavoritesFragment extends Fragment {
 
         rvFavorites = view.findViewById(R.id.rvFavorites);
 
-        currentUser = CommonValues.CURRENT_USER;
+        currentUser = ParseUser.getCurrentUser();
 
         placesClient = Places.createClient(context);
         placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS);

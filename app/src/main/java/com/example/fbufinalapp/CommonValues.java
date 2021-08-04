@@ -1,7 +1,5 @@
 package com.example.fbufinalapp;
 
-import com.parse.ParseUser;
-
 public class CommonValues {
     // Destination model values =========
     public static String KEY_DESCRIPTION_DESTINATION = "notes";
@@ -23,5 +21,5 @@ public class CommonValues {
     // User model values ================
     public static String KEY_ITINERARY_USER = "itineraries";
     public static String KEY_FAVORITES = "favorites";
-    public static ParseUser CURRENT_USER = ParseUser.getCurrentUser();
+    public static String KEY_USERNAME = "username";
 }
