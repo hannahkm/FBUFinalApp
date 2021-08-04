@@ -133,16 +133,7 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        queryTripsAsync queryTrips = new queryTripsAsync();
-        binding.rotateloading.start();
-        queryTrips.start();
-        try {
-            queryTrips.join();
-        } catch (Exception e){
-            Log.e("Dashboard", String.valueOf(e));
-        }
-
-        binding.rotateloading.stop();
+        runQueryThread();
 
         // Allows the user to create new itineraries
         binding.fabNewItin.setOnClickListener(new View.OnClickListener() {
@@ -155,10 +146,9 @@ public class DashboardFragment extends Fragment {
         });
     }
 
-
-    public void fetchTimelineAsync(int page) {
-        adapter.clear();
+    public void runQueryThread(){
         queryTripsAsync queryTrips = new queryTripsAsync();
+        binding.rotateloading.start();
         queryTrips.start();
         try {
             queryTrips.join();
@@ -167,6 +157,12 @@ public class DashboardFragment extends Fragment {
         }
 
         binding.rotateloading.stop();
+    }
+
+
+    public void fetchTimelineAsync(int page) {
+        adapter.clear();
+        runQueryThread();
         binding.swipeContainer.setRefreshing(false);
     }
 

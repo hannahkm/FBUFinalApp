@@ -93,6 +93,11 @@ public class FavoritesFragment extends Fragment {
             }
         });
 
+        runQueryThread();
+
+    }
+    
+    public void runQueryThread(){
         queryFavoritesAsync queryFavorites = new queryFavoritesAsync();
         binding.rotateloading.start();
         queryFavorites.start();
@@ -103,21 +108,11 @@ public class FavoritesFragment extends Fragment {
         }
 
         binding.rotateloading.stop();
-
     }
 
     public void fetchTimelineAsync(int page) {
         favAdapter.clear();
-        queryFavoritesAsync queryFavorites = new queryFavoritesAsync();
-        binding.rotateloading.start();
-        queryFavorites.start();
-        try {
-            queryFavorites.join();
-        } catch (Exception e){
-            Log.e("Favorites", String.valueOf(e));
-        }
-
-        binding.rotateloading.stop();
+        runQueryThread();
         binding.swipeContainer.setRefreshing(false);
     }
 

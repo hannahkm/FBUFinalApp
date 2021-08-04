@@ -169,7 +169,7 @@ public class EditDestinationActivity extends AppCompatActivity {
 
                 destination.setIsDay(false);
 
-                String placeName = place.getName();
+                String placeName = String.valueOf(binding.tvLocation.getText());
                 String inputtedName = String.valueOf(binding.etDestName.getText());
                 if (placeName.equals(inputtedName)){
                     destination.setName(inputtedName);
