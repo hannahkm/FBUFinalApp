@@ -83,7 +83,7 @@ public class EditItineraryActivity extends AppCompatActivity {
         try {
             queryDefaults.join();
         } catch (Exception e){
-            Log.e("Favorites", String.valueOf(e));
+            Log.e(TAG, String.valueOf(e));
         }
 
         binding.rotateloading.stop();
@@ -140,7 +140,7 @@ public class EditItineraryActivity extends AppCompatActivity {
                         etStartDate.setText(dateFormat.format(object.getStartDate()));
                         etEndDate.setText(dateFormat.format(object.getEndDate()));
                     } else {
-                        Toast.makeText(EditItineraryActivity.this, "Couldn't retrive itinerary", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditItineraryActivity.this, "Couldn't retrieve itinerary", Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
@@ -172,14 +172,14 @@ public class EditItineraryActivity extends AppCompatActivity {
                 start = sdf.parse(startInput);
             } catch (java.text.ParseException e) {
                 start = sdf.parse(endInput);
-                Log.e("EditItinerary", String.valueOf(e));
+                Log.e(TAG, String.valueOf(e));
             }
 
             try {
                 end = sdf.parse(endInput);
             } catch (java.text.ParseException e) {
                 end = sdf.parse(startInput);
-                Log.e("EditItinerary", String.valueOf(e));
+                Log.e(TAG, String.valueOf(e));
             }
             itin.setStartDate(start);
             itin.setEndDate(end);
@@ -236,7 +236,7 @@ public class EditItineraryActivity extends AppCompatActivity {
                         if (e == null){
                             destinations.add(newDest.getObjectId());
                         } else {
-                            Log.e("EditItinerary", String.valueOf(e));
+                            Log.e(TAG, String.valueOf(e));
                             Toast.makeText(EditItineraryActivity.this, "Error saving dates", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -250,7 +250,7 @@ public class EditItineraryActivity extends AppCompatActivity {
                 @Override
                 public void done(ParseException e) {
                     if (e != null){
-                        Log.e("New Trip", String.valueOf(e));
+                        Log.e(TAG, String.valueOf(e));
                         Toast.makeText(EditItineraryActivity.this, "Error posting", Toast.LENGTH_SHORT).show();
                     } else {
                         tvTripName.setText("");
@@ -270,7 +270,7 @@ public class EditItineraryActivity extends AppCompatActivity {
                             @Override
                             public void done(ParseException e) {
                                 if (e != null){
-                                    Log.e("Saving user", String.valueOf(e));
+                                    Log.e(TAG, String.valueOf(e));
                                     Toast.makeText(EditItineraryActivity.this, "Error saving your trip", Toast.LENGTH_SHORT).show();
                                 } else {
                                     finishAfterTransition();
@@ -308,7 +308,7 @@ public class EditItineraryActivity extends AppCompatActivity {
                             @Override
                             public void done(ParseException e2) {
                                 if (e2 != null){
-                                    Log.e("EditItinerary", String.valueOf(e2));
+                                    Log.e(TAG, String.valueOf(e2));
                                     Toast.makeText(EditItineraryActivity.this, "Error updating dates", Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -316,7 +316,7 @@ public class EditItineraryActivity extends AppCompatActivity {
                     }
                 }
             } else {
-                Log.e("EditItinerary", String.valueOf(e));
+                Log.e(TAG, String.valueOf(e));
                 Toast.makeText(EditItineraryActivity.this, "Error updating dates", Toast.LENGTH_SHORT).show();
             }
 

@@ -48,6 +48,7 @@ public class EditDestinationActivity extends AppCompatActivity {
     Destination editingDestination;
     TextView tvLocation;
     String itinId;
+    public static String TAG = "EditDestination";
     boolean editing = false;
     private static int AUTOCOMPLETE_REQUEST_CODE = 600;
 
@@ -77,7 +78,7 @@ public class EditDestinationActivity extends AppCompatActivity {
         try {
             queryDefault.join();
         } catch (Exception e){
-            Log.e("Favorites", String.valueOf(e));
+            Log.e(TAG, String.valueOf(e));
         }
 
         binding.rotateloading.stop();

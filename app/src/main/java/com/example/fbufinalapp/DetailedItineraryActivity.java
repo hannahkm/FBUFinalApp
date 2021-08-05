@@ -40,6 +40,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
     String itinId;
     Menu menu;
     static boolean editing;
+    public static String TAG = "DetailedItinerary";
 
     public static boolean getEditing() {
         return editing;
@@ -127,6 +128,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
         try {
             queryDestinations.join();
         } catch (Exception e){
+            Log.e(TAG, String.valueOf(e));
             Log.e("DetailedItinerary", String.valueOf(e));
         }
 
@@ -156,7 +158,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                     destinations.addAll(objects);
                     adapter.notifyDataSetChanged();
                 } else {
-                    Log.e("DetailedItinerary", String.valueOf(e));
+                    Log.e(TAG, String.valueOf(e));
                     Toast.makeText(DetailedItineraryActivity.this, "Couldn't load destinations", Toast.LENGTH_SHORT).show();
                 }
             }
