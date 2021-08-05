@@ -42,6 +42,7 @@ public class DashboardFragment extends Fragment {
     ItineraryAdapter adapter;
     FragmentDashboardBinding binding;
     Menu menu;
+    public static String TAG = "DashboardFragment";
     public static boolean editing;
 
     public DashboardFragment() {
@@ -164,7 +165,7 @@ public class DashboardFragment extends Fragment {
         try {
             queryTrips.join();
         } catch (Exception e){
-            Log.e("Dashboard", String.valueOf(e));
+            Log.e(TAG, String.valueOf(e));
         }
 
         binding.rotateloading.stop();
@@ -185,7 +186,7 @@ public class DashboardFragment extends Fragment {
                 @Override
                 public void done(List<Itinerary> itineraries, ParseException e) {
                     if (e != null){
-                        Log.e("DashboardFragment", String.valueOf(e));
+                        Log.e(TAG, String.valueOf(e));
                     } else {
                         trips.addAll(itineraries);
                         adapter.notifyDataSetChanged();

@@ -18,6 +18,7 @@ import com.parse.ParseUser;
 public class LoginActivity extends AppCompatActivity {
     TextView tvUsername;
     TextView tvPassword;
+    public static String TAG = "LoginActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Welcome back!", Toast.LENGTH_SHORT).show();
                 startActivity(i);
             } else {
-                Log.e("Login Failed", String.valueOf(e));
+                Log.e(TAG, String.valueOf(e));
                 Toast.makeText(LoginActivity.this, "Couldn't log you in", Toast.LENGTH_SHORT).show();
             }
         });

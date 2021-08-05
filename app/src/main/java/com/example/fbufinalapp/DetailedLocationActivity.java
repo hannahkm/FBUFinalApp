@@ -147,7 +147,7 @@ public class DetailedLocationActivity extends AppCompatActivity{
                     @Override
                     public void done(ParseException e) {
                         if (e != null){
-                            Log.e("Saving user", String.valueOf(e));
+                            Log.e(TAG, String.valueOf(e));
                             Toast.makeText(DetailedLocationActivity.this, "An error occurred. Please try again later!", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -332,7 +332,7 @@ public class DetailedLocationActivity extends AppCompatActivity{
                         @Override
                         public void onResponse(Call<AccuweatherForecast> call, Response<AccuweatherForecast> response) {
                             if (response == null){
-                                Log.e("WeatherApplication", "no response");
+                                Log.e(TAG, "no response");
                                 binding.tvDetailedForecast.setText("Sorry, this feature is unavailable in this location.");
                                 binding.lavWeather.setAnimation("lottie-error.json");
                             } else {
@@ -362,8 +362,13 @@ public class DetailedLocationActivity extends AppCompatActivity{
 
                         @Override
                         public void onFailure(Call<AccuweatherForecast> call, Throwable t) {
+<<<<<<< Updated upstream
                             Log.e("WeatherApplication", String.valueOf(t));
                             binding.tvDetailedForecast.setText("Sorry, this feature is currently unavailable.");
+=======
+                            Log.e(TAG, String.valueOf(t));
+                            binding.tvDetailedForecast.setText("Sorry, this feature is unavailable.");
+>>>>>>> Stashed changes
                             binding.lavWeather.setAnimation("lottie-error.json");
                         }
                     });
@@ -372,8 +377,13 @@ public class DetailedLocationActivity extends AppCompatActivity{
 
             @Override
             public void onFailure(Call<AccuweatherLocation> call, Throwable t) {
+<<<<<<< Updated upstream
                 Log.e("DetailedLocation", String.valueOf(t));
                 binding.tvDetailedForecast.setText("Sorry, this feature is currently unavailable.");
+=======
+                Log.e(TAG, String.valueOf(t));
+                binding.tvDetailedForecast.setText("Sorry, this feature is unavailable.");
+>>>>>>> Stashed changes
                 binding.lavWeather.setAnimation("lottie-error.json");
             }
         });
@@ -397,7 +407,7 @@ public class DetailedLocationActivity extends AppCompatActivity{
             public void done(List<Itinerary> itineraries, ParseException e) {
                 if (e != null){
                     Toast.makeText(DetailedLocationActivity.this, "Unable to get itineraries", Toast.LENGTH_SHORT).show();
-                    Log.e("DetailedLocation", String.valueOf(e));
+                    Log.e(TAG, String.valueOf(e));
                 } else {
                     // save received posts to list and notify adapter of new data
                     for (Itinerary itin : itineraries){

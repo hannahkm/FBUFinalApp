@@ -99,7 +99,7 @@ public class FavoritesFragment extends Fragment {
         try {
             queryFavorites.join();
         } catch (Exception e){
-            Log.e("Favorites", String.valueOf(e));
+            Log.e(TAG, String.valueOf(e));
         }
 
         binding.rotateloading.stop();

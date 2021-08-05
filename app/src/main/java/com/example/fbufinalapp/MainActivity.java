@@ -27,6 +27,7 @@ import java.util.ArrayList;
  */
 public class MainActivity extends AppCompatActivity {
     Fragment dashboardFragment, searchFragment, favoritesFragment, profileFragment;
+    public static String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             if (e == null) {
                 Toast.makeText(MainActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
             } else {
-                Log.e("SignUp Failed", String.valueOf(e));
+                Log.e(TAG, "SignUp Failed " +  String.valueOf(e));
             }
         });
     }
