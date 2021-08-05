@@ -68,16 +68,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
 
         itinId = getIntent().getStringExtra("itinId");
 
-        queryDestinationsAsync queryDestinations = new queryDestinationsAsync();
-        binding.rotateloading.start();
-        queryDestinations.start();
-        try {
-            queryDestinations.join();
-        } catch (Exception e){
-            Log.e("DetailedItinerary", String.valueOf(e));
-        }
-
-        binding.rotateloading.stop();
+        runQueryThread();
 
         // Allows the user to create a new destination to add to this itinerary
         binding.fabNewDest.setOnClickListener(new View.OnClickListener() {
@@ -104,7 +95,6 @@ public class DetailedItineraryActivity extends AppCompatActivity {
      * Queries the destinations of the current itinerary in the background. In the meantime, the
      * loading progress symbol is shown.
      */
-
     class queryDestinationsAsync extends Thread{
         @Override
         public void run() {
@@ -131,8 +121,6 @@ public class DetailedItineraryActivity extends AppCompatActivity {
         }
     }
 
-<<<<<<< Updated upstream
-=======
     public void runQueryThread(){
         queryDestinationsAsync queryDestinations = new queryDestinationsAsync();
         binding.rotateloading.start();
@@ -141,15 +129,15 @@ public class DetailedItineraryActivity extends AppCompatActivity {
             queryDestinations.join();
         } catch (Exception e){
             Log.e(TAG, String.valueOf(e));
+            Log.e("DetailedItinerary", String.valueOf(e));
         }
 
         binding.rotateloading.stop();
     }
 
->>>>>>> Stashed changes
     public void fetchTimelineAsync(int page) {
         adapter.clear();
-        getDestinations();
+        runQueryThread();
         binding.swipeContainer.setRefreshing(false);
     }
 
