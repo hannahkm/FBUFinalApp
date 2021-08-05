@@ -198,17 +198,19 @@ public class DetailedItineraryActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == USER_SHARED_SUCCESS) {
-            String userId = data.getStringExtra("userId");
-            List<String> authors = currentItinerary.getAuthor();
+            if (data != null){
+                String userId = data.getStringExtra("userId");
+                List<String> authors = currentItinerary.getAuthor();
 
-            if (authors.contains(userId)){
-                Toast.makeText(getBaseContext(), "User is already in this trip", Toast.LENGTH_SHORT).show();
-            } else {
-                authors.add(userId);
-                currentItinerary.setAuthor(authors);
-                currentItinerary.saveInBackground();
-                Toast.makeText(getBaseContext(), "User added to trip!", Toast.LENGTH_SHORT).show();
+                if (authors.contains(userId)){
+                    Toast.makeText(getBaseContext(), "User is already in this trip", Toast.LENGTH_SHORT).show();
+                } else {
+                    authors.add(userId);
+                    currentItinerary.setAuthor(authors);
+                    currentItinerary.saveInBackground();
+                    Toast.makeText(getBaseContext(), "User added to trip!", Toast.LENGTH_SHORT).show();
 
+                }
             }
         }
     }

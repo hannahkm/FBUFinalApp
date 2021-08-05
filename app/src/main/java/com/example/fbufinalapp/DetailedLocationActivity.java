@@ -362,13 +362,8 @@ public class DetailedLocationActivity extends AppCompatActivity{
 
                         @Override
                         public void onFailure(Call<AccuweatherForecast> call, Throwable t) {
-<<<<<<< Updated upstream
-                            Log.e("WeatherApplication", String.valueOf(t));
-                            binding.tvDetailedForecast.setText("Sorry, this feature is currently unavailable.");
-=======
                             Log.e(TAG, String.valueOf(t));
-                            binding.tvDetailedForecast.setText("Sorry, this feature is unavailable.");
->>>>>>> Stashed changes
+                            binding.tvDetailedForecast.setText("Sorry, this feature is currently unavailable.");
                             binding.lavWeather.setAnimation("lottie-error.json");
                         }
                     });
@@ -377,13 +372,8 @@ public class DetailedLocationActivity extends AppCompatActivity{
 
             @Override
             public void onFailure(Call<AccuweatherLocation> call, Throwable t) {
-<<<<<<< Updated upstream
-                Log.e("DetailedLocation", String.valueOf(t));
-                binding.tvDetailedForecast.setText("Sorry, this feature is currently unavailable.");
-=======
                 Log.e(TAG, String.valueOf(t));
-                binding.tvDetailedForecast.setText("Sorry, this feature is unavailable.");
->>>>>>> Stashed changes
+                binding.tvDetailedForecast.setText("Sorry, this feature is currently unavailable.");
                 binding.lavWeather.setAnimation("lottie-error.json");
             }
         });
@@ -395,9 +385,8 @@ public class DetailedLocationActivity extends AppCompatActivity{
      * Obtains a list of all the itineraries the current user has made to display in the popup window
      */
     public void getAllItins(){
-
         ParseQuery<Itinerary> query = ParseQuery.getQuery("Itinerary");
-        query.whereEqualTo(CommonValues.KEY_USER, currentUser);
+        query.whereEqualTo(CommonValues.KEY_USER, ParseUser.getCurrentUser().getObjectId());
 
         itinNames = new ArrayList<>();
         itinIds = new ArrayList<>();

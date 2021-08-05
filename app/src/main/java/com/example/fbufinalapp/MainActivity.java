@@ -115,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
         user.signUpInBackground(e -> {
             if (e == null) {
                 Toast.makeText(this, "Welcome!", Toast.LENGTH_SHORT).show();
-                Log.i("fucker", "guest set");
             } else {
                 Log.e(TAG, "SignUp Failed " +  String.valueOf(e));
             }
