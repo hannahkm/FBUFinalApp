@@ -27,6 +27,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -194,7 +195,9 @@ public class EditItineraryActivity extends AppCompatActivity {
             itin.setTitle(title);
 
             ParseUser currentUser = ParseUser.getCurrentUser();
-            itin.setAuthor(currentUser);
+            List<String> authorArray = new ArrayList<>();
+            authorArray.add(currentUser.getObjectId());
+            itin.setAuthor(authorArray);
 
             itin.setDescription(notes);
 

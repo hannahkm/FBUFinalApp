@@ -6,6 +6,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,12 +32,12 @@ public class Itinerary extends ParseObject {
         put(CommonValues.KEY_DESCRIPTION_ITINERARY, descrip);
     }
 
-    public ParseUser getAuthor() {
-        return getParseUser(CommonValues.KEY_USER);
+    public List<String> getAuthor() {
+        return getList(CommonValues.KEY_USER);
     }
 
-    public void setAuthor(ParseUser parseUser){
-        put(CommonValues.KEY_USER, parseUser);
+    public void setAuthor(List<String> authors){
+        put(CommonValues.KEY_USER, authors);
     }
 
     public String getPlaceID() {

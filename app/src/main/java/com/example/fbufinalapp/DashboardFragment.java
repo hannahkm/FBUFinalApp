@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.fbufinalapp.adapters.ItineraryAdapter;
 import com.example.fbufinalapp.databinding.FragmentDashboardBinding;
@@ -90,6 +91,8 @@ public class DashboardFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_bar, menu);
         this.menu = menu;
+
+        menu.findItem(R.id.action_add_person).setVisible(false);
     }
 
     /**
@@ -174,10 +177,9 @@ public class DashboardFragment extends Fragment {
     class queryTripsAsync extends Thread{
         @Override
         public void run() {
-
             ParseQuery<Itinerary> query = ParseQuery.getQuery(Itinerary.class);
             query.include(CommonValues.KEY_USER);
-            query.whereEqualTo(CommonValues.KEY_USER, ParseUser.getCurrentUser());
+            query.whereEqualTo(CommonValues.KEY_USER, ParseUser.getCurrentUser().getObjectId());
 
             // order posts by creation date (newest first)
             query.addDescendingOrder("createdAt");
