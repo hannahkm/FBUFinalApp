@@ -13,16 +13,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FBUFinalApp">
-        <activity android:name=".EditDestinationActivity"></activity>
+        <activity android:name=".UserSearchActivity"></activity>
+        <activity android:name=".EditDestinationActivity" />
         <activity android:name=".DetailedItineraryActivity" />
         <activity android:name=".DetailedLocationActivity" />
         <activity android:name=".EditItineraryActivity" />
         <activity android:name=".SignUpActivity" />
-        <activity android:name=".LoginActivity"/>
+        <activity android:name=".LoginActivity" />
         <activity
             android:name=".MainActivity"
             android:windowSoftInputMode="adjustPan">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

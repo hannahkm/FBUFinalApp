@@ -1,6 +1,7 @@
 package com.example.fbufinalapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,6 +40,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
     Itinerary currentItinerary;
     String itinId;
     Menu menu;
+    static int USER_SHARED_SUCCESS = 11;
     static boolean editing;
     public static String TAG = "DetailedItinerary";
 
@@ -184,7 +186,30 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                     item.setTitle("DONE");
                 }
                 return true;
+            case R.id.action_add_person:
+                Intent i = new Intent(this, UserSearchActivity.class);
+                startActivityForResult(i, USER_SHARED_SUCCESS);
+                // find person
         }
         return(super.onOptionsItemSelected(item));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == USER_SHARED_SUCCESS) {
+            String userId = data.getStringExtra("userId");
+            List<String> authors = currentItinerary.getAuthor();
+
+            if (authors.contains(userId)){
+                Toast.makeText(getBaseContext(), "User is already in this trip", Toast.LENGTH_SHORT).show();
+            } else {
+                authors.add(userId);
+                currentItinerary.setAuthor(authors);
+                currentItinerary.saveInBackground();
+                Toast.makeText(getBaseContext(), "User added to trip!", Toast.LENGTH_SHORT).show();
+
+            }
+        }
     }
 }

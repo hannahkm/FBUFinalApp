@@ -38,7 +38,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(view);
 
         if (ParseUser.getCurrentUser() == null){
-            setGuestUser();
+            setGuestUserAsync getUser = new setGuestUserAsync();
+            getUser.start();
+            try {
+                getUser.join();
+            } catch (Exception e){
+                Log.e("Main", String.valueOf(e));
+            }
         }
 
         // Initialize the SDK
@@ -91,6 +97,13 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(title);
     }
 
+    class setGuestUserAsync extends Thread{
+        @Override
+        public void run() {
+            setGuestUser();
+        }
+    }
+
     public void setGuestUser(){
         ParseUser user = new ParseUser();
 
@@ -101,7 +114,8 @@ public class MainActivity extends AppCompatActivity {
 
         user.signUpInBackground(e -> {
             if (e == null) {
-                Toast.makeText(MainActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Welcome!", Toast.LENGTH_SHORT).show();
+                Log.i("fucker", "guest set");
             } else {
                 Log.e(TAG, "SignUp Failed " +  String.valueOf(e));
             }
