@@ -209,7 +209,6 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                     currentItinerary.setAuthor(authors);
                     currentItinerary.saveInBackground();
                     Toast.makeText(getBaseContext(), "User added to trip!", Toast.LENGTH_SHORT).show();
-
                 }
             }
         }

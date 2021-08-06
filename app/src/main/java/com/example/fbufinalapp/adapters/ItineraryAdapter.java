@@ -4,13 +4,19 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fbufinalapp.CommonValues;
@@ -19,12 +25,18 @@ import com.example.fbufinalapp.DetailedItineraryActivity;
 import com.example.fbufinalapp.EditItineraryActivity;
 import com.example.fbufinalapp.R;
 import com.example.fbufinalapp.models.Itinerary;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -69,12 +81,22 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle;
         TextView tvDates;
+        TextView tvLocation;
+        TextView tvPeople;
+        ImageView dropdown;
+        RelativeLayout hiddenView;
+        CardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvDates = itemView.findViewById(R.id.tvDates);
+            tvLocation = itemView.findViewById(R.id.tvLocation);
+            tvPeople = itemView.findViewById(R.id.tvPeople);
+            dropdown = itemView.findViewById(R.id.iv_dropdown);
+            hiddenView = itemView.findViewById(R.id.expand_cardview);
+            cardView = itemView.findViewById(R.id.base_cardview);
 
             // allow user to click on itineraries to either edit info or view detailed page
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +130,20 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
                     showUndoSnackbar(position, deletedItin);
 
                     return true;
+                }
+            });
+
+            dropdown.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TransitionManager.beginDelayedTransition(cardView, new AutoTransition());
+                    if (hiddenView.getVisibility() == View.GONE){
+                        hiddenView.setVisibility(View.VISIBLE);
+                        dropdown.setImageResource(R.drawable.ic_dropup);
+                    } else {
+                        hiddenView.setVisibility(View.GONE);
+                        dropdown.setImageResource(R.drawable.ic_dropdown);
+                    }
                 }
             });
         }
@@ -180,6 +216,32 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
 
             tvTitle.setText(title);
             tvDates.setText(dates);
+
+            int numAuthors = itin.getAuthor().size();
+            if (numAuthors == 2){
+                tvPeople.setText("Shared with 1 other user");
+            } else {
+                tvPeople.setText("Shared with " + (numAuthors-1) + " other users");
+            }
+
+            setLocation(itin.getPlaceID());
+        }
+
+        public void setLocation(String placeId){
+            PlacesClient placesClient = Places.createClient(context);
+            final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+
+            final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, placeFields);
+
+            placesClient.fetchPlace(request).addOnSuccessListener((response) -> {
+                Place place = response.getPlace();
+                tvLocation.setText(place.getName());
+            }).addOnFailureListener((exception) -> {
+                if (exception instanceof ApiException) {
+                    Log.e(TAG, "Place not found: " + exception.getMessage());
+                }
+                tvLocation.setText("ERROR");
+            });
         }
     }
 }
