@@ -23,4 +23,5 @@ public class CommonValues {
     public static String KEY_FAVORITES = "favorites";
     public static String KEY_USERNAME = "username";
     public static String KEY_PROFILE_PICTURE = "profilePic";
+    public static String KEY_USER_ID = "objectId";
 }
