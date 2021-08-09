@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,8 +86,12 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
                 @Override
                 public void onClick(View v) {
                     Destination desti = destinations.get(getAdapterPosition());
+                    int[] attrs = new int[]{R.attr.selectableItemBackground};
+                    TypedArray typedArray = context.obtainStyledAttributes(attrs);
+                    int backgroundResource = typedArray.getResourceId(0, 0);
 
                     if (DetailedItineraryActivity.getEditing() && !desti.getIsDay()) {
+                        v.setBackgroundResource(backgroundResource);
                         Intent i = new Intent(context, EditDestinationActivity.class);
                         i.putExtra("itinId", currentItin.getObjectId());
                         i.putExtra("placeId", desti.getPlaceID());
@@ -95,6 +100,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
 
                         context.startActivity(i, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
                     } else if (!DetailedItineraryActivity.getEditing() && !desti.getIsDay() && desti.getPlaceID() != null) {
+                        v.setBackgroundResource(backgroundResource);
                         Intent i = new Intent(context, DetailedLocationActivity.class);
                         i.putExtra("placeID", desti.getPlaceID());
                         i.putExtra("name", tvName.getText());

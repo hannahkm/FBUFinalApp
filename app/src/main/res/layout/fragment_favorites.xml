@@ -32,6 +32,15 @@
             android:padding="10dp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <TextView
+        android:id="@+id/tvEmptyPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="You have no favorites"
+        android:textAlignment="center"
+        android:textSize="24sp" />
+
 
     <com.victor.loading.rotate.RotateLoading
         android:id="@+id/rotateloading"
