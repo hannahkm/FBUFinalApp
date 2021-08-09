@@ -58,7 +58,8 @@
                 android:layout_marginEnd="10dp"
                 android:scaleX="1.5"
                 android:scaleY="1.5"
-                app:srcCompat="@drawable/ic_dropdown" />
+                app:srcCompat="@drawable/ic_dropdown"
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
         </RelativeLayout>
 
         <!-- the view to be shown after click -->
