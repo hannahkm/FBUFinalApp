@@ -96,6 +96,8 @@ public class DetailedLocationActivity extends AppCompatActivity{
         inflater = (LayoutInflater) DetailedLocationActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         layout = inflater.inflate(R.layout.itinerary_popup, null);
         pw = new PopupWindow(DetailedLocationActivity.this);
+        pw.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.custom_popup));
+        pw.setElevation(15);
         pw.setContentView(layout);
         pw.setWidth((int) (screenWidth*0.9));
         pw.setOutsideTouchable(true);
