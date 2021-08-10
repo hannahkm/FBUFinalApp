@@ -189,9 +189,10 @@ public class DetailedItineraryActivity extends AppCompatActivity {
             case R.id.action_add_person:
                 Intent i = new Intent(this, UserSearchActivity.class);
                 startActivityForResult(i, USER_SHARED_SUCCESS);
-                // find person
+                return true;
             case R.id.action_share:
                 shareItinerary();
+                return true;
         }
         return(super.onOptionsItemSelected(item));
     }

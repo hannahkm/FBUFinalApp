@@ -152,8 +152,6 @@ public class DashboardFragment extends Fragment {
     }
 
     public void runQueryThread(){
-        binding.tvEmptyPage.setVisibility(View.GONE);
-
         queryTripsAsync queryTrips = new queryTripsAsync();
         binding.rotateloading.start();
         queryTrips.start();
@@ -189,13 +187,9 @@ public class DashboardFragment extends Fragment {
                     } else {
                         trips.addAll(itineraries);
                         adapter.notifyDataSetChanged();
-                        binding.tvEmptyPage.setVisibility(View.GONE);
                     }
                 }
             });
-            if (adapter.getItemCount() == 0){
-                binding.tvEmptyPage.setVisibility(View.VISIBLE);
-            }
         }
     }
 

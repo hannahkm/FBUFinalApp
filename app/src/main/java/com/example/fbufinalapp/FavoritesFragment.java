@@ -98,8 +98,6 @@ public class FavoritesFragment extends Fragment {
     }
     
     public void runQueryThread(){
-        binding.tvEmptyPage.setVisibility(View.GONE);
-
         queryFavoritesAsync queryFavorites = new queryFavoritesAsync();
         binding.rotateloading.start();
         queryFavorites.start();
@@ -135,16 +133,11 @@ public class FavoritesFragment extends Fragment {
                     String message = place.getName() + "\n" + place.getAddress() + "\n" + placeId;
                     favorites.add(message);
                     favAdapter.notifyItemInserted(favorites.size());
-                    binding.tvEmptyPage.setVisibility(View.GONE);
                 }).addOnFailureListener((exception) -> {
                     if (exception instanceof ApiException) {
                         Log.e(TAG, "Place not found: " + exception.getMessage());
                     }
                 });
-            }
-
-            if (favAdapter.getItemCount() == 0){
-                binding.tvEmptyPage.setVisibility(View.VISIBLE);
             }
         }
     }
