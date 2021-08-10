@@ -190,6 +190,8 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                 Intent i = new Intent(this, UserSearchActivity.class);
                 startActivityForResult(i, USER_SHARED_SUCCESS);
                 // find person
+            case R.id.action_share:
+                shareItinerary();
         }
         return(super.onOptionsItemSelected(item));
     }
@@ -212,5 +214,31 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void shareItinerary(){
+        String destins = getPDFDestinations();
+
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, destins);
+        shareIntent.putExtra(Intent.EXTRA_TITLE, currentItinerary.getTitle());
+        shareIntent.setType("application/pdf");
+        startActivity(Intent.createChooser(shareIntent, "Share itinerary to..."));
+
+    }
+
+    public String getPDFDestinations(){
+        String res = "";
+        List<Destination> toExport = adapter.getItems();
+        for (Destination d : toExport){
+            if (d.getIsDay()){
+                res += d.getName();
+            } else {
+                res += d.reformatTime() + ": " + d.getName();
+            }
+            res += "\n";
+        }
+        return res;
     }
 }
