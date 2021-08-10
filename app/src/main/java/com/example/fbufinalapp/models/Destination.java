@@ -71,7 +71,8 @@ public class Destination extends ParseObject{
 
     public void setItinerary(Itinerary itin) { put(CommonValues.KEY_ITINERARY_DESTINATION, itin); }
 
-    public String reformatTime(Date time){
+    public String reformatTime(){
+        Date time = getDate();
         String pattern = "hh:mm a";
         SimpleDateFormat simpleDateFormat =new SimpleDateFormat(pattern);
 

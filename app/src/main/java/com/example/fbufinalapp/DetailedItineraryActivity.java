@@ -9,7 +9,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
 import android.transition.Slide;
 import android.util.Log;
 import android.view.Menu;
@@ -25,6 +30,9 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -190,6 +198,8 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                 Intent i = new Intent(this, UserSearchActivity.class);
                 startActivityForResult(i, USER_SHARED_SUCCESS);
                 // find person
+            case R.id.action_share:
+                shareItinerary();
         }
         return(super.onOptionsItemSelected(item));
     }
@@ -212,5 +222,59 @@ public class DetailedItineraryActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void shareItinerary(){
+        int pageHeight = 1120;
+        int pageWidth = 792;
+
+        PdfDocument document = new PdfDocument();
+
+        Paint paint = new Paint();
+        Paint textFormat = new Paint();
+
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
+
+
+        PdfDocument.Page page = document.startPage(pageInfo);
+        Canvas canvas = page.getCanvas();
+
+        textFormat.setTextSize(28);
+        textFormat.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(currentItinerary.getTitle(), 100, 125, textFormat);
+
+        textFormat.setTextSize(20);
+        textFormat.setTextAlign(Paint.Align.LEFT);
+        String destins = getPDFDestinations();
+        int yLoc = 175;
+        for (String i : destins.split("\n")) {
+            canvas.drawText(i, 100, yLoc, textFormat);
+            yLoc += 25;
+        }
+
+        document.finishPage(page);
+
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, destins);
+        shareIntent.putExtra(Intent.EXTRA_TITLE, currentItinerary.getTitle());
+        shareIntent.setType("application/pdf");
+        startActivity(Intent.createChooser(shareIntent, "Share itinerary to..."));
+
+        document.close();
+    }
+
+    public String getPDFDestinations(){
+        String res = "";
+        List<Destination> toExport = adapter.getItems();
+        for (Destination d : toExport){
+            if (d.getIsDay()){
+                res += d.getName();
+            } else {
+                res += d.reformatTime() + ": " + d.getName();
+            }
+            res += "\n";
+        }
+        return res;
     }
 }

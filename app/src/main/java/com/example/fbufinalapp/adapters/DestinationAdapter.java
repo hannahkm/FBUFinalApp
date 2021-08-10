@@ -64,6 +64,10 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
         return destinations.size();
     }
 
+    public List<Destination> getItems(){
+        return destinations;
+    }
+
     public void clear() {
         destinations.clear();
         notifyDataSetChanged();

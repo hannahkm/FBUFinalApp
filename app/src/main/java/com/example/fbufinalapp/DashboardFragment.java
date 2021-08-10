@@ -18,7 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.fbufinalapp.adapters.ItineraryAdapter;
 import com.example.fbufinalapp.databinding.FragmentDashboardBinding;
@@ -94,6 +93,7 @@ public class DashboardFragment extends Fragment {
         this.menu = menu;
 
         menu.findItem(R.id.action_add_person).setVisible(false);
+        menu.findItem(R.id.action_share).setVisible(false);
     }
 
     /**
