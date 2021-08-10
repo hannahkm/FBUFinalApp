@@ -69,7 +69,6 @@ Keep track of your favorite locations that you want to vacation to, as well as p
        * Description
        * Opening hours (for stores/museums/etc)
        * Weather forecast (for cities/countries)
-       * Reviews (for a specific location)/popular locations (for cities/countries)
    * Button to favorite the place
    * Button to add to itinerary
    * Button to add a review/popular location 
@@ -128,7 +127,7 @@ sing FAB
 | objectID     | String     | unique id for the itinerary (default)     |
 | title | String | user gives title to itinerary |
 | description | String | user gives notes about the trip |
-| author | Pointer to User | author of the itinerary |
+| author | Array | Array of String IDs for users collaborating on trip |
 | placeID     | String     | id of location given by Google Places API|
 | startDate | DateTime | day the trip begins |
 | endDate | DateTime | day the trip ends |
@@ -142,8 +141,8 @@ sing FAB
 | username | String | username the user should log in with |
 | password | String | user's password |
 | email | String | email the user signs up with |
-| favorites | Array | Array of pointers to Favorites |
-| itineraries | Array | Array of pointers to Itinerary |
+| favorites | Array | Array of place IDs |
+| itineraries | Array | Array of Itinerary IDs |
 
 ### Model: Destination
 
@@ -190,10 +189,10 @@ sing FAB
 | GET | Place.Field.RATING | average rating of users on Google |
 | GET | Place.Field.PRICE_LEVEL | rating for how expensive the location is |
 
-[Yelp Fusion API](https://www.yelp.com/developers/documentation/v3)
-Base Url: https://api.yelp.com/v3/
+[AccuWeather API](https://developer.accuweather.com/accuweather-forecast-api/apis)
+Base Url: https://dataservice.accuweather.com/
 | HTTP Verb | Endpoint | Description |
 | -------- | -------- | -------- |
-| GET     | /businesses/{id}/reviews  | top 3 reviews for a business |
-
+| GET     | /locations/v1/cities/geoposition/search  | returns location key for given coordinates |
+| GET     | /forecasts/v1/daily/1day/{locationKey}   | returns one day forecast for given location key |
 
