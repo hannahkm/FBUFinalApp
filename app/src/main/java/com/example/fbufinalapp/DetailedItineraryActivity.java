@@ -225,34 +225,7 @@ public class DetailedItineraryActivity extends AppCompatActivity {
     }
 
     public void shareItinerary(){
-        int pageHeight = 1120;
-        int pageWidth = 792;
-
-        PdfDocument document = new PdfDocument();
-
-        Paint paint = new Paint();
-        Paint textFormat = new Paint();
-
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, 1).create();
-
-
-        PdfDocument.Page page = document.startPage(pageInfo);
-        Canvas canvas = page.getCanvas();
-
-        textFormat.setTextSize(28);
-        textFormat.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(currentItinerary.getTitle(), 100, 125, textFormat);
-
-        textFormat.setTextSize(20);
-        textFormat.setTextAlign(Paint.Align.LEFT);
         String destins = getPDFDestinations();
-        int yLoc = 175;
-        for (String i : destins.split("\n")) {
-            canvas.drawText(i, 100, yLoc, textFormat);
-            yLoc += 25;
-        }
-
-        document.finishPage(page);
 
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
@@ -261,7 +234,6 @@ public class DetailedItineraryActivity extends AppCompatActivity {
         shareIntent.setType("application/pdf");
         startActivity(Intent.createChooser(shareIntent, "Share itinerary to..."));
 
-        document.close();
     }
 
     public String getPDFDestinations(){
