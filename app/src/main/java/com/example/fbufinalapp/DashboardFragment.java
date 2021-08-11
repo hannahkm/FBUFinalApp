@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.fbufinalapp.adapters.ItineraryAdapter;
 import com.example.fbufinalapp.databinding.FragmentDashboardBinding;
@@ -152,15 +153,20 @@ public class DashboardFragment extends Fragment {
     }
 
     public void runQueryThread(){
-        queryTripsAsync queryTrips = new queryTripsAsync();
-        binding.rotateloading.start();
-        queryTrips.start();
         try {
-            queryTrips.join();
-        } catch (Exception e){
-            Log.e(TAG, String.valueOf(e));
+            queryTripsAsync queryTrips = new queryTripsAsync();
+            binding.rotateloading.start();
+            queryTrips.start();
+            try {
+                queryTrips.join();
+            } catch (Exception e){
+                Log.e(TAG, String.valueOf(e));
+            }
+            binding.rotateloading.stop();
+        } catch (NullPointerException e){
+            Toast.makeText(getActivity(), "Couldn't load feed, try again later", Toast.LENGTH_SHORT).show();
         }
-        binding.rotateloading.stop();
+
     }
 
 

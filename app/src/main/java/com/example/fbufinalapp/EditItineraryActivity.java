@@ -121,6 +121,7 @@ public class EditItineraryActivity extends AppCompatActivity {
                     if (e == null){
                         itin = object;
                         tvTripName.setText(object.getTitle());
+                        etNotes.setText(object.getDescription());
                         getSupportActionBar().setTitle(object.getTitle());
 
                         final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);

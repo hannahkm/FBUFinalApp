@@ -83,6 +83,7 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
         TextView tvDates;
         TextView tvLocation;
         TextView tvPeople;
+        TextView tvNotes;
         ImageView dropdown;
         RelativeLayout hiddenView;
         CardView cardView;
@@ -94,6 +95,7 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
             tvDates = itemView.findViewById(R.id.tvDates);
             tvLocation = itemView.findViewById(R.id.tvLocation);
             tvPeople = itemView.findViewById(R.id.tvPeople);
+            tvNotes = itemView.findViewById(R.id.tvNotes);
             dropdown = itemView.findViewById(R.id.iv_dropdown);
             hiddenView = itemView.findViewById(R.id.expand_cardview);
             cardView = itemView.findViewById(R.id.base_cardview);
@@ -216,6 +218,13 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
 
             tvTitle.setText(title);
             tvDates.setText(dates);
+
+            String notes = itin.getDescription();
+            if (notes.equals("")){
+                tvNotes.setText("NONE");
+            } else {
+                tvNotes.setText(notes);
+            }
 
             int numAuthors = itin.getAuthor().size();
             if (numAuthors == 2){
