@@ -97,7 +97,6 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="25dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_below="@+id/iv_location"
                 app:srcCompat="@drawable/ic_person"/>
 
@@ -110,6 +109,28 @@
                 android:layout_toEndOf="@+id/iv_people"
                 android:layout_below="@+id/iv_location"
                 tools:text="hannahkm, hannahkm02"/>
+
+            <ImageView
+                android:id="@+id/ivNote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_below="@+id/iv_people"
+                app:srcCompat="@drawable/ic_note"/>
+
+            <TextView
+                android:id="@+id/tvNotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_toEndOf="@+id/ivNote"
+                android:layout_below="@+id/iv_people"
+                tools:text="this is a new trip!"/>
 
         </RelativeLayout>
 
