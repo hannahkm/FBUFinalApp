@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ public class ProfileFragment extends Fragment {
     Context context;
     FragmentProfileBinding binding;
     ParseUser currentUser;
+    public static final String TAG = "ProfileFragment";
     boolean newUser;
 
     public ProfileFragment() {
@@ -61,16 +63,17 @@ public class ProfileFragment extends Fragment {
             binding.btLogOut.setText("Sign Up");
         }
 
-        binding.btLogOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (newUser) {
-                    Intent i = new Intent(context, SignUpActivity.class);
-                    startActivity(i);
-                } else {
-                    ParseUser.logOut();
-                    Intent i = new Intent(context, LoginActivity.class);
-                    startActivity(i);
+        binding.btLogOut.setOnClickListener(v -> {
+            if (newUser) {
+                Intent i = new Intent(context, SignUpActivity.class);
+                startActivity(i);
+            } else {
+                logUserOut logOut = new logUserOut();
+                logOut.start();
+                try {
+                    logOut.join();
+                } catch (Exception e){
+                    Log.e(TAG, String.valueOf(e));
                 }
             }
         });
@@ -78,4 +81,14 @@ public class ProfileFragment extends Fragment {
         binding.tvUsername.setText(currentUser.getUsername());
 
     }
+
+    class logUserOut extends Thread{
+        @Override
+        public void run() {
+            ParseUser.logOut();
+            Intent i = new Intent(context, LoginActivity.class);
+            startActivity(i);
+        }
+    }
+
 }

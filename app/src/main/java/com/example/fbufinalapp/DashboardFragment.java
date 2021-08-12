@@ -173,23 +173,24 @@ public class DashboardFragment extends Fragment {
     class queryTripsAsync extends Thread{
         @Override
         public void run() {
-            ParseQuery<Itinerary> query = ParseQuery.getQuery(Itinerary.class);
-            query.include(CommonValues.KEY_USER);
-            query.whereEqualTo(CommonValues.KEY_USER, ParseUser.getCurrentUser().getObjectId());
+            try {
+                ParseQuery<Itinerary> query = ParseQuery.getQuery(Itinerary.class);
+                query.include(CommonValues.KEY_USER);
+                query.whereEqualTo(CommonValues.KEY_USER, ParseUser.getCurrentUser().getObjectId());
 
-            // order posts by creation date (newest first)
-            query.addDescendingOrder("createdAt");
-            query.findInBackground(new FindCallback<Itinerary>() {
-                @Override
-                public void done(List<Itinerary> itineraries, ParseException e) {
+                // order posts by creation date (newest first)
+                query.addDescendingOrder("createdAt");
+                query.findInBackground((itineraries, e) -> {
                     if (e != null){
                         Log.e(TAG, String.valueOf(e));
                     } else {
                         trips.addAll(itineraries);
                         adapter.notifyDataSetChanged();
                     }
-                }
-            });
+                });
+            } catch (NullPointerException e){
+                Log.e(TAG, String.valueOf(e));
+            }
         }
     }
 
