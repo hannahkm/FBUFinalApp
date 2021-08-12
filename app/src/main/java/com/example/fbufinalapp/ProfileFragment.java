@@ -30,8 +30,7 @@ public class ProfileFragment extends Fragment {
     }
 
     public static ProfileFragment newInstance() {
-        ProfileFragment fragment = new ProfileFragment();
-        return fragment;
+        return new ProfileFragment();
     }
 
     @Override
@@ -61,17 +60,14 @@ public class ProfileFragment extends Fragment {
             binding.btLogOut.setText("Sign Up");
         }
 
-        binding.btLogOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (newUser) {
-                    Intent i = new Intent(context, SignUpActivity.class);
-                    startActivity(i);
-                } else {
-                    ParseUser.logOut();
-                    Intent i = new Intent(context, LoginActivity.class);
-                    startActivity(i);
-                }
+        binding.btLogOut.setOnClickListener(v -> {
+            if (newUser) {
+                Intent i = new Intent(context, SignUpActivity.class);
+                startActivity(i);
+            } else {
+                ParseUser.logOut();
+                Intent i = new Intent(context, LoginActivity.class);
+                startActivity(i);
             }
         });
 

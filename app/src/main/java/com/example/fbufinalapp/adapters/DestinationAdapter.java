@@ -35,9 +35,9 @@ import java.util.List;
  * Adapter to build a recyclerview with destination items. Displays the destination name and time.
  */
 public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.ViewHolder> {
-    private Context context;
-    private List<Destination> destinations;
-    Itinerary currentItin;
+    private final Context context;
+    private final List<Destination> destinations;
+    final Itinerary currentItin;
     private static final String TAG = "ItineraryAdapter";
 
     public DestinationAdapter(Context context, List<Destination> destinations, Itinerary currentItin){
@@ -74,9 +74,9 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName;
-        TextView tvTime;
-        TextView tvAddress;
+        final TextView tvName;
+        final TextView tvTime;
+        final TextView tvAddress;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -86,48 +86,42 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
             tvAddress = itemView.findViewById(R.id.tvAddress);
 
             // user can either click to view details or click to edit destination
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Destination desti = destinations.get(getAdapterPosition());
-                    int[] attrs = new int[]{R.attr.selectableItemBackground};
-                    TypedArray typedArray = context.obtainStyledAttributes(attrs);
-                    int backgroundResource = typedArray.getResourceId(0, 0);
+            itemView.setOnClickListener(v -> {
+                Destination desti = destinations.get(getAdapterPosition());
+                int[] attrs = new int[]{R.attr.selectableItemBackground};
+                TypedArray typedArray = context.obtainStyledAttributes(attrs);
+                int backgroundResource = typedArray.getResourceId(0, 0);
 
-                    if (DetailedItineraryActivity.getEditing() && !desti.getIsDay()) {
-                        v.setBackgroundResource(backgroundResource);
-                        Intent i = new Intent(context, EditDestinationActivity.class);
-                        i.putExtra("itinId", currentItin.getObjectId());
-                        i.putExtra("placeId", desti.getPlaceID());
-                        i.putExtra("editing", true);
-                        i.putExtra("destinationId", desti.getObjectId());
+                if (DetailedItineraryActivity.getEditing() && !desti.getIsDay()) {
+                    v.setBackgroundResource(backgroundResource);
+                    Intent i = new Intent(context, EditDestinationActivity.class);
+                    i.putExtra("itinId", currentItin.getObjectId());
+                    i.putExtra("placeId", desti.getPlaceID());
+                    i.putExtra("editing", true);
+                    i.putExtra("destinationId", desti.getObjectId());
 
-                        context.startActivity(i, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
-                    } else if (!DetailedItineraryActivity.getEditing() && !desti.getIsDay() && desti.getPlaceID() != null) {
-                        v.setBackgroundResource(backgroundResource);
-                        Intent i = new Intent(context, DetailedLocationActivity.class);
-                        i.putExtra("placeID", desti.getPlaceID());
-                        i.putExtra("name", tvName.getText());
-                        context.startActivity(i);
-                    }
+                    context.startActivity(i, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
+                } else if (!DetailedItineraryActivity.getEditing() && !desti.getIsDay() && desti.getPlaceID() != null) {
+                    v.setBackgroundResource(backgroundResource);
+                    Intent i = new Intent(context, DetailedLocationActivity.class);
+                    i.putExtra("placeID", desti.getPlaceID());
+                    i.putExtra("name", tvName.getText());
+                    context.startActivity(i);
                 }
             });
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    int position = getAdapterPosition();
-                    Destination deleted = destinations.get(position);
+            itemView.setOnLongClickListener(view -> {
+                int position = getAdapterPosition();
+                Destination deleted = destinations.get(position);
 
-                    if (!deleted.getIsDay()) {
-                        destinations.remove(position);
-                        notifyItemRemoved(position);
+                if (!deleted.getIsDay()) {
+                    destinations.remove(position);
+                    notifyItemRemoved(position);
 
-                        showUndoSnackbar(position, deleted);
-                    }
-
-                    return true;
+                    showUndoSnackbar(position, deleted);
                 }
+
+                return true;
             });
         }
 

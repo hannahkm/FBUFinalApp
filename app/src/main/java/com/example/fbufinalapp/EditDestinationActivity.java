@@ -50,7 +50,7 @@ public class EditDestinationActivity extends AppCompatActivity {
     String itinId;
     public static String TAG = "EditDestination";
     boolean editing = false;
-    private static int AUTOCOMPLETE_REQUEST_CODE = 600;
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 600;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,108 +108,92 @@ public class EditDestinationActivity extends AppCompatActivity {
 
         ArrayAdapter<String> dateAdapter = new ArrayAdapter<>(EditDestinationActivity.this, R.layout.item_spinner, tripDates);
         binding.etDateSelect.setAdapter(dateAdapter);
-        binding.etDateSelect.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                dateSelected = String.valueOf(parent.getItemAtPosition(position));
-            }
-        });
+        binding.etDateSelect.setOnItemClickListener((parent, view12, position, id) -> dateSelected = String.valueOf(parent.getItemAtPosition(position)));
 
         String[] timeArray = new String[]{"AM", "PM"};
         ArrayAdapter<String> timeAdapter = new ArrayAdapter<>(EditDestinationActivity.this, R.layout.item_spinner, timeArray);
         binding.etTimeSelect.setAdapter(timeAdapter);
-        binding.etTimeSelect.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                timeSelected = String.valueOf(parent.getItemAtPosition(position));
+        binding.etTimeSelect.setOnItemClickListener((parent, view1, position, id) -> timeSelected = String.valueOf(parent.getItemAtPosition(position)));
+
+        binding.btFinish.setOnClickListener(v -> {
+            Destination destination;
+
+            if (editing) {
+                destination = editingDestination;
+            } else {
+                destination = new Destination();
             }
-        });
 
-        binding.btFinish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Destination destination;
+            if (place != null) {
+                destination.setPlaceID(place.getId());
+            }
 
-                if (editing) {
-                    destination = editingDestination;
+            destination.setItinerary(currentItinerary);
+
+            SimpleDateFormat timezoneFormat = new SimpleDateFormat("zzzz");
+
+            String timeString = dateSelected + " " + binding.etTime.getText() + " " + timeSelected + " " + timezoneFormat.format(new Date());
+            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm a zzzz");
+
+            boolean timeValid = true;
+            Date selectedDate;
+            try {
+                selectedDate = formatter.parse(timeString);
+            } catch (java.text.ParseException e) {
+                e.printStackTrace();
+                selectedDate = null;
+                timeValid = false;
+            }
+
+            try {
+                if (place.isOpen(selectedDate.getTime())){
+                    destination.setDate(selectedDate);
                 } else {
-                    destination = new Destination();
-                }
-
-                if (place != null) {
-                    destination.setPlaceID(place.getId());
-                }
-
-                destination.setItinerary(currentItinerary);
-
-                SimpleDateFormat timezoneFormat = new SimpleDateFormat("zzzz");
-
-                String timeString = dateSelected + " " + binding.etTime.getText() + " " + timeSelected + " " + timezoneFormat.format(new Date());
-                SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm a zzzz");
-
-                boolean timeValid = true;
-                Date selectedDate;
-                try {
-                    selectedDate = formatter.parse(timeString);
-                } catch (java.text.ParseException e) {
-                    e.printStackTrace();
-                    selectedDate = null;
                     timeValid = false;
                 }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                destination.setDate(selectedDate);
+            }
 
-                try {
-                    if (place.isOpen(selectedDate.getTime())){
-                        destination.setDate(selectedDate);
-                    } else {
-                        timeValid = false;
-                    }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                    destination.setDate(selectedDate);
-                }
+            destination.setIsDay(false);
 
-                destination.setIsDay(false);
+            String placeName = String.valueOf(binding.tvLocation.getText());
+            String inputtedName = String.valueOf(binding.etDestName.getText());
+            if (placeName.equals(inputtedName)){
+                destination.setName(inputtedName);
+            } else {
+                destination.setName(inputtedName + "\n" + placeName);
+            }
 
-                String placeName = String.valueOf(binding.tvLocation.getText());
-                String inputtedName = String.valueOf(binding.etDestName.getText());
-                if (placeName.equals(inputtedName)){
-                    destination.setName(inputtedName);
-                } else {
-                    destination.setName(inputtedName + "\n" + placeName);
-                }
+            if (timeValid){
+                destination.saveInBackground(e -> {
+                    if (e == null) {
+                        binding.tvTripName.setText("");
+                        tvLocation.setText("");
+                        binding.etDateSelect.setText("");
+                        binding.etTime.setText("");
 
-                if (timeValid){
-                    destination.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null){
-                                binding.tvTripName.setText("");
-                                tvLocation.setText("");
-                                binding.etDateSelect.setText("");
-                                binding.etTime.setText("");
+                        if (!editing) {
+                            queryItinerary.getInBackground(itinId, (object, error) -> {
+                                if (error != null) {
+                                    Toast.makeText(EditDestinationActivity.this, "Couldn't save destination", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    List<String> currentDests = object.getDestinations();
+                                    currentDests.add(destination.getObjectId());
+                                    object.put(CommonValues.KEY_DESTINATIONS, currentDests);
 
-                                if (!editing) {
-                                    queryItinerary.getInBackground(itinId, (object, error) -> {
-                                        if (error != null){
-                                            Toast.makeText(EditDestinationActivity.this, "Couldn't save destination", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            List<String> currentDests = object.getDestinations();
-                                            currentDests.add(destination.getObjectId());
-                                            object.put(CommonValues.KEY_DESTINATIONS, currentDests);
-
-                                            object.saveInBackground();
-                                        }
-                                    });
+                                    object.saveInBackground();
                                 }
-                            } else {
-                                Toast.makeText(EditDestinationActivity.this, "Couldn't save destination", Toast.LENGTH_SHORT).show();
-                            }
+                            });
                         }
-                    });
-                    finishAfterTransition();
-                } else {
-                    Toast.makeText(EditDestinationActivity.this, "This location won't be open at that time.", Toast.LENGTH_SHORT).show();
-                }
+                    } else {
+                        Toast.makeText(EditDestinationActivity.this, "Couldn't save destination", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                finishAfterTransition();
+            } else {
+                Toast.makeText(EditDestinationActivity.this, "This location won't be open at that time.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -292,17 +276,14 @@ public class EditDestinationActivity extends AppCompatActivity {
      * Opens Google Places SDK Autocomplete page when the user focuses on the EditText box. Lets them
      * search for a location.
      */
-    private View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
-        @Override
-        public void onFocusChange(View v, boolean hasFocus) {
-            if (hasFocus){
-                List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME,
-                        Place.Field.OPENING_HOURS, Place.Field.UTC_OFFSET);
+    private final View.OnFocusChangeListener focusListener = (v, hasFocus) -> {
+        if (hasFocus){
+            List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME,
+                    Place.Field.OPENING_HOURS, Place.Field.UTC_OFFSET);
 
-                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
-                        .build(EditDestinationActivity.this);
-                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-            }
+            Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                    .build(EditDestinationActivity.this);
+            startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
         }
     };
 
@@ -310,8 +291,7 @@ public class EditDestinationActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                Place location = Autocomplete.getPlaceFromIntent(data);
-                place = location;
+                place = Autocomplete.getPlaceFromIntent(data);
                 String name = place.getName();
                 tvLocation.setText(name);
                 if (String.valueOf(binding.etDestName.getText()).isEmpty()) {
