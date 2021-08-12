@@ -27,7 +27,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,8 +52,8 @@ public class EditItineraryActivity extends AppCompatActivity {
     ParseQuery<Itinerary> query;
     boolean editing = false;
 
-    private static int AUTOCOMPLETE_REQUEST_CODE = 1;
-    private static String TAG = "EditItineraryActivity";
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 1;
+    private static final String TAG = "EditItineraryActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,19 +88,16 @@ public class EditItineraryActivity extends AppCompatActivity {
 
         binding.rotateloading.stop();
 
-        binding.btFinish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!editing) {
-                    itin = new Itinerary();
-                }
+        binding.btFinish.setOnClickListener(v -> {
+            if (!editing) {
+                itin = new Itinerary();
+            }
 
-                try {
-                    parseItinerary();
-                } catch (java.text.ParseException e) {
-                    e.printStackTrace();
-                    Toast.makeText(EditItineraryActivity.this, "Failed to make itinerary", Toast.LENGTH_SHORT).show();
-                }
+            try {
+                parseItinerary();
+            } catch (java.text.ParseException e) {
+                e.printStackTrace();
+                Toast.makeText(EditItineraryActivity.this, "Failed to make itinerary", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -121,6 +117,7 @@ public class EditItineraryActivity extends AppCompatActivity {
                     if (e == null){
                         itin = object;
                         tvTripName.setText(object.getTitle());
+                        etNotes.setText(object.getDescription());
                         getSupportActionBar().setTitle(object.getTitle());
 
                         final List<Place.Field> placeFields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
@@ -233,15 +230,12 @@ public class EditItineraryActivity extends AppCompatActivity {
                 newDest.setIsDay(true);
                 newDest.setItinerary(itin);
 
-                newDest.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null){
-                            destinations.add(newDest.getObjectId());
-                        } else {
-                            Log.e(TAG, String.valueOf(e));
-                            Toast.makeText(EditItineraryActivity.this, "Error saving dates", Toast.LENGTH_SHORT).show();
-                        }
+                newDest.saveInBackground(e -> {
+                    if (e == null){
+                        destinations.add(newDest.getObjectId());
+                    } else {
+                        Log.e(TAG, String.valueOf(e));
+                        Toast.makeText(EditItineraryActivity.this, "Error saving dates", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -249,38 +243,32 @@ public class EditItineraryActivity extends AppCompatActivity {
             itin.setDestinations(destinations);
 
 
-            itin.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    if (e != null){
-                        Log.e(TAG, String.valueOf(e));
-                        Toast.makeText(EditItineraryActivity.this, "Error posting", Toast.LENGTH_SHORT).show();
-                    } else {
-                        tvTripName.setText("");
-                        tvLocation.setText("");
-                        etNotes.setText("");
-                        etStartDate.setText("");
-                        etEndDate.setText("");
+            itin.saveInBackground(e -> {
+                if (e != null){
+                    Log.e(TAG, String.valueOf(e));
+                    Toast.makeText(EditItineraryActivity.this, "Error posting", Toast.LENGTH_SHORT).show();
+                } else {
+                    tvTripName.setText("");
+                    tvLocation.setText("");
+                    etNotes.setText("");
+                    etStartDate.setText("");
+                    etEndDate.setText("");
 
-                        List<String> currentItins = currentUser.getList(CommonValues.KEY_ITINERARY_USER);
-                        if (currentItins == null){
-                            currentItins = new ArrayList<String>();
-                        }
-                        currentItins.add(itin.getObjectId());
-                        currentUser.put(CommonValues.KEY_ITINERARY_USER, currentItins);
-
-                        currentUser.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e != null){
-                                    Log.e(TAG, String.valueOf(e));
-                                    Toast.makeText(EditItineraryActivity.this, "Error saving your trip", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    finishAfterTransition();
-                                }
-                            }
-                        });
+                    List<String> currentItins = currentUser.getList(CommonValues.KEY_ITINERARY_USER);
+                    if (currentItins == null){
+                        currentItins = new ArrayList<String>();
                     }
+                    currentItins.add(itin.getObjectId());
+                    currentUser.put(CommonValues.KEY_ITINERARY_USER, currentItins);
+
+                    currentUser.saveInBackground(e1 -> {
+                        if (e1 != null) {
+                            Log.e(TAG, String.valueOf(e1));
+                            Toast.makeText(EditItineraryActivity.this, "Error saving your trip", Toast.LENGTH_SHORT).show();
+                        } else {
+                            finishAfterTransition();
+                        }
+                    });
                 }
             });
         } else {
@@ -307,13 +295,10 @@ public class EditItineraryActivity extends AppCompatActivity {
                     if (day.before(start) || day.after(end) || d.getIsDay()){
                         toDelete.add(d.getObjectId());
 
-                        d.deleteInBackground(new DeleteCallback() {
-                            @Override
-                            public void done(ParseException e2) {
-                                if (e2 != null){
-                                    Log.e(TAG, String.valueOf(e2));
-                                    Toast.makeText(EditItineraryActivity.this, "Error updating dates", Toast.LENGTH_SHORT).show();
-                                }
+                        d.deleteInBackground(e2 -> {
+                            if (e2 != null){
+                                Log.e(TAG, String.valueOf(e2));
+                                Toast.makeText(EditItineraryActivity.this, "Error updating dates", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -333,16 +318,13 @@ public class EditItineraryActivity extends AppCompatActivity {
      * Opens the Google Places SDK Autocomplete search page when the user focuses on the edittext;
      * lets them search for locations.
      */
-    private View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
-        @Override
-        public void onFocusChange(View v, boolean hasFocus) {
-            if (hasFocus){
-                List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+    private final View.OnFocusChangeListener focusListener = (v, hasFocus) -> {
+        if (hasFocus){
+            List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
 
-                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
-                        .build(EditItineraryActivity.this);
-                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-            }
+            Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                    .build(EditItineraryActivity.this);
+            startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
         }
     };
 
@@ -350,8 +332,7 @@ public class EditItineraryActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                Place location = Autocomplete.getPlaceFromIntent(data);
-                place = location;
+                place = Autocomplete.getPlaceFromIntent(data);
                 tvLocation.setText(place.getName());
             } else {
                 Status status = Autocomplete.getStatusFromIntent(data);

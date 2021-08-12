@@ -51,11 +51,9 @@ public class MainActivity extends AppCompatActivity {
 
         final FragmentManager fragmentManager = getSupportFragmentManager();
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                item -> {
                     Fragment fragment;
                     switch (item.getItemId()) {
                         case R.id.dashboard:
@@ -86,8 +84,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
                     return true;
-                }
-            });
+                });
         // Set default selection
         bottomNavigationView.setSelectedItemId(R.id.dashboard);
     }
@@ -115,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             if (e == null) {
                 Toast.makeText(this, "Welcome!", Toast.LENGTH_SHORT).show();
             } else {
-                Log.e(TAG, "SignUp Failed " +  String.valueOf(e));
+                Log.e(TAG, "SignUp Failed " + e);
             }
         });
     }

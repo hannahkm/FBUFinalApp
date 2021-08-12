@@ -44,8 +44,8 @@ import java.util.List;
  * Adapter to build recyclerview with itineraries for items.
  */
 public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.ViewHolder>{
-    private Context context;
-    private List<Itinerary> itins;
+    private final Context context;
+    private final List<Itinerary> itins;
     private static final String TAG = "ItineraryAdapter";
     ParseUser currentUser;
 
@@ -79,13 +79,14 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle;
-        TextView tvDates;
-        TextView tvLocation;
-        TextView tvPeople;
-        ImageView dropdown;
-        RelativeLayout hiddenView;
-        CardView cardView;
+        final TextView tvTitle;
+        final TextView tvDates;
+        final TextView tvLocation;
+        final TextView tvPeople;
+        final TextView tvNotes;
+        final ImageView dropdown;
+        final RelativeLayout hiddenView;
+        final CardView cardView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -94,56 +95,48 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
             tvDates = itemView.findViewById(R.id.tvDates);
             tvLocation = itemView.findViewById(R.id.tvLocation);
             tvPeople = itemView.findViewById(R.id.tvPeople);
+            tvNotes = itemView.findViewById(R.id.tvNotes);
             dropdown = itemView.findViewById(R.id.iv_dropdown);
             hiddenView = itemView.findViewById(R.id.expand_cardview);
             cardView = itemView.findViewById(R.id.base_cardview);
 
             // allow user to click on itineraries to either edit info or view detailed page
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Itinerary selected = itins.get(getAdapterPosition());
-                    String itinId = selected.getObjectId();
-                    Intent i;
+            itemView.setOnClickListener(v -> {
+                Itinerary selected = itins.get(getAdapterPosition());
+                String itinId = selected.getObjectId();
+                Intent i;
 
-                    if (DashboardFragment.editing){
-                        i = new Intent(context, EditItineraryActivity.class);
-                        i.putExtra("editing", true);
-                    } else {
-                        i = new Intent(context, DetailedItineraryActivity.class);
-                    }
-
-                    i.putExtra("itinId", itinId);
-                    context.startActivity(i, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
+                if (DashboardFragment.editing){
+                    i = new Intent(context, EditItineraryActivity.class);
+                    i.putExtra("editing", true);
+                } else {
+                    i = new Intent(context, DetailedItineraryActivity.class);
                 }
+
+                i.putExtra("itinId", itinId);
+                context.startActivity(i, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
             });
 
             // user can delete itineraries
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    int position = getAdapterPosition();
-                    Itinerary deletedItin = itins.get(position);
-                    itins.remove(position);
-                    notifyItemRemoved(position);
+            itemView.setOnLongClickListener(view -> {
+                int position = getAdapterPosition();
+                Itinerary deletedItin = itins.get(position);
+                itins.remove(position);
+                notifyItemRemoved(position);
 
-                    showUndoSnackbar(position, deletedItin);
+                showUndoSnackbar(position, deletedItin);
 
-                    return true;
-                }
+                return true;
             });
 
-            dropdown.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    TransitionManager.beginDelayedTransition(cardView, new AutoTransition());
-                    if (hiddenView.getVisibility() == View.GONE){
-                        hiddenView.setVisibility(View.VISIBLE);
-                        dropdown.setImageResource(R.drawable.ic_dropup);
-                    } else {
-                        hiddenView.setVisibility(View.GONE);
-                        dropdown.setImageResource(R.drawable.ic_dropdown);
-                    }
+            dropdown.setOnClickListener(v -> {
+                TransitionManager.beginDelayedTransition(cardView, new AutoTransition());
+                if (hiddenView.getVisibility() == View.GONE){
+                    hiddenView.setVisibility(View.VISIBLE);
+                    dropdown.setImageResource(R.drawable.ic_dropup);
+                } else {
+                    hiddenView.setVisibility(View.GONE);
+                    dropdown.setImageResource(R.drawable.ic_dropdown);
                 }
             });
         }
@@ -207,7 +200,7 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
             Date start = itin.getStartDate();
             Date end = itin.getEndDate();
 
-            String dates = "";
+            String dates;
             if (start.equals(end)) {
                 dates = itin.reformatDate(start);
             } else {
@@ -216,6 +209,13 @@ public class ItineraryAdapter extends RecyclerView.Adapter<ItineraryAdapter.View
 
             tvTitle.setText(title);
             tvDates.setText(dates);
+
+            String notes = itin.getDescription();
+            if (notes.equals("")){
+                tvNotes.setText("NONE");
+            } else {
+                tvNotes.setText(notes);
+            }
 
             int numAuthors = itin.getAuthor().size();
             if (numAuthors == 2){

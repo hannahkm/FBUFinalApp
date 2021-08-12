@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fbufinalapp.DetailedLocationActivity;
 import com.example.fbufinalapp.R;
-import com.example.fbufinalapp.models.Destination;
 
 import java.util.List;
 
@@ -24,8 +22,8 @@ import java.util.List;
  */
 public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.ViewHolder>{
 
-    private Context context;
-    private List<String> places;
+    private final Context context;
+    private final List<String> places;
     private static final String TAG = "LocationsAdapter";
 
     public LocationsAdapter(Context context, List<String> places){
@@ -57,8 +55,8 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{
-        TextView tvPrimary;
-        TextView tvSecondary;
+        final TextView tvPrimary;
+        final TextView tvSecondary;
         String placeId;
 
         public ViewHolder(@NonNull View itemView) {
@@ -68,14 +66,11 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
             tvSecondary = itemView.findViewById(R.id.tvSecondary);
 
             // user can click on item to view more details about that location
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(context, DetailedLocationActivity.class);
-                    i.putExtra("placeID", placeId);
-                    i.putExtra("name", tvPrimary.getText());
-                    context.startActivity(i, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
-                }
+            itemView.setOnClickListener(v -> {
+                Intent i = new Intent(context, DetailedLocationActivity.class);
+                i.putExtra("placeID", placeId);
+                i.putExtra("name", tvPrimary.getText());
+                context.startActivity(i, ActivityOptions.makeSceneTransitionAnimation((Activity) context).toBundle());
             });
         }
 

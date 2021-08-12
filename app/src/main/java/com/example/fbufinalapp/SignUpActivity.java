@@ -3,9 +3,7 @@ package com.example.fbufinalapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,19 +42,11 @@ public class SignUpActivity extends AppCompatActivity {
 
         newUser = currentUser == null;
 
-        binding.btSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SignUp();
-            }
-        });
+        binding.btSignUp.setOnClickListener(v -> SignUp());
 
-        binding.btLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
-                startActivity(i);
-            }
+        binding.btLogin.setOnClickListener(v -> {
+            Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
+            startActivity(i);
         });
     }
 

@@ -1,7 +1,6 @@
 package com.example.fbufinalapp;
 
 import android.app.Application;
-import android.content.Context;
 
 import com.example.fbufinalapp.models.Destination;
 import com.example.fbufinalapp.models.Itinerary;
@@ -11,8 +10,6 @@ import com.parse.ParseObject;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
-import static java.security.AccessController.getContext;
-
 public class ParseApplication extends Application {
     @Override
     public void onCreate() {
@@ -20,9 +17,6 @@ public class ParseApplication extends Application {
 
         Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
 
-        // Use for monitoring Parse OkHttp traffic
-        // Can be Level.BASIC, Level.HEADERS, or Level.BODY
-        // See https://square.github.io/okhttp/3.x/logging-interceptor/ to see the options.
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);

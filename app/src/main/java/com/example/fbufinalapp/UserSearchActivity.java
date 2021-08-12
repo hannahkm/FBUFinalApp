@@ -8,11 +8,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.transition.Slide;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.fbufinalapp.adapters.LocationsAdapter;
 import com.example.fbufinalapp.adapters.UserAdapter;
 import com.example.fbufinalapp.databinding.ActivityUserSearchBinding;
 import com.parse.ParseQuery;

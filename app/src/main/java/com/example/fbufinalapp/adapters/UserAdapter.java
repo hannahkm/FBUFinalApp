@@ -17,8 +17,8 @@ import com.parse.ParseUser;
 import java.util.List;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
-    Context context;
-    List<ParseUser> users;
+    final Context context;
+    final List<ParseUser> users;
 
     public UserAdapter(Context context, List<ParseUser> users) {
         this.context = context;
@@ -44,8 +44,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvUsername;
-        ImageView ivProfilePic;
+        final TextView tvUsername;
+        final ImageView ivProfilePic;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -53,12 +53,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
             tvUsername = itemView.findViewById(R.id.tvUsername);
             ivProfilePic = itemView.findViewById(R.id.ivProfilePic);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((UserSearchActivity) context).userClicked(users.get(getAdapterPosition()));
-                }
-            });
+            itemView.setOnClickListener(v -> ((UserSearchActivity) context).userClicked(users.get(getAdapterPosition())));
         }
 
         public void bind(ParseUser user) {
