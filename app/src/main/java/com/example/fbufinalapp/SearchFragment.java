@@ -37,7 +37,6 @@ public class SearchFragment extends Fragment {
     public static final String TAG = "SearchFragment";
     public static int AUTOCOMPLETE_REQUEST_CODE = 1;
     private EditText etSearch;
-    private RecyclerView searchResults;
     FragmentSearchBinding binding;
     List<String> places;
     LocationsAdapter adapter;
@@ -79,7 +78,7 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        searchResults = view.findViewById(R.id.rvResults);
+        RecyclerView searchResults = view.findViewById(R.id.rvResults);
 
         places = new ArrayList<>();
         adapter = new LocationsAdapter(context, places);
@@ -97,7 +96,7 @@ public class SearchFragment extends Fragment {
     /**
      * Listens to when the user types into the search bar and displays matching results underneath
      */
-    private TextWatcher searchListener = new TextWatcher () {
+    private final TextWatcher searchListener = new TextWatcher () {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -120,8 +119,8 @@ public class SearchFragment extends Fragment {
 
                 for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
                     mResult = new StringBuilder();
-                    mResult.append(prediction.getPrimaryText(null) + "\n");
-                    mResult.append(prediction.getSecondaryText(null) + "\n");
+                    mResult.append(prediction.getPrimaryText(null)).append("\n");
+                    mResult.append(prediction.getSecondaryText(null)).append("\n");
                     mResult.append(prediction.getPlaceId());
                     places.add(String.valueOf(mResult));
                 }

@@ -3,10 +3,8 @@ package com.example.fbufinalapp.models;
 import com.example.fbufinalapp.CommonValues;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

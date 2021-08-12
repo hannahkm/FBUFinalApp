@@ -35,19 +35,11 @@ public class LoginActivity extends AppCompatActivity {
         tvUsername = findViewById(R.id.tvUsername);
         tvPassword = findViewById(R.id.tvPassword);
 
-        binding.btLogIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logIn();
-            }
-        });
+        binding.btLogIn.setOnClickListener(v -> logIn());
 
-        binding.btSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(LoginActivity.this, SignUpActivity.class);
-                startActivity(i);
-            }
+        binding.btSignUp.setOnClickListener(v -> {
+            Intent i = new Intent(LoginActivity.this, SignUpActivity.class);
+            startActivity(i);
         });
     }
 

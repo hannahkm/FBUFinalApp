@@ -63,9 +63,8 @@ public class FavoritesFragment extends Fragment {
         // Inflate the layout for this fragment
         context = container.getContext();
         binding = FragmentFavoritesBinding.inflate(getLayoutInflater(), container, false);
-        View view = binding.getRoot();
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -86,12 +85,7 @@ public class FavoritesFragment extends Fragment {
         rvFavorites.setLayoutManager(new LinearLayoutManager(context));
 
         // Setup refresh listener which triggers new data loading
-        binding.swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                fetchTimelineAsync(0);
-            }
-        });
+        binding.swipeContainer.setOnRefreshListener(() -> fetchTimelineAsync(0));
 
         runQueryThread();
 

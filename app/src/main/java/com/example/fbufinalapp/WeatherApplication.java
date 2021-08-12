@@ -14,7 +14,7 @@ import retrofit2.http.Query;
 
 public class WeatherApplication extends Application {
     private static Retrofit retrofit;
-    public static String BASE_URL_ACCUWEATHER = "https://dataservice.accuweather.com/";
+    public static final String BASE_URL_ACCUWEATHER = "https://dataservice.accuweather.com/";
 
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {

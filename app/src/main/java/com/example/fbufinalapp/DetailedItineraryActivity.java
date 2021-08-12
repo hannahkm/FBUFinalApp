@@ -73,23 +73,17 @@ public class DetailedItineraryActivity extends AppCompatActivity {
         runQueryThread();
 
         // Allows the user to create a new destination to add to this itinerary
-        binding.fabNewDest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(DetailedItineraryActivity.this, EditDestinationActivity.class);
-                i.putExtra("itinId", itinId);
-                startActivity(i, ActivityOptions.makeSceneTransitionAnimation(DetailedItineraryActivity.this).toBundle());
-                adapter.notifyDataSetChanged();
-            }
+        binding.fabNewDest.setOnClickListener(v -> {
+            Intent i = new Intent(DetailedItineraryActivity.this, EditDestinationActivity.class);
+            i.putExtra("itinId", itinId);
+            startActivity(i, ActivityOptions.makeSceneTransitionAnimation(DetailedItineraryActivity.this).toBundle());
+            adapter.notifyDataSetChanged();
         });
 
         // Setup refresh listener which triggers new data loading
-        binding.swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // refreshes the user's timeline
-                fetchTimelineAsync(0);
-            }
+        binding.swipeContainer.setOnRefreshListener(() -> {
+            // refreshes the user's timeline
+            fetchTimelineAsync(0);
         });
     }
 
@@ -153,16 +147,13 @@ public class DetailedItineraryActivity extends AppCompatActivity {
         queryDestination.whereEqualTo(CommonValues.KEY_ITINERARY_DESTINATION, currentItinerary);
         queryDestination.orderByAscending(CommonValues.KEY_DATE);
 
-        queryDestination.findInBackground(new FindCallback<Destination>() {
-            @Override
-            public void done(List<Destination> objects, ParseException e) {
-                if (e == null){
-                    destinations.addAll(objects);
-                    adapter.notifyDataSetChanged();
-                } else {
-                    Log.e(TAG, String.valueOf(e));
-                    Toast.makeText(DetailedItineraryActivity.this, "Couldn't load destinations", Toast.LENGTH_SHORT).show();
-                }
+        queryDestination.findInBackground((objects, e) -> {
+            if (e == null){
+                destinations.addAll(objects);
+                adapter.notifyDataSetChanged();
+            } else {
+                Log.e(TAG, String.valueOf(e));
+                Toast.makeText(DetailedItineraryActivity.this, "Couldn't load destinations", Toast.LENGTH_SHORT).show();
             }
         });
     }

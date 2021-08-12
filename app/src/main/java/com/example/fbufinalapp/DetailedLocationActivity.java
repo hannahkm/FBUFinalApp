@@ -119,7 +119,7 @@ public class DetailedLocationActivity extends AppCompatActivity{
             queryPage.join();
         }
         catch (Exception e) {
-            System.out.println(e);
+            Log.e(TAG, String.valueOf(e));
         }
 
         binding.rotateloading.stop();
@@ -128,72 +128,55 @@ public class DetailedLocationActivity extends AppCompatActivity{
         /**
          * the user clicked on the favorites button, so we add/remove it from their favorites
          */
-        fabAddToFav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<String> currentFavs = currentUser.getList(CommonValues.KEY_FAVORITES);
+        fabAddToFav.setOnClickListener(v -> {
+            List<String> currentFavs = currentUser.getList(CommonValues.KEY_FAVORITES);
 
-                if (currentFavs.contains(placeId)){
-                    // we're disliking; remove the id from favorites
-                    currentFavs.remove(placeId);
-                    fabAddToFav.setImageResource(R.drawable.ic_favorite);
-                } else {
-                    // liking the location; add id
-                    currentFavs.add(placeId);
-                    fabAddToFav.setImageResource(R.drawable.ic_favorite_filled);
-                }
-                currentUser.put(CommonValues.KEY_FAVORITES, currentFavs);
-
-
-                currentUser.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e != null){
-                            Log.e(TAG, String.valueOf(e));
-                            Toast.makeText(DetailedLocationActivity.this, "An error occurred. Please try again later!", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+            if (currentFavs.contains(placeId)){
+                // we're disliking; remove the id from favorites
+                currentFavs.remove(placeId);
+                fabAddToFav.setImageResource(R.drawable.ic_favorite);
+            } else {
+                // liking the location; add id
+                currentFavs.add(placeId);
+                fabAddToFav.setImageResource(R.drawable.ic_favorite_filled);
             }
+            currentUser.put(CommonValues.KEY_FAVORITES, currentFavs);
+
+
+            currentUser.saveInBackground(e -> {
+                if (e != null) {
+                    Log.e(TAG, String.valueOf(e));
+                    Toast.makeText(DetailedLocationActivity.this, "An error occurred. Please try again later!", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         /**
          * Allows the user to add the current location to an existing itinerary
          */
-        binding.fabAddToItin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // show popup and let user select an itinerary from the list.
-                pw.showAtLocation(binding.main, Gravity.CENTER, 0, 0);
-                AutoCompleteTextView etItinSelect = layout.findViewById(R.id.etItinSelect);
+        binding.fabAddToItin.setOnClickListener(v -> {
+            // show popup and let user select an itinerary from the list.
+            pw.showAtLocation(binding.main, Gravity.CENTER, 0, 0);
+            AutoCompleteTextView etItinSelect = layout.findViewById(R.id.etItinSelect);
 
-                ArrayAdapter<String> dateAdapter = new ArrayAdapter<>(DetailedLocationActivity.this, R.layout.item_spinner, itinNames);
-                etItinSelect.setAdapter(dateAdapter);
-                etItinSelect.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        itinSelected = itinIds.get(position);
-                    }
-                });
+            ArrayAdapter<String> dateAdapter = new ArrayAdapter<>(DetailedLocationActivity.this, R.layout.item_spinner, itinNames);
+            etItinSelect.setAdapter(dateAdapter);
+            etItinSelect.setOnItemClickListener((parent, view1, position, id) -> itinSelected = itinIds.get(position));
 
-                Button finished = layout.findViewById(R.id.btContinue);
-                finished.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (itinSelected == null){
-                            Toast.makeText(v.getContext(), "Please select an itinerary", Toast.LENGTH_SHORT).show();
-                        } else {
-                            pw.dismiss();
-                            Intent i = new Intent(DetailedLocationActivity.this, EditDestinationActivity.class);
-                            i.putExtra("itinId", itinSelected);
-                            i.putExtra("placeName", place.getName());
-                            i.putExtra("placeId", place.getId());
-                            startActivity(i);
-                        }
-                    }
-                });
+            Button finished = layout.findViewById(R.id.btContinue);
+            finished.setOnClickListener(v1 -> {
+                if (itinSelected == null) {
+                    Toast.makeText(v1.getContext(), "Please select an itinerary", Toast.LENGTH_SHORT).show();
+                } else {
+                    pw.dismiss();
+                    Intent i = new Intent(DetailedLocationActivity.this, EditDestinationActivity.class);
+                    i.putExtra("itinId", itinSelected);
+                    i.putExtra("placeName", place.getName());
+                    i.putExtra("placeId", place.getId());
+                    startActivity(i);
+                }
+            });
 
-            }
         });
 
     }
@@ -255,46 +238,37 @@ public class DetailedLocationActivity extends AppCompatActivity{
                 ratingBar.setVisibility(View.GONE);
             }
 
-            binding.btWebsite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        Uri url = place.getWebsiteUri();
-                        Intent launch = new Intent(Intent.ACTION_VIEW, url);
-                        startActivity(launch);
-                    } catch (NullPointerException e){
-                        Toast.makeText(DetailedLocationActivity.this, "This location has no website", Toast.LENGTH_SHORT).show();
-                    }
+            binding.btWebsite.setOnClickListener(v -> {
+                try {
+                    Uri url = place.getWebsiteUri();
+                    Intent launch = new Intent(Intent.ACTION_VIEW, url);
+                    startActivity(launch);
+                } catch (NullPointerException e){
+                    Toast.makeText(DetailedLocationActivity.this, "This location has no website", Toast.LENGTH_SHORT).show();
+                }
 
+            });
+
+            binding.btPhoneNumber.setOnClickListener(v -> {
+                try {
+                    String phone = "tel:" + place.getPhoneNumber();
+                    Intent launch = new Intent(Intent.ACTION_DIAL);
+                    launch.setData(Uri.parse(phone));
+                    startActivity(launch);
+                } catch (NullPointerException e) {
+                    Toast.makeText(DetailedLocationActivity.this, "This location has no phone number", Toast.LENGTH_SHORT).show();
                 }
             });
 
-            binding.btPhoneNumber.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        String phone = "tel:" + place.getPhoneNumber();
-                        Intent launch = new Intent(Intent.ACTION_DIAL);
-                        launch.setData(Uri.parse(phone));
-                        startActivity(launch);
-                    } catch (NullPointerException e) {
-                        Toast.makeText(DetailedLocationActivity.this, "This location has no phone number", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-
-            binding.btDirections.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        String address = place.getAddress().replace(" ", "+");
-                        Uri gmmIntentUri = Uri.parse("google.navigation:q="+address);
-                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                        mapIntent.setPackage("com.google.android.apps.maps");
-                        startActivity(mapIntent);
-                    } catch (NullPointerException e) {
-                        Toast.makeText(DetailedLocationActivity.this, "Couldn't get directions", Toast.LENGTH_SHORT).show();
-                    }
+            binding.btDirections.setOnClickListener(v -> {
+                try {
+                    String address = place.getAddress().replace(" ", "+");
+                    Uri gmmIntentUri = Uri.parse("google.navigation:q="+address);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
+                } catch (NullPointerException e) {
+                    Toast.makeText(DetailedLocationActivity.this, "Couldn't get directions", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -393,18 +367,15 @@ public class DetailedLocationActivity extends AppCompatActivity{
         itinNames = new ArrayList<>();
         itinIds = new ArrayList<>();
 
-        query.findInBackground(new FindCallback<Itinerary>() {
-            @Override
-            public void done(List<Itinerary> itineraries, ParseException e) {
-                if (e != null){
-                    Toast.makeText(DetailedLocationActivity.this, "Unable to get itineraries", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, String.valueOf(e));
-                } else {
-                    // save received posts to list and notify adapter of new data
-                    for (Itinerary itin : itineraries){
-                        itinNames.add(itin.getTitle());
-                        itinIds.add(itin.getObjectId());
-                    }
+        query.findInBackground((itineraries, e) -> {
+            if (e != null){
+                Toast.makeText(DetailedLocationActivity.this, "Unable to get itineraries", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, String.valueOf(e));
+            } else {
+                // save received posts to list and notify adapter of new data
+                for (Itinerary itin : itineraries){
+                    itinNames.add(itin.getTitle());
+                    itinIds.add(itin.getObjectId());
                 }
             }
         });
