@@ -206,17 +206,17 @@ public class EditItineraryActivity extends AppCompatActivity {
 
             List<String> destinations;
 
-            if (editing){
-                destinations = removeDates(start, end);
-            } else {
-                destinations = new ArrayList<>();
-            }
-
             Calendar cStart = Calendar.getInstance();
             cStart.setTime(start);
             Calendar cEnd = Calendar.getInstance();
             cEnd.setTime(end);
             cEnd.add(Calendar.DATE, 1);
+
+            if (editing){
+                destinations = removeDates(start, cEnd.getTime());
+            } else {
+                destinations = new ArrayList<>();
+            }
 
             String pattern = "MMMM dd, yyyy";
             SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
